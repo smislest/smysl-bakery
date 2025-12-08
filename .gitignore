@@ -1,10 +1,25 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+=======
+
+>>>>>>> 37ae191e98fa08d6faaea04b46e192eafbb78746
 
 # dependencies
 /node_modules
 /.pnp
+<<<<<<< HEAD
 =======
+=======
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+>>>>>>> 37ae191e98fa08d6faaea04b46e192eafbb78746
 # Logs
 logs
 *.log
@@ -12,6 +27,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
+.pnpm-debug.log*
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
@@ -76,6 +92,7 @@ web_modules/
 .env
 .env.*
 !.env.example
+.env*
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache
@@ -132,6 +149,7 @@ dist
 # Stores VSCode versions used for testing VSCode extensions
 .vscode-test
 
+<<<<<<< HEAD
 # yarn v3
 >>>>>>> 7cd1cb675e046bd539e724f4efbf873c741fd5a4
 .pnp.*
@@ -179,3 +197,29 @@ next-env.d.ts
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 >>>>>>> 7cd1cb675e046bd539e724f4efbf873c741fd5a4
+=======
+# Vite logs files
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+>>>>>>> 37ae191e98fa08d6faaea04b46e192eafbb78746
