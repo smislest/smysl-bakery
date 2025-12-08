@@ -116,56 +116,57 @@ export default function ProductsSection() {
 
   return (
     <section ref={sectionRef} id="products" className="w-full py-12 bg-primary">
-      <div className="max-w-7xl mx-auto px-6">
-        {/* Заголовок и кнопки навигации */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 md:mb-12">
-          <div className="flex flex-col items-center gap-3 mb-6 md:mb-0 flex-1">
-            <h2 className="text-5xl md:text-7xl font-normal text-white uppercase text-center">
-              Наша выпечка <br />и десерты
-            </h2>
-          </div>
-          <div className="hidden md:flex items-center gap-2 md:gap-3 flex-shrink-0">
-            <button
-              onClick={prevProduct}
-              className="w-10 h-10 md:w-12 md:h-12 rounded-full border-2 transition-all flex items-center justify-center text-4xl cursor-pointer"
-              style={{ 
-                borderColor: '#fdebc1', 
-                backgroundColor: '#fdebc1', 
-                color: '#7BA862' 
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = '#7BA862';
-                e.currentTarget.style.color = '#fdebc1';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = '#fdebc1';
-                e.currentTarget.style.color = '#7BA862';
-              }}
-              aria-label="Предыдущий продукт"
-            >
-              ‹
-            </button>
-            <button
-              onClick={nextProduct}
-              className="w-10 h-10 md:w-12 md:h-12 rounded-full border-2 transition-all flex items-center justify-center text-2xl cursor-pointer"
-              style={{ 
-                borderColor: '#fdebc1', 
-                backgroundColor: '#fdebc1', 
-                color: '#7BA862' 
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = '#7BA862';
-                e.currentTarget.style.color = '#fdebc1';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = '#fdebc1';
-                e.currentTarget.style.color = '#7BA862';
-              }}
-              aria-label="Следующий продукт"
-            >
-              ›
-            </button>
-          </div>
+      <div className="max-w-7xl mx-auto px-6 relative">
+        {/* Стрелки управления по краям */}
+        <button
+          onClick={prevProduct}
+          className="hidden md:flex absolute left-0 top-1/2 w-10 h-10 md:w-12 md:h-12 rounded-full border-2 transition-all flex items-center justify-center cursor-pointer group"
+          style={{
+            borderColor: '#fdebc1',
+            backgroundColor: '#fdebc1',
+            zIndex: 10,
+            display: 'flex'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = '#7BA862';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = '#fdebc1';
+          }}
+          aria-label="Предыдущий продукт"
+        >
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="12" fill="none" />
+            <path d="M14 6L8 12L14 18" stroke="#7BA862" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="group-hover:stroke-[#fdebc1]" />
+          </svg>
+        </button>
+        <button
+          onClick={nextProduct}
+          className="hidden md:flex absolute right-0 top-1/2 w-10 h-10 md:w-12 md:h-12 rounded-full border-2 transition-all flex items-center justify-center cursor-pointer group"
+          style={{
+            borderColor: '#fdebc1',
+            backgroundColor: '#fdebc1',
+            zIndex: 10,
+            display: 'flex'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = '#7BA862';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = '#fdebc1';
+          }}
+          aria-label="Следующий продукт"
+        >
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="12" fill="none" />
+            <path d="M10 6L16 12L10 18" stroke="#7BA862" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="group-hover:stroke-[#fdebc1]" />
+          </svg>
+        </button>
+        {/* Заголовок по центру */}
+        <div className="mb-8 md:mb-12 flex flex-col items-center justify-center">
+          <h2 className="text-3xl md:text-5xl font-normal text-white uppercase text-center">
+            Наша выпечка <br />и десерты
+          </h2>
         </div>
 
         {/* Мобильная версия - одна карточка */}

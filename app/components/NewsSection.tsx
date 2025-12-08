@@ -132,56 +132,57 @@ export default function NewsSection() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 relative z-10">
-        {/* Заголовок с иконкой и кнопками */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 md:mb-12">
-          <div className="flex flex-col items-center gap-3 mb-6 md:mb-0 flex-1">
-            <img src="/svg/symbol.svg" alt="" className="w-15 h-15 md:w-20 md:h-20" />
-            <h2 className="text-3xl md:text-5xl font-normal text-white uppercase text-center">
-              НАШИ НОВОСТИ
-            </h2>
-          </div>
-          <div className="hidden md:flex items-center gap-2 md:gap-3 flex-shrink-0">
-            <button
-              onClick={prevNews}
-              className="w-10 h-10 md:w-12 md:h-12 rounded-full border-2 transition-all flex items-center justify-center text-xl cursor-pointer"
-              style={{ 
-                borderColor: '#fdebc1', 
-                backgroundColor: '#fdebc1', 
-                color: '#675b53' 
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = '#675b53';
-                e.currentTarget.style.color = '#fdebc1';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = '#fdebc1';
-                e.currentTarget.style.color = '#675b53';
-              }}
-              aria-label="Предыдущая новость"
-            >
-              ‹
-            </button>
-            <button
-              onClick={nextNews}
-              className="w-10 h-10 md:w-12 md:h-12 rounded-full border-2 transition-all flex items-center justify-center text-xl cursor-pointer"
-              style={{ 
-                borderColor: '#fdebc1', 
-                backgroundColor: '#fdebc1', 
-                color: '#675b53' 
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = '#675b53';
-                e.currentTarget.style.color = '#fdebc1';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = '#fdebc1';
-                e.currentTarget.style.color = '#675b53';
-              }}
-              aria-label="Следующая новость"
-            >
-              ›
-            </button>
-          </div>
+        {/* Стрелки управления по краям */}
+        <button
+          onClick={prevNews}
+          className="hidden md:flex absolute left-0 top-1/2 w-10 h-10 md:w-12 md:h-12 rounded-full border-2 transition-all flex items-center justify-center cursor-pointer group"
+          style={{
+            borderColor: '#fdebc1',
+            backgroundColor: '#fdebc1',
+            zIndex: 10,
+            display: 'flex'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = '#675b53';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = '#fdebc1';
+          }}
+          aria-label="Предыдущая новость"
+        >
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="12" fill="none" />
+            <path d="M14 6L8 12L14 18" stroke="#675b53" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="group-hover:stroke-[#fdebc1]" />
+          </svg>
+        </button>
+        <button
+          onClick={nextNews}
+          className="hidden md:flex absolute right-0 top-1/2 w-10 h-10 md:w-12 md:h-12 rounded-full border-2 transition-all flex items-center justify-center cursor-pointer group"
+          style={{
+            borderColor: '#fdebc1',
+            backgroundColor: '#fdebc1',
+            zIndex: 10,
+            display: 'flex'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = '#675b53';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = '#fdebc1';
+          }}
+          aria-label="Следующая новость"
+        >
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="12" fill="none" />
+            <path d="M10 6L16 12L10 18" stroke="#675b53" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="group-hover:stroke-[#fdebc1]" />
+          </svg>
+        </button>
+        {/* Заголовок и иконка по центру */}
+        <div className="mb-8 md:mb-12 flex flex-col items-center justify-center">
+          <img src="/svg/symbol.svg" alt="" className="w-15 h-15 md:w-20 md:h-20 mb-2" />
+          <h2 className="text-3xl md:text-5xl font-normal text-white uppercase text-center">
+            НАШИ НОВОСТИ
+          </h2>
         </div>
 
         {/* Карточки новостей - карусель */}
