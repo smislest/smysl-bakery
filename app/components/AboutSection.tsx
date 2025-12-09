@@ -101,8 +101,8 @@ export default function AboutSection() {
             </div>
 
             {/* Фото девушки - одинаковая ширина со всеми */}
-            <div className="relative rounded-3xl overflow-hidden w-full mx-auto" style={{ maxWidth: '100%', aspectRatio: '3/4' }}>
-              <Image src="/img/staf1.png" alt="Сотрудник" fill className="object-cover" />
+            <div className="relative rounded-3xl overflow-hidden w-full mx-auto max-w-full aspect-[3/4]">
+              <Image src="/img/staf1.png" alt="Сотрудник" fill className="object-contain" />
             </div>
 
             {/* Текстовый блок "гордимся своим делом" */}
@@ -112,8 +112,8 @@ export default function AboutSection() {
             </div>
 
             {/* Фото staf2 */}
-            <div className="relative rounded-3xl overflow-hidden w-full mx-auto" style={{ maxWidth: '100%', height: '300px' }}>
-              <Image src="/img/staf2.png" alt="Сотрудник" fill className="object-cover" />
+            <div className="relative rounded-3xl overflow-hidden w-full mx-auto max-w-full h-[300px]">
+              <Image src="/img/staf2.png" alt="Сотрудник" fill className="object-contain" />
             </div>
 
             {/* Текстовый блок "гордимся" */}
@@ -123,8 +123,8 @@ export default function AboutSection() {
             </div>
 
             {/* Фото staf3 - одинаковая ширина со всеми */}
-            <div className="relative rounded-3xl overflow-hidden w-full mx-auto" style={{ maxWidth: '100%', aspectRatio: '3/4' }}>
-              <Image src="/img/staf3.png" alt="Сотрудник" fill className="object-cover" />
+            <div className="relative rounded-3xl overflow-hidden w-full mx-auto max-w-full aspect-[3/4]">
+              <Image src="/img/staf3.png" alt="Сотрудник" fill className="object-contain" />
             </div>
 
             {/* Текстовый блок "наша миссия" */}
@@ -134,8 +134,8 @@ export default function AboutSection() {
             </div>
 
             {/* Фото staf5 - одинаковая ширина со всеми */}
-            <div className="relative rounded-3xl overflow-hidden w-full mx-auto" style={{ maxWidth: '100%', height: '250px' }}>
-              <Image src="/img/staf5.png" alt="Сотрудник" fill className="object-cover" />
+            <div className="relative rounded-3xl overflow-hidden w-full mx-auto max-w-full h-[250px]">
+              <Image src="/img/staf5.png" alt="Сотрудник" fill className="object-contain" />
             </div>
           </div>
 
@@ -143,25 +143,25 @@ export default function AboutSection() {
           <div className="hidden md:flex gap-4 items-end">
             {/* Левая колонка - staf2 и staf4 */}
             <div className="w-1/3 flex flex-col gap-4">
-              <div className="relative rounded-3xl overflow-hidden fade-in-scroll" style={{ width: '100%', paddingBottom: '133.33%' }}>
-                <Image src="/img/staf2.png" alt="Сотрудник" fill className="object-cover" />
+              <div className="relative rounded-3xl overflow-hidden fade-in-scroll w-full aspect-[3/4]">
+                <Image src="/img/staf2.png" alt="Сотрудник" fill className="object-contain" />
               </div>
-              <div className="relative rounded-3xl overflow-hidden fade-in-scroll" style={{ width: '100%', paddingBottom: '133.33%' }}>
-                <Image src="/img/staf4.png" alt="Сотрудник" fill className="object-cover" />
+              <div className="relative rounded-3xl overflow-hidden fade-in-scroll w-full aspect-[3/4]">
+                <Image src="/img/staf4.png" alt="Сотрудник" fill className="object-contain" />
               </div>
             </div>
 
             {/* Центральная колонка - staf1, текстовый блок и staf5 */}
             <div className="w-1/3 flex flex-col gap-0">
-              <div className="relative rounded-3xl overflow-hidden fade-in-scroll" style={{ width: '100%', paddingBottom: '133.33%' }}>
+              <div className="relative rounded-3xl overflow-hidden fade-in-scroll w-full aspect-[3/4]">
                 <Image src="/img/staf1.png" alt="Сотрудник" fill className="object-contain object-top" />
               </div>
               <div className="bg-beige rounded-3xl p-4 pb-3 flex flex-col justify-center fade-in-scroll">
                 <p className="font-bold text-white italic great-vibes text-4xl mb-1">гордимся</p>
                 <p className="text-white text-lg leading-tight">Мы с гордостью предлагаем широкий ассортимент вкусной и натуральной выпечки на безглютеновой основе</p>
               </div>
-              <div className="relative rounded-3xl overflow-hidden fade-in-scroll" style={{ width: '100%', paddingBottom: '133.33%' }}>
-                <Image src="/img/staf5.png" alt="Сотрудник" fill className="object-cover" />
+              <div className="relative rounded-3xl overflow-hidden fade-in-scroll w-full aspect-[3/4]">
+                <Image src="/img/staf5.png" alt="Сотрудник" fill className="object-contain" />
               </div>
             </div>
 
@@ -176,7 +176,7 @@ export default function AboutSection() {
                   <p className="text-white text-lg leading-tight">Благодаря нашей страсти к инновациям и строгому контролю качества, мы создаём натуральные продукты, которые наполняют жизнь вкусом</p>
                 </div>
               </div>
-              <div className="relative rounded-3xl overflow-hidden fade-in-scroll" style={{ width: '100%', paddingBottom: '133.33%' }}>
+              <div className="relative rounded-3xl overflow-hidden fade-in-scroll w-full aspect-[3/4]">
                 <Image src="/img/staf3.png" alt="Сотрудник" fill className="object-contain object-top" />
               </div>
               <div className="bg-beige rounded-3xl p-4 flex flex-col justify-center fade-in-scroll">
