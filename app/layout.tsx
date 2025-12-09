@@ -3,7 +3,7 @@ import { Montserrat } from "next/font/google";
 import "./globals.css";
 import "./fonts.css";
 import SmoothScroll from "./components/SmoothScroll";
-
+import DesktopOnly from "./components/DesktopOnly";
 const montserrat = Montserrat({ 
   subsets: ["latin", "cyrillic"],
   variable: "--font-montserrat",
@@ -23,7 +23,9 @@ export default function RootLayout({
   return (
     <html lang="ru" className={`${montserrat.variable}`}>
       <body className={`${montserrat.className} antialiased`}>
-        <SmoothScroll />
+        <DesktopOnly>
+          <SmoothScroll />
+        </DesktopOnly>
         {children}
       </body>
     </html>

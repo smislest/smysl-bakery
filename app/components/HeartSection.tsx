@@ -1,31 +1,54 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useLayoutEffect, useRef } from "react";
 import Image from "next/image";
 
 export default function HeartSection() {
   const [scale, setScale] = useState(1);
+  const [isClient, setIsClient] = useState(false);
   const sectionRef = useRef(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+      setIsClient(true);
+    const isMobile = window.innerWidth <= 768;
+    if (isMobile) {
+      setScale(1);
+      return;
+    }
     const handleScroll = () => {
       if (!sectionRef.current) return;
-
       const rect = sectionRef.current.getBoundingClientRect();
       const windowHeight = window.innerHeight;
-      
-      // Вычисляем, насколько далеко элемент прошел через viewport
       const elementCenter = rect.top + rect.height / 2;
       const distance = windowHeight / 2 - elementCenter;
-      
-      // Масштаб от 1 до 1.15 при прокрутке
       const newScale = 1 + (Math.abs(distance) / windowHeight) * 0.15;
       setScale(Math.min(newScale, 1.15));
     };
-
     window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    const handleResize = () => {
+      if (window.innerWidth <= 768) {
+        setScale(1);
+        window.removeEventListener("scroll", handleScroll);
+      } else {
+        window.addEventListener("scroll", handleScroll);
+      }
+    };
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleResize);
+    };
   }, []);
+
+  // Гарантируем отсутствие анимации на мобильных при любом рендере
+  let isMobile = false;
+  let appliedScale = 1;
+  let appliedTransition = 'none';
+  if (isClient) {
+    isMobile = window.innerWidth <= 768;
+    appliedScale = isMobile ? 1 : scale;
+    appliedTransition = isMobile ? 'none' : 'transform 0.3s ease-out';
+  }
 
   return (
     <section ref={sectionRef} className="w-full py-20 relative overflow-hidden" style={{ backgroundColor: '#675b53' }}>
@@ -54,7 +77,7 @@ export default function HeartSection() {
 
           {/* Правая колонка - изображение в форме сердца */}
           <div className="relative flex items-center justify-center">
-            <div className="relative w-full max-w-2xl overflow-hidden rounded-3xl -translate-x-[10%] md:translate-x-0" style={{ transform: `scale(${scale * 1.3})`, transition: 'transform 0.3s ease-out' }}>
+            <div className="relative w-full max-w-2xl overflow-hidden rounded-3xl -translate-x-[10%] md:translate-x-0" style={{ transform: `scale(${appliedScale * 1.3})`, transition: appliedTransition }}>
               <Image
                 src="/img/rythm1.png"
                 alt="Ритм"

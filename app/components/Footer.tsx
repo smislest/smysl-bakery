@@ -10,6 +10,7 @@
           ></iframe>
         </div>
 import { FaInstagram, FaVk, FaTelegramPlane, FaPhoneAlt, FaEnvelope, FaMapMarkerAlt } from "react-icons/fa";
+import Image from "./Image";
 
 export default function Footer() {
   return (
@@ -19,7 +20,7 @@ export default function Footer() {
           {/* Логотип и иконки */}
           <div>
             <div className="mb-6">
-              <img src="/svg/logo.svg" alt="СМЫСЛ есть" className="h-12" />
+              <Image src="/svg/logo.svg" alt="СМЫСЛ есть" className="h-12" width={60} height={24} />
             </div>
             <div className="flex gap-4">
               <a
