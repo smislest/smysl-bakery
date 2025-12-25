@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 "use client";
 
 import { useState, useRef, useCallback, useEffect } from "react";
@@ -13,54 +12,36 @@ interface Product {
   subtitle: string;
   description: string;
   ingredients: string;
-  weight: string;
-  price: string;
-  image: string;
+  weight: number;
+  product_photo: string; // id файла Directus
 }
 
 export default function ProductsCarousel() {
-  const [products] = useState<Product[]>([
-    {
-      id: 1,
-      title: "Безглютеновый багет",
-      subtitle: "Французская классика",
-      description: "Хрустящий багет без глютена с хрустящей корочкой и нежным мякишем.",
-      ingredients: "Мука рисовая, вода, дрожжи, соль, оливковое масло",
-      weight: "350",
-      price: "450",
-      image: "baget.jpg"
-    },
-    {
-      id: 2,
-      title: "Карамельный круассан",
-      subtitle: "Слоёное наслаждение",
-      description: "Ароматный круассан с карамельной начинкой.",
-      ingredients: "Мука миндальная, масло сливочное, карамель, яйца",
-      weight: "120",
-      price: "320",
-      image: "croissant.jpg"
-    },
-    {
-      id: 3,
-      title: "Чиабатта с розмарином",
-      subtitle: "Итальянская традиция",
-      description: "Воздушная чиабатта с ароматом свежего розмарина.",
-      ingredients: "Мука кукурузная, розмарин, оливковое масло, дрожжи",
-      weight: "280",
-      price: "380",
-      image: "chiabatta.jpg"
-    },
-    {
-      id: 4,
-      title: "Безглютеновый бородинский",
-      subtitle: "Русский хлеб",
-      description: "Тёмный хлеб с тмином и кориандром.",
-      ingredients: "Мука гречневая, закваска, тмин, кориандр, патока",
-      weight: "500",
-      price: "520",
-      image: "borodinsky.jpg"
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || "http://localhost:8055";
+
+  useEffect(() => {
+    async function fetchProducts() {
+      try {
+        const res = await fetch(`${DIRECTUS_URL}/items/products?fields=id,title,subtitle,description,ingredients,weight,product_photo`);
+        const data = await res.json();
+        setProducts(data.data || []);
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.error("Ошибка загрузки продуктов:", e);
+      } finally {
+        setLoading(false);
+      }
     }
-  ]);
+    fetchProducts();
+  }, []);
+
+  // Получение URL изображения Directus
+  const getImageUrl = (photoId: string) => {
+    if (!photoId) return "/img/placeholder.jpg";
+    return `${DIRECTUS_URL}/assets/${photoId}`;
+  };
   
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -100,10 +81,7 @@ export default function ProductsCarousel() {
     from: () => [x.get(), 0]
   });
 
-  // Функция для получения URL изображения
-  const getImageUrl = (imageName: string) => {
-    return `/img/${imageName}`;
-  };
+  // (удалено дублирующееся определение getImageUrl)
 
   // Мобильный скролл
   const handleMobileScroll = useCallback(() => {
@@ -155,6 +133,12 @@ export default function ProductsCarousel() {
     }
   }, [handleMobileScroll]);
 
+  if (loading) {
+    return <div className="w-full py-12 text-center text-xl">Загрузка продуктов...</div>;
+  }
+  if (!products.length) {
+    return <div className="w-full py-12 text-center text-xl">Нет доступных продуктов</div>;
+  }
   return (
     <section id="products" className="w-full py-12 bg-primary">
       <div className="max-w-7xl mx-auto px-6 relative">
@@ -247,14 +231,14 @@ export default function ProductsCarousel() {
                     <div className={styles.activeCardInner}>
                       {/* Фото */}
                       <div className={styles.activeImageContainer}>
-                        <Image
-                          src={getImageUrl(product.image)}
-                          alt={product.title}
-                          fill
-                          className={styles.activeImage}
-                          sizes="432px"
-                          priority
-                        />
+                          <Image
+                            src={getImageUrl(product.product_photo)}
+                            alt={product.title}
+                            fill
+                            className={styles.activeImage}
+                            sizes="432px"
+                            priority
+                          />
                       </div>
                       
                       {/* Иконка */}
@@ -284,9 +268,7 @@ export default function ProductsCarousel() {
                           <p className={styles.ingredientsText}>{product.ingredients}</p>
                         </div>
                         
-                        <div className="mt-4 text-2xl font-bold text-[#544a44]">
-                          {product.price} ₽
-                        </div>
+                        {/* Цена убрана, так как её нет в Directus */}
                       </div>
                     </div>
                   </div>
@@ -297,7 +279,6 @@ export default function ProductsCarousel() {
               else {
                 const imgWidth = Math.abs(offset) === 2 ? 180 : 260;
                 const imgHeight = Math.abs(offset) === 2 ? 140 : 220;
-                
                 return (
                   <div
                     key={uniqueKey}
@@ -306,17 +287,15 @@ export default function ProductsCarousel() {
                       zIndex,
                       transform: `scale(${scale})`, 
                       opacity,
-                      // Выравниваем боковые карточки по центру
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      margin: '0 10px', // Уменьшаем отступы
-                      // Смещаем вверх для эффекта перспективы
+                      margin: '0 10px',
                       marginTop: Math.abs(offset) === 1 ? '30px' : '40px'
                     }}
                   >
                     <Image
-                      src={getImageUrl(product.image)}
+                      src={getImageUrl(product.product_photo)}
                       alt={product.title}
                       width={imgWidth}
                       height={imgHeight}
@@ -339,14 +318,13 @@ export default function ProductsCarousel() {
                   {/* Фото */}
                   <div className={styles.mobileImageWrapper}>
                     <Image
-                      src={getImageUrl(product.image)}
+                      src={getImageUrl(product.product_photo)}
                       alt={product.title}
                       width={308}
                       height={220}
                       className={styles.mobileImage}
                     />
                   </div>
-                  
                   {/* Иконка */}
                   <div className={styles.mobileIcon}>
                     <Image
@@ -357,25 +335,19 @@ export default function ProductsCarousel() {
                       className="object-contain"
                     />
                   </div>
-                  
                   {/* Контент */}
                   <div className={styles.mobileContent}>
                     <div className={styles.mobileHeader}>
                       <h3 className={styles.mobileTitle}>{product.title}</h3>
                       <div className={styles.mobileWeight}>{product.weight}г</div>
                     </div>
-                    
                     <p className={styles.mobileSubtitle}>{product.subtitle}</p>
                     <p className={styles.mobileDescription}>{product.description}</p>
-                    
                     <div className={styles.mobileIngredients}>
                       <h4 className={styles.mobileIngredientsTitle}>Состав:</h4>
                       <p className={styles.mobileIngredientsText}>{product.ingredients}</p>
                     </div>
-                    
-                    <div className="mt-3 text-xl font-bold text-[#544a44]">
-                      {product.price} ₽
-                    </div>
+                    {/* Цена убрана */}
                   </div>
                 </div> 
               </div> 
@@ -415,7 +387,3 @@ export default function ProductsCarousel() {
     </section>
   );
 }
-=======
-// Переименованный файл. Содержимое полностью совпадает с PoductsCarousel.tsx
-export { default } from "./PoductsCarousel";
->>>>>>> 97dce66 (экап фронтенда: актуальное состояние)

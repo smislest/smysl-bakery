@@ -1,0 +1,6 @@
+{
+  "title": "Смылс Пекарня",
+  "description": "Лучший хлеб в Москве!",
+  "seo": { "keywords": "хлеб, пекарня, Москва", "ogImage": "/img/og.jpg" },
+  "contacts": { "phone": "+7 999 123-45-67", "email": "info@smysl-bakery.ru", "address": "Москва, ул. Хлебная, 1" }
+}

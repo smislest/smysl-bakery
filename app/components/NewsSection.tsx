@@ -1,19 +1,65 @@
 "use client";
 
+
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { getNews } from "@/lib/news";
-import type { NewsItem } from "@/lib/news";
+import directus from "@/app/lib/directus";
+import { readItems } from "@directus/sdk";
+
+interface NewsImage {
+  id: string;
+  filename_disk: string;
+}
+interface NewsItem {
+  id: number;
+  title: string;
+  excerpt: string;
+  news_photo: NewsImage | null;
+  date: string;
+  content: string;
+  gallery?: NewsImage[];
+}
 
 export default function NewsSection() {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [news, setNews] = useState<NewsItem[]>([]);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
+
+
   useEffect(() => {
-    getNews().then(setNews);
+    async function fetchNews() {
+      try {
+        const data = await directus.request(
+          readItems('news', {
+            fields: [
+              'id',
+              'title',
+              'excerpt',
+              { news_photo: ['id', 'filename_disk'] },
+              'date',
+              'content',
+              { gallery: ['id', 'filename_disk'] },
+            ],
+            sort: ['-date'],
+          })
+        ) as NewsItem[];
+        setNews(data || []);
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.error("Ошибка загрузки новостей:", e);
+      }
+    }
+    fetchNews();
   }, []);
+
+  // Получение URL изображения через filename_disk
+  const DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || "http://localhost:8055";
+  const getImageUrl = (img: NewsImage | null) => {
+    if (!img || !img.filename_disk) return "/img/placeholder.jpg";
+    return `${DIRECTUS_URL}/assets/${img.filename_disk}`;
+  };
 
 
 
@@ -182,9 +228,12 @@ export default function NewsSection() {
               <div key={item.id} className="news-scroll-card">
                 <Link href={`/news/${item.id}`} className="w-full h-full bg-[#fdebc1] rounded-3xl overflow-hidden hover:shadow-xl transition-shadow cursor-pointer text-left flex flex-col min-h-[420px]">
                   <div className="relative aspect-video overflow-hidden flex-shrink-0">
-                    <img
-                      src={item.image}
+                    {/* ...existing code... */}
+                    <Image
+                      src={getImageUrl(item.news_photo)}
                       alt={item.title}
+                      width={400}
+                      height={300}
                       className="w-full h-full object-cover"
                     />
                     <div className="absolute top-4 left-4 px-3 py-1.5 rounded-2xl text-sm font-medium text-white bg-[#619e5a]">
@@ -233,8 +282,9 @@ export default function NewsSection() {
                       {item.date}
                     </div>
                     <div className="relative aspect-[4/3] bg-gray-200">
+                        {/* ...existing code... */}
                       <Image
-                        src={item.image}
+                        src={getImageUrl(item.news_photo)}
                         alt={item.title}
                         fill
                         className="object-cover"
@@ -277,9 +327,11 @@ export default function NewsSection() {
               />
             ))}
           </div>
+
       </div>
-
-
     </section>
   );
 }
+
+
+

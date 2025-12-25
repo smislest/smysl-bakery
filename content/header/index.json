@@ -1,0 +1,9 @@
+{
+  "logo": "/img/logo.png",
+  "menu": [
+    { "label": "Главная", "href": "/" },
+    { "label": "О нас", "href": "/about" }
+  ],
+  "phone": "+7 999 123-45-67",
+  "address": "Москва, ул. Хлебная, 1"
+}

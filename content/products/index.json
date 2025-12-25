@@ -1,0 +1,10 @@
+{
+  "title": "Наши продукты",
+  "subtitle": "Вкусно и полезно",
+  "description": "Описание продукции",
+  "ingredients": "Мука, вода, соль",
+  "weight": "500",
+  "image": "/img/product.jpg",
+  "product_photo": { "url": "/img/product_photo.jpg" },
+  "price": "100"
+}
