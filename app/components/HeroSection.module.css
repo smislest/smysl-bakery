@@ -1,130 +1,6 @@
-/* Волна из muka_wave.svg */
-.waveBg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 2;
-  overflow: visible;
-}
-  .waveSvg {
-    position: absolute;
-    left: 65%;
-    top: 40%;
-    width: 1200px;
-    min-width: 900px;
-    max-width: 1600px;
-    transform: translate(-60%, -50%) scale(var(--wave-scale,1));
-    opacity: var(--wave-opacity,0.7);
-    z-index: 2;
-    transition: transform 2.5s, opacity 2.5s;
-  }
-
-  @media (max-width: 767px) {
-    .waveSvg {
-      transition: none !important;
-      transform: none !important;
-      opacity: 0.7 !important;
-    }
-    .waveScrolled {
-      --wave-scale: 1 !important;
-      --wave-opacity: 0.7 !important;
-    }
-  }
-
-.waveScrolled {
-  /* Этот класс будет добавляться при скролле через JS */
-  --wave-scale: 1.4;
-  --wave-opacity: 0;
-}
-
-/* Декоративные хлеба на фоне HeroSection */
-.breadsBg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 1;
-}
-@keyframes breadFly {
-  0% {
-    opacity: 0;
-    transform: translateY(40px) scale(1.2);
-  }
-  10% {
-    opacity: 1;
-  }
-  80% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(-120px) scale(1.2);
-  }
-}
-
-.breadMain {
-  position: absolute;
-  left: 40%;
-  top: 40%;
-  width: 520px;
-  transform: translate(-50%, -50%) scale(1.45);
-  opacity: 0.7;
-  z-index: 1;
-  animation: breadFly 5s linear infinite;
-  animation-delay: 0s;
-}
-.bread1 {
-  position: absolute;
-  left: 65%;
-  top: 65%;
-  width: 260px;
-  transform: translate(-50%, -50%) scale(1.35);
-  opacity: 0.5;
-  z-index: 1;
-  animation: breadFly 6s linear infinite;
-  animation-delay: 1s;
-}
-.breadMin {
-  position: absolute;
-  left: 15%;
-  top: 65%;
-  width: 180px;
-  transform: translate(-50%, -50%) scale(1.3);
-  opacity: 0.4;
-  z-index: 1;
-  animation: breadFly 7s linear infinite;
-  animation-delay: 2s;
-}
-.breadMicro {
-  position: absolute;
-  left: 5%;
-  top: 45%;
-  width: 120px;
-  transform: translate(-50%, -50%) scale(1.25);
-  opacity: 0.3;
-  z-index: 1;
-  animation: breadFly 8s linear infinite;
-  animation-delay: 3s;
-}
-
-@media (max-width: 767px) {
-  .breadMain,
-  .bread1,
-  .breadMin,
-  .breadMicro {
-    animation: none !important;
-  }
-  .heartbeat {
-    animation: none !important;
-  }
-}
 /* ==================== */
-/* ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ */
+/* CSS ПЕРЕМЕННЫЕ */
 /* ==================== */
-
 :root {
   --header-height-mobile: 80px;
   --header-height-desktop: 160px;
@@ -132,27 +8,43 @@
   --color-secondary: #7BA862;
   --color-accent: #9BC381;
   --color-white: #ffffff;
+  --color-button: #ffecc6;
+  --color-button-hover: #f5e0b5;
   --spacing-xs: 0.5rem;
   --spacing-sm: 1rem;
-  --spacing-md: 2rem;
-  --spacing-lg: 3rem;
-  --spacing-xl: 4rem;
+  --spacing-md: 1.5rem;
+  --spacing-lg: 2.5rem;
+  --spacing-xl: 3.5rem;
   --container-2xl: 1400px;
+  
+  /* Переменные для кнопки */
+  --button-padding-base: 0.875rem 2.25rem;
+  --button-padding-md: 1rem 2.5rem;
+  --button-padding-lg: 1.125rem 3rem;
+  --button-font-base: 1.125rem;
+  --button-font-md: 1.25rem;
+  --button-font-lg: 1.5rem;
+  --button-border-base: 2px;
+  --button-border-lg: 3px;
+  
+  /* Золотое сечение */
+  --golden-ratio: 1.618;
+  --golden-ratio-inverse: 0.618;
 }
 
 /* ==================== */
-/* ОСНОВНАЯ ГРИД-СТРУКТУРА */
+/* ОСНОВНОЙ КОНТЕЙНЕР HERO */
 /* ==================== */
-
 .hero {
   position: relative;
   min-height: 100vh;
-  display: grid;
-  grid-template-rows: auto 1fr; /* Шапка | Контент */
-  overflow: visible;
-  /* Компенсация шапки - первый ряд грида */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   padding-top: var(--header-height-mobile);
-  /* УБРАЛИ градиентный фон - будет из layout */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 @media (min-width: 768px) {
@@ -162,9 +54,106 @@
 }
 
 /* ==================== */
-/* ДЕКОРАТИВНЫЕ ЭЛЕМЕНТЫ */
+/* ФОНОВЫЕ ВОЛНЫ */
 /* ==================== */
+.waveBg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
 
+.waveSvg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.waveScrolled {
+  transform: translateY(-10px);
+}
+
+/* ==================== */
+/* ДЕКОРАТИВНЫЕ ХЛЕБЫ */
+/* ==================== */
+.breadsBg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 2;
+  overflow: hidden;
+}
+
+.bread {
+  position: absolute;
+  opacity: 0;
+  z-index: 1;
+  object-fit: contain;
+  animation: breadFly 5s linear infinite;
+}
+
+.breadMain {
+  left: clamp(30%, 40vw, 40%);
+  top: clamp(30%, 40vh, 40%);
+  width: clamp(200px, 40vw, 520px);
+  animation-delay: 0s;
+}
+
+.bread1 {
+  left: clamp(55%, 65vw, 65%);
+  top: clamp(55%, 65vh, 65%);
+  width: clamp(100px, 20vw, 260px);
+  animation-delay: 1s;
+}
+
+.breadMin {
+  left: clamp(10%, 15vw, 15%);
+  top: clamp(55%, 65vh, 65%);
+  width: clamp(80px, 15vw, 180px);
+  animation-delay: 2s;
+}
+
+.breadMicro {
+  left: clamp(2%, 5vw, 5%);
+  top: clamp(35%, 45vh, 45%);
+  width: clamp(60px, 10vw, 120px);
+  animation-delay: 3s;
+}
+
+@keyframes breadFly {
+  0% {
+    opacity: 0;
+    transform: translateY(40px) scale(1.2);
+  }
+  10% {
+    opacity: 0.7;
+  }
+  80% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-120px) scale(1.2);
+  }
+}
+
+@media (max-width: 767px) {
+  .bread {
+    animation: none;
+    opacity: 0.3;
+  }
+}
+
+/* ==================== */
+/* ДЕКОРАТИВНЫЕ КОЛОСЬЯ */
+/* ==================== */
 .wheatDecor {
   position: fixed;
   top: 50%;
@@ -172,7 +161,7 @@
   pointer-events: none;
   z-index: 10;
   display: none;
-  width: 180px;
+  width: clamp(120px, 15vw, 250px);
 }
 
 @media (min-width: 768px) {
@@ -189,44 +178,33 @@
   right: 0;
 }
 
-@media (min-width: 1024px) {
-  .wheatDecor {
-    width: 250px;
-  }
-}
-
 /* ==================== */
-/* ОСНОВНОЙ КОНТЕНТ - ЦЕНТРИРУЮЩИЙ ГРИД */
+/* ОСНОВНОЙ КОНТЕНТ */
 /* ==================== */
-
 .content {
-  grid-row: 2; /* Занимаем второй ряд основного грида */
   position: relative;
   z-index: 20;
+  flex: 1;
   width: 100%;
   max-width: var(--container-2xl);
   margin: 0 auto;
-  padding: 0 var(--spacing-sm);
-  
-  /* Ключевое: центрирующий грид с возможностью подъёма */
-  display: grid;
-  place-items: center; /* Центрирует по обеим осям */
-  min-height: 0; /* Предотвращает переполнение */
+  padding: var(--spacing-sm) var(--spacing-sm);
+  display: flex;
+  align-items: flex-start; /* Изменено с center на flex-start */
+  justify-content: center;
+  padding-top: max(2vh, 20px); /* Добавлено минимальное расстояние от шапки */
 }
 
 /* ==================== */
-/* МОБИЛЬНАЯ ВЕРСИЯ - ПРОСТОЙ ЦЕНТРИРОВАННЫЙ ГРИД */
+/* МОБИЛЬНАЯ ВЕРСИЯ - КАРТИНКА СВЕРХУ */
 /* ==================== */
-
 .mobileLayout {
-  display: grid;
-  grid-template-rows: auto auto; /* Картинка сверху, текст снизу */
-  gap: var(--spacing-md);
-  justify-items: center;
+  display: flex;
+  flex-direction: column;
   align-items: center;
   width: 100%;
-  /* Поднимаем весь блок ещё выше */
-  transform: translateY(-25%); /* УВЕЛИЧИЛИ с -15% до -25% */
+  gap: var(--spacing-md);
+  margin-top: 0; /* Убрано смещение */
 }
 
 @media (min-width: 768px) {
@@ -237,23 +215,14 @@
 
 .mobileImageContainer {
   position: relative;
-  width: 100%;
-  max-width: 320px;
+  width: min(100%, 280px); /* Уменьшено с 320px */
   aspect-ratio: 1;
-}
-
-.mobileTextContainer {
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-xs);
 }
 
 /* ==================== */
-/* ДЕСКТОПНАЯ ВЕРСИЯ - ГРИД С КОНТРОЛЕМ ПОЛОЖЕНИЯ */
+/* ДЕСКТОПНАЯ ВЕРСИЯ - ДВЕ КОЛОНКИ */
 /* ==================== */
-
 .desktopLayout {
   display: none;
 }
@@ -261,81 +230,70 @@
 @media (min-width: 768px) {
   .desktopLayout {
     display: grid;
-    /* Две колонки для десктопа */
-    grid-template-columns: 45% 55%;
-    align-items: start; /* Выравниваем колонки по верху */
-    justify-content: space-between;
-    gap: var(--spacing-xl);
+    grid-template-columns: calc(100% / var(--golden-ratio)) 1fr;
+    gap: var(--spacing-lg); /* Уменьшено с xl */
     width: 100%;
-    /* Поднимаем весь блок ещё выше */
-    transform: translateY(-25%); /* УВЕЛИЧИЛИ с -15% до -25% */
+    align-items: flex-start; /* Изменено с center */
+    padding-top: max(3vh, 30px); /* Добавлен отступ сверху */
   }
 }
 
-/* ПЛАНШЕТЫ (768-1023px) - ВЕРТИКАЛЬНЫЙ ГРИД */
-@media (min-width: 768px) and (max-width: 1023px) {
-  .desktopLayout {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto auto;
-    justify-items: center;
-    max-width: 600px;
-    margin: 0 auto;
-  }
-  
+/* ==================== */
+/* ТЕКСТОВАЯ КОЛОНКА */
+/* ==================== */
+.textContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+  gap: var(--spacing-sm); /* Добавлены небольшие промежутки */
+}
+
+@media (min-width: 768px) {
   .textContainer {
-    order: 2;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--spacing-lg);
+    align-items: flex-start;
+    text-align: left;
+    justify-content: flex-start; /* Изменено с center */
+    height: auto;
   }
-  
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .textContainer {
+    align-items: center;
+    text-align: center;
+  }
+}
+
+/* ==================== */
+/* КОЛОНКА С ИЗОБРАЖЕНИЕМ */
+/* ==================== */
+.imageContainer {
+  position: relative;
+  width: min(100%, 450px); /* Уменьшено для более компактного вида */
+  aspect-ratio: 1;
+  margin: 0 auto;
+}
+
+@media (min-width: 768px) {
   .imageContainer {
-    order: 1;
-    width: 100%;
+    width: 90%; /* Уменьшено для поднятия */
     max-width: 500px;
   }
 }
 
-/* ТЕКСТОВАЯ КОЛОНКА - ВЫРАВНИВАНИЕ ПО ЦЕНТРУ */
-.textContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start; /* Текст слева на десктопе */
-  justify-content: center; /* Вертикальное центрирование внутри колонки */
-  height: 100%;
-}
-
-@media (min-width: 768px) and (max-width: 1023px) {
-  .textContainer {
-    align-items: center; /* Центрируем на планшетах */
+@media (min-width: 1024px) {
+  .imageContainer {
+    max-width: 550px;
   }
 }
-
-/* КОЛОНКА С КАРТИНКОЙ - ПРИЖАТА К ВЕРХУ И ЦЕНТРИРОВАНА */
-.imageContainer {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 1;
-  max-width: 800px; /* Увеличенная картинка на десктопе */
-  /* Картинка центрируется в своей колонке и прижимается к верху */
-  align-self: start;
-  justify-self: center;
-  overflow: visible;
-}
-
-/* ==================== */
-/* ОБЩИЕ СТИЛИ ЭЛЕМЕНТОВ */
-/* ==================== */
 
 .imageGradient {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  pointer-events: none;
-  z-index: 1;
   width: 100%;
   height: 100%;
   background: radial-gradient(
@@ -344,6 +302,8 @@
     rgba(255, 255, 255, 0.12) 40%,
     transparent 70%
   );
+  pointer-events: none;
+  z-index: 1;
 }
 
 .heartImage {
@@ -351,75 +311,120 @@
   width: 100%;
   height: 100%;
   z-index: 2;
-  overflow: visible;
 }
 
+/* ==================== */
+/* ТИПОГРАФИКА ПО ЗОЛОТОМУ СЕЧЕНИЮ */
+/* ==================== */
 .title {
   color: var(--color-white);
-  font-size: 2.5rem;
   font-weight: bold;
   line-height: 1.1;
-  text-align: inherit;
-  /* ДОБАВИЛИ отступ снизу для кнопки */
-  margin-bottom: var(--spacing-md); /* Новое свойство */
+  margin-bottom: calc(var(--spacing-sm) * var(--golden-ratio-inverse)); /* Уменьшено */
+  width: 100%;
+  
+  /* Мобильная версия - уменьшены размеры */
+  font-size: clamp(1.75rem, 7vw, 2.25rem);
 }
 
-@media (min-width: 768px) and (max-width: 1023px) {
+@media (min-width: 768px) {
   .title {
-    font-size: 3.5rem;
-    margin-bottom: var(--spacing-lg); /* Больше отступ на планшетах */
+    font-size: clamp(2.5rem, 3.5vw, 3.5rem);
+    margin-bottom: calc(var(--spacing-md) * var(--golden-ratio-inverse)); /* Уменьшено */
   }
 }
 
 @media (min-width: 1024px) {
   .title {
-    font-size: 5rem;
-    line-height: 1;
-    margin-bottom: var(--spacing-xl); /* Ещё больше отступ на десктопе */
+    font-size: clamp(3rem, 4.5vw, 4.5rem);
+    line-height: 0.95;
+    margin-bottom: calc(var(--spacing-lg) * var(--golden-ratio-inverse)); /* Уменьшено */
   }
 }
 
+.subtitle {
+  color: var(--color-white);
+  line-height: 1.5;
+  margin-bottom: calc(var(--spacing-md) * var(--golden-ratio)); /* Уменьшено */
+  font-weight: 400;
+  width: 100%;
+  max-width: 500px;
+  
+  /* Мобильная версия - уменьшены размеры */
+  font-size: clamp(0.875rem, 3.5vw, 1rem);
+}
+
+@media (min-width: 768px) {
+  .subtitle {
+    font-size: clamp(1rem, 1.6vw, 1.3rem);
+    margin-bottom: calc(var(--spacing-lg) * var(--golden-ratio)); /* Уменьшено */
+  }
+}
+
+@media (min-width: 1024px) {
+  .subtitle {
+    font-size: clamp(1.125rem, 1.7vw, 1.5rem);
+    line-height: 1.4;
+    margin-bottom: calc(var(--spacing-xl) * var(--golden-ratio)); /* Уменьшено, но относительно */
+  }
+}
+
+/* ==================== */
+/* КНОПКА С ЦВЕТОМ #ffecc6 */
+/* ==================== */
 .button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.875rem 2.25rem;
-  border: 2px solid var(--color-white);
+  padding: var(--button-padding-base);
+  border: var(--button-border-base) solid var(--color-button);
   border-radius: 9999px;
-  background: transparent;
-  color: var(--color-white);
-  font-size: 1.125rem;
-  font-weight: 500;
+  background: var(--color-button);
+  color: var(--color-primary);
+  font-size: var(--button-font-base);
+  font-weight: 600;
   text-decoration: none;
   transition: all 0.3s ease;
   cursor: pointer;
   white-space: nowrap;
+  min-width: fit-content;
+  box-shadow: 0 4px 15px rgba(255, 236, 198, 0.2);
 }
 
 .button:hover {
-  background: var(--color-white);
-  color: var(--color-primary);
+  background: var(--color-button-hover);
+  border-color: var(--color-button-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 236, 198, 0.3);
 }
 
 @media (min-width: 768px) and (max-width: 1023px) {
   .button {
-    padding: 1rem 2.5rem;
-    font-size: 1.25rem;
+    padding: var(--button-padding-md);
+    font-size: var(--button-font-md);
   }
 }
 
 @media (min-width: 1024px) {
   .button {
-    padding: 1.125rem 3rem;
-    font-size: 1.5rem;
-    border-width: 3px;
+    padding: var(--button-padding-lg);
+    font-size: var(--button-font-lg);
+    border-width: var(--button-border-lg);
   }
 }
 
-/* ==================== */
-/* АНИМАЦИИ */
-/* ==================== */
+.button svg {
+  margin-right: 0.5em;
+  width: 1.2em;
+  height: 1.2em;
+  vertical-align: middle;
+  fill: currentColor;
+  transition: fill 0.3s;
+}
 
+/* ==================== */
+/* АНИМАЦИЯ СЕРДЦА */
+/* ==================== */
 @keyframes heartbeat {
   0%, 100% {
     transform: scale(1);
@@ -444,42 +449,52 @@
 }
 
 /* ==================== */
-/* ТОЧНАЯ НАСТРОЙКА ПОДЪЁМА */
+/* ЛАНДШАФТНАЯ ОРИЕНТАЦИЯ */
 /* ==================== */
-
-/* Регулируйте эти значения для точного позиционирования */
-
-/* Поднять ещё выше (увеличивайте отрицательное значение) */
-@media (max-height: 800px) {
-  .mobileLayout,
-  .desktopLayout {
-    transform: translateY(-30%); /* Соответственно увеличили */
-  }
-}
-
-/* Опустить ниже (уменьшайте отрицательное значение) */
-@media (min-height: 1000px) {
-  .mobileLayout,
-  .desktopLayout {
-    transform: translateY(-20%); /* Соответственно увеличили */
-  }
-}
-
-/* Для ландшафтной ориентации на мобильных */
 @media (max-width: 767px) and (orientation: landscape) {
   .mobileLayout {
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr;
-    align-items: center;
-    gap: var(--spacing-lg);
+    flex-direction: row;
+    align-items: flex-start; /* Изменено с center */
+    gap: var(--spacing-md);
   }
   
   .mobileImageContainer {
-    max-width: 250px;
+    width: 35%;
+    margin-bottom: 0;
   }
   
-  .mobileTextContainer {
+  .textContainer {
+    width: 65%;
     text-align: left;
     align-items: flex-start;
+  }
+  
+  .title {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+  }
+  
+  .subtitle {
+    font-size: clamp(0.75rem, 2vw, 0.875rem);
+  }
+}
+
+/* ==================== */
+/* ВЫСОКИЕ ЭКРАНЫ - СКОРРЕКТИРОВАНО */
+/* ==================== */
+@media (min-height: 900px) {
+  .content {
+    padding-top: max(4vh, 40px);
+  }
+  
+  .desktopLayout {
+    padding-top: max(4vh, 40px);
+  }
+  
+  .mobileImageContainer {
+    width: min(100%, 320px); /* Немного больше на высоких экранах */
+  }
+  
+  .imageContainer {
+    width: 100%;
   }
 }

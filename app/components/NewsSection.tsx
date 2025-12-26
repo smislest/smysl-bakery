@@ -12,7 +12,8 @@ interface NewsImage {
   filename_disk: string;
 }
 interface NewsItem {
-  id: number;
+  id: number | string;
+  slug: string;
   title: string;
   excerpt: string;
   news_photo: NewsImage | null;
@@ -35,6 +36,7 @@ export default function NewsSection() {
           readItems('news', {
             fields: [
               'id',
+              'slug',
               'title',
               'excerpt',
               { news_photo: ['id', 'filename_disk'] },
@@ -225,8 +227,8 @@ export default function NewsSection() {
         <div className="md:hidden">
           <div ref={scrollContainerRef} className="news-scroll-container">
             {news.map((item) => (
-              <div key={item.id} className="news-scroll-card">
-                <Link href={`/news/${item.id}`} className="w-full h-full bg-[#fdebc1] rounded-3xl overflow-hidden hover:shadow-xl transition-shadow cursor-pointer text-left flex flex-col min-h-[420px]">
+              <div key={item.slug} className="news-scroll-card">
+                <Link href={`/news/${item.slug}`} className="w-full h-full bg-[#fdebc1] rounded-3xl overflow-hidden hover:shadow-xl transition-shadow cursor-pointer text-left flex flex-col min-h-[420px]">
                   <div className="relative aspect-video overflow-hidden flex-shrink-0">
                     {/* ...existing code... */}
                     <Image
@@ -272,8 +274,8 @@ export default function NewsSection() {
               const item = news[index];
               return (
                 <Link
-                  key={item.id}
-                  href={`/news/${item.id}`}
+                  key={item.slug}
+                  href={`/news/${item.slug}`}
                   className="rounded-3xl overflow-hidden hover:shadow-xl transition-shadow cursor-pointer text-left"
                   style={{ backgroundColor: '#fdebc1' }}
                 >

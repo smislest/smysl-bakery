@@ -1,15 +1,30 @@
-"use client";
 
+"use client";
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import styles from "./Header.module.css";
-import { getHeaderData } from '../../lib/headerData';
+import { fetchHeaderDataClient } from "@/app/lib/fetch-header-client";
 
+// Типы можно импортировать или дублировать
+interface HeaderData {
+  logo: { url: string } | null;
+  menu: { label: string; href: string }[];
+  phone: string;
+  email: string;
+  social_instagram_icon?: any;
+  social_vk_icon?: any;
+  social_telegram_icon?: any;
+}
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const header = getHeaderData();
+  const [header, setHeader] = useState<HeaderData | null>(null);
+
+  useEffect(() => {
+    fetchHeaderDataClient().then(setHeader);
+  }, []);
 
   useEffect(() => {
     if (isMenuOpen) {
@@ -32,6 +47,17 @@ export default function Header() {
     }
   };
 
+  if (!header) {
+    // Пока данные загружаются — показываем логотип по умолчанию
+    return (
+      <header className={styles.header}>
+        <Link href="/">
+          <Image src="/img/logo.png" alt="СМЫСЛ есть" width={120} height={60} />
+        </Link>
+      </header>
+    );
+  }
+
   return (
     <header className={styles.header}>
       {/* МОБИЛЬНАЯ ВЕРСИЯ */}
@@ -51,7 +77,11 @@ export default function Header() {
 
           <Link href="/">
             <div className={styles.mobileLogo}>
-              <img src={header.logo} alt="СМЫСЛ есть" />
+              {header.logo ? (
+                <Image src={header.logo.url} alt="СМЫСЛ есть" width={120} height={60} priority />
+              ) : (
+                <Image src="/img/logo.png" alt="СМЫСЛ есть" width={120} height={60} priority />
+              )}
             </div>
           </Link>
         </div>
@@ -81,7 +111,11 @@ export default function Header() {
 
           <Link href="/">
             <div className={styles.desktopLogo}>
-              <img src={header.logo} alt="СМЫСЛ есть" />
+              {header.logo ? (
+                <Image src={header.logo.url} alt="СМЫСЛ есть" width={120} height={60} priority />
+              ) : (
+                <Image src="/img/logo.png" alt="СМЫСЛ есть" width={120} height={60} priority />
+              )}
             </div>
           </Link>
         </div>
@@ -102,12 +136,16 @@ export default function Header() {
             </button>
 
             <div className={styles.menuLogo}>
-              <img src={header.logo} alt="СМЫСЛ есть" />
+              {header.logo ? (
+                <Image src={header.logo.url} alt="СМЫСЛ есть" width={120} height={60} priority />
+              ) : (
+                <Image src="/img/logo.png" alt="СМЫСЛ есть" width={120} height={60} priority />
+              )}
             </div>
           </div>
 
           <nav className={styles.menuNav}>
-            {header.menu.map((item) => (
+            {Array.isArray(header.menu) && header.menu.map((item) => (
               <button
                 key={item.href}
                 onClick={() => handleNavClick(item.href)}

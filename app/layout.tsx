@@ -4,7 +4,7 @@ import "./globals.css";
 import "./fonts.css";
 import LayoutContainer from "./components/LayoutContainer";
 import './styles/swiper.css';
-import { TinaProvider } from "./TinaProvider";
+
 
 // const montserrat = Montserrat({ 
 //   subsets: ["latin", "cyrillic"],
@@ -25,11 +25,9 @@ export default function RootLayout({
   return (
     <html lang="ru">
       <body className={`antialiased overflow-x-hidden`}>
-        <TinaProvider>
-          <LayoutContainer>
-            {children}
-          </LayoutContainer>
-        </TinaProvider>
+        <LayoutContainer>
+          {children}
+        </LayoutContainer>
       </body>
     </html>
   );
