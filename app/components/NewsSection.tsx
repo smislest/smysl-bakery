@@ -4,22 +4,9 @@
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { getNewsData } from '../../lib/newsData';
 
-interface NewsImage {
-  id: string;
-  filename_disk: string;
-}
-interface NewsItem {
-  id: number | string;
-  slug: string;
-  title: string;
-  excerpt: string;
-  news_photo: NewsImage | null;
-  date: string;
-  content: string;
-  gallery?: NewsImage[];
-}
+import { getNewsData } from '../../lib/newsData';
+import type { NewsItem, NewsImage } from '../../lib/news';
 
 export default function NewsSection() {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
