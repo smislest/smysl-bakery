@@ -12,8 +12,7 @@ interface NewsPageProps {
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata(props: NewsPageProps): Promise<Metadata> {
-  const params = typeof props.params?.then === 'function' ? await props.params : props.params;
-  const news = await fetchNewsBySlug(params.slug);
+  const news = await fetchNewsBySlug(props.params.slug);
 
   const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
   const DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'http://localhost:8055';
@@ -46,8 +45,7 @@ export async function generateMetadata(props: NewsPageProps): Promise<Metadata> 
 }
 
 export default async function NewsPage(props: NewsPageProps) {
-  const params = typeof props.params?.then === 'function' ? await props.params : props.params;
-  const news = await fetchNewsBySlug(params.slug);
+  const news = await fetchNewsBySlug(props.params.slug);
   const DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'http://localhost:8055';
 
   if (!news) {

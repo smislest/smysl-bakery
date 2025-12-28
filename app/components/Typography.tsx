@@ -1,4 +1,6 @@
+
 import React from "react";
+import type { JSX } from "react";
 
 export type TypographyProps = {
   as?: keyof JSX.IntrinsicElements;
