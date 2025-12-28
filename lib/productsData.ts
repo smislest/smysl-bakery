@@ -1,17 +1,16 @@
 
+
 import { getCollectionFromDirectus } from './directus';
 
-export type Product = {
+export interface Product {
   id: string;
   title: string;
   subtitle?: string;
   description: string;
   ingredients?: string;
-  weight?: string;
-  image: string;
-  product_photo?: { url: string };
-  price: string;
-};
+  weight?: number | string;
+  product_photo?: string | { url: string };
+}
 
 export async function getProductsData(): Promise<Product[]> {
   const data = await getCollectionFromDirectus('products');
