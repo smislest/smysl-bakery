@@ -1,5 +1,4 @@
-import { TinaAdmin } from "tinacms/dist/admin";
 
 export default function AdminPage() {
-  return null;
+  return <div>Админка пока не реализована</div>;
 }
