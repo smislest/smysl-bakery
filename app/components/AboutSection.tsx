@@ -6,7 +6,12 @@ import { getAboutData } from '../../lib/aboutData';
 
 export default function AboutSection() {
   const waveSvgRef = useRef<SVGElement>(null);
-  const [about, setAbout] = useState<any>(null);
+  interface AboutData {
+    title: string;
+    image: string;
+    text: string;
+  }
+  const [about, setAbout] = useState<AboutData | null>(null);
 
   useEffect(() => {
     getAboutData().then(setAbout);

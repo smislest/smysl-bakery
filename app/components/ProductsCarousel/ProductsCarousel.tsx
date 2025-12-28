@@ -8,13 +8,13 @@ import { useDrag } from '@use-gesture/react';
 import styles from './ProductsCarousel.module.css';
 
 interface Product {
-  id?: number;
+  id?: string | number;
   title: string;
-  subtitle: string;
+  subtitle?: string;
   description: string;
-  ingredients: string;
-  weight: number;
-  product_photo: string; // id файла Directus
+  ingredients?: string;
+  weight?: number | string;
+  product_photo?: string | { url: string }; // id файла Directus или объект с url
 }
 
 export default function ProductsCarousel() {
@@ -26,15 +26,20 @@ export default function ProductsCarousel() {
     getProductsData().then(data => {
       setProducts(data || []);
     }).catch(e => {
-      // eslint-disable-next-line no-console
       console.error("Ошибка загрузки продуктов:", e);
     }).finally(() => setLoading(false));
   }, []);
 
   // Получение URL изображения Directus
-  const getImageUrl = (photoId: string) => {
-    if (!photoId) return "/img/placeholder.jpg";
-    return `${DIRECTUS_URL}/assets/${photoId}`;
+  const getImageUrl = (photo: Product['product_photo']) => {
+    if (!photo) return "/img/placeholder.jpg";
+    if (typeof photo === 'string') {
+      return `${DIRECTUS_URL}/assets/${photo}`;
+    }
+    if (typeof photo === 'object' && photo.url) {
+      return photo.url;
+    }
+    return "/img/placeholder.jpg";
   };
   
   const [currentIndex, setCurrentIndex] = useState(0);
