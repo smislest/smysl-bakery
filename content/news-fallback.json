@@ -1,0 +1,10 @@
+[
+  {
+    "id": "fallback-1",
+    "date": "1 января 2026",
+    "title": "Резервная новость",
+    "excerpt": "Это резервная новость для offline-режима.",
+    "image": "/img/placeholder.jpg",
+    "fullContent": "Сайт работает в offline-режиме. Это резервные данные."
+  }
+]

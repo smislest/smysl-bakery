@@ -1,0 +1,13 @@
+{
+  "title": "СМЫСЛ есть — Безглютеновая пекарня в Москве (offline)",
+  "description": "Резервное описание для offline-режима.",
+  "seo": {
+    "keywords": "безглютеновая пекарня, offline",
+    "ogImage": "/img/og-image.jpg"
+  },
+  "contacts": {
+    "phone": "+7 (999) 123-45-67",
+    "email": "info@smysl-est.ru",
+    "address": "Москва, ул. Примерная, 1"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "logo": "/svg/logo.svg",
+  "menu": [
+    { "label": "О нас", "href": "#about" },
+    { "label": "Продукция", "href": "#products" },
+    { "label": "Новости", "href": "/news" },
+    { "label": "Контакты", "href": "#contacts" }
+  ]
+}
