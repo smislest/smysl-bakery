@@ -2,6 +2,7 @@
 
 import { getCollectionFromDirectus } from './directus';
 import { typograph } from './typograph';
+import aboutFallback from '../content/about-fallback.json';
 
 export interface AboutData {
   id: string;
@@ -9,8 +10,11 @@ export interface AboutData {
   text_r?: string;
   text_c?: string;
   text_r2?: string;
+  passion_title?: string;
   passion_text?: string;
+  pride_title?: string;
   pride_text?: string;
+  mission_title?: string;
   mission_text?: string;
   svg_title?: string | { id: string };
   image_main?: string | { id: string };
@@ -22,25 +26,37 @@ export interface AboutData {
 }
 
 export async function getAboutData(): Promise<AboutData | null> {
-  const data = await getCollectionFromDirectus('about');
-  let item: AboutData | null = null;
-  
-  if (Array.isArray(data) && data.length > 0) {
-    item = data[0] as AboutData;
-  } else {
-    item = data as AboutData;
+  try {
+    const data = await getCollectionFromDirectus('about');
+    let item: AboutData | null = null;
+    
+    if (Array.isArray(data) && data.length > 0) {
+      item = data[0] as AboutData;
+    } else {
+      item = data as AboutData;
+    }
+    
+    if (!item) {
+      console.log('⚠️ No about data from Directus, using fallback');
+      return aboutFallback as AboutData;
+    }
+    
+    // Типографирование текстовых полей
+    return {
+      ...item,
+      text_r: typograph(item.text_r),
+      text_c: typograph(item.text_c),
+      text_r2: typograph(item.text_r2),
+      passion_title: typograph(item.passion_title),
+      passion_text: typograph(item.passion_text),
+      pride_title: typograph(item.pride_title),
+      pride_text: typograph(item.pride_text),
+      mission_title: typograph(item.mission_title),
+      mission_text: typograph(item.mission_text),
+    };
+  } catch (error) {
+    console.error('❌ Error loading about data:', error);
+    console.log('📦 Using fallback about data');
+    return aboutFallback as AboutData;
   }
-  
-  if (!item) return null;
-  
-  // Типографирование текстовых полей
-  return {
-    ...item,
-    text_r: typograph(item.text_r),
-    text_c: typograph(item.text_c),
-    text_r2: typograph(item.text_r2),
-    passion_text: typograph(item.passion_text),
-    pride_text: typograph(item.pride_text),
-    mission_text: typograph(item.mission_text),
-  };
 }

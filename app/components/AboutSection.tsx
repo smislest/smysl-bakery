@@ -3,21 +3,16 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { getAboutData } from '../../lib/aboutData';
-
 import type { AboutData } from '../../lib/aboutData';
 
 const DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'https://smysl-bakery-directus.onrender.com';
 
-// Helper function to convert Directus file reference to asset URL
 function getAssetUrl(file?: string | { id: string }): string {
   if (!file) return '/img/staf3.png';
   if (typeof file === 'string') {
-    // If it's already a full path, return as-is
     if (file.startsWith('http') || file.startsWith('/')) return file;
-    // Otherwise, it's a file ID
     return `${DIRECTUS_URL}/assets/${file}`;
   }
-  // If it's an object with id
   return `${DIRECTUS_URL}/assets/${file.id}`;
 }
 
@@ -29,78 +24,174 @@ export default function AboutSection() {
   }, []);
 
   const svgTitle = getAssetUrl(about?.svg_title);
-  const passionText = about?.passion_text || about?.text_c || about?.text_r || about?.text_r2 || 'Мы печём хлеб с душой.';
-  const prideText = about?.pride_text || 'Гордимся своим делом';
-  const missionText = about?.mission_text || 'Наша миссия — натуральность и вкус без компромиссов';
+  const passionTitle = about?.passion_title || 'Мы...';
+  const passionText = about?.passion_text || 'Благодаря нашей страсти к инновациям и строгому контролю качества, мы создаём натуральные продукты, которые наполняют жизнь вкусом';
+  const prideTitle = about?.pride_title || 'гордимся';
+  const prideText = about?.pride_text || 'Мы с гордостью предлагаем широкий ассортимент вкусной и натуральной выпечки на безглютеновой основе';
+  const missionTitle = about?.mission_title || 'наша миссия';
+  const missionText = about?.mission_text || 'Мы стремимся к тому, чтобы питание стало ОСОЗНАННЫМ, понятным и по-настоящему вкусным — Вся компромисса между пользой и удовольствием';
+  
   const images = {
     main: getAssetUrl(about?.image_main),
     topRight: getAssetUrl(about?.image_top_right),
     bottomLeft: getAssetUrl(about?.image_bottom_left),
     bottomRight: getAssetUrl(about?.image_bottom_right),
+    extra1: getAssetUrl(about?.image_extra1),
+    extra2: getAssetUrl(about?.image_extra2),
   };
 
   return (
-    <section id="about" className="w-full py-16 bg-primary relative overflow-visible">
-      <div className="container mx-auto px-4 relative z-10">
-        {/* Header with SVG between lines */}
+    <section id="about" className="w-full relative" style={{ paddingBottom: '100px' }}>
+      {/* Заголовок на зелёном фоне */}
+      <div className="container mx-auto px-4 py-12 relative z-10">
         <div className="flex items-center justify-center gap-4 mb-8">
-          <div className="flex-1 h-[2px] bg-gray-300" />
+          <div className="flex-1 h-[2px]" style={{ backgroundColor: 'rgba(255,255,255,0.3)' }} />
           <div className="flex-shrink-0">
-            <Image src={svgTitle} alt="Смысл есть" width={160} height={40} />
+            <Image src={svgTitle} alt="Смысл есть" width={200} height={50} className="object-contain" />
           </div>
-          <div className="flex-1 h-[2px] bg-gray-300" />
+          <div className="flex-1 h-[2px]" style={{ backgroundColor: 'rgba(255,255,255,0.3)' }} />
+        </div>
+      </div>
+
+      {/* Бежевый фон с изгибами - абсолютное позиционирование */}
+      <div className="absolute left-0 w-full z-0" style={{ backgroundColor: '#F5E6D3', minHeight: '800px', top: '400px' }}>
+        {/* SVG форма для верхнего изгиба */}
+        <div className="absolute top-0 left-0 w-full" style={{ height: '225px', transform: 'translateY(-224px)' }}>
+          <svg viewBox="0 0 1920 225" preserveAspectRatio="none" className="w-full h-full">
+            <path d="M 0,225 L 0,0 Q 960,225 1920,0 L 1920,225 Z" fill="#F5E6D3"/>
+          </svg>
+        </div>
+      </div>
+
+      {/* Контент поверх бежевого фона */}
+      <div className="container mx-auto px-4 py-12 relative z-10" style={{ marginTop: '-100px' }}>
+
+        {/* Desktop Layout */}
+        <div className="hidden lg:block max-w-[1400px] mx-auto">
+          <div className="grid grid-cols-12 gap-6 items-start">
+            {/* Left Column - 2 images */}
+            <div className="col-span-4 space-y-6">
+              {/* Top: horizontal image (старый пекарь) */}
+              <div className="rounded-3xl overflow-hidden">
+                <Image 
+                  src={images.topRight} 
+                  alt="Пекарь за работой" 
+                  width={500} 
+                  height={240} 
+                  className="w-full h-auto object-contain" 
+                />
+              </div>
+              
+              {/* Bottom: large vertical image */}
+              <div className="rounded-3xl overflow-hidden">
+                <Image 
+                  src={images.bottomRight} 
+                  alt="Процесс приготовления" 
+                  width={500} 
+                  height={480} 
+                  className="w-full h-auto object-contain" 
+                />
+              </div>
+            </div>
+
+            {/* Center Column - Main image + pride text + lab image */}
+            <div className="col-span-4 flex flex-col gap-6">
+              {/* Main image */}
+              <div className="rounded-3xl overflow-hidden">
+                <Image 
+                  src={images.main} 
+                  alt="Главное фото" 
+                  width={450} 
+                  height={420} 
+                  className="w-full h-auto object-contain" 
+                />
+              </div>
+              
+              {/* Pride text */}
+              <div className="space-y-2">
+                <h3 className="great-vibes text-5xl" style={{ color: '#C74B50' }}>{prideTitle}</h3>
+                <p className="text-gray-800 text-sm leading-relaxed">{prideText}</p>
+              </div>
+
+              {/* Lab image */}
+              <div className="rounded-3xl overflow-hidden">
+                <Image 
+                  src={images.extra1} 
+                  alt="Лаборатория" 
+                  width={450} 
+                  height={180} 
+                  className="w-full h-auto object-contain" 
+                />
+              </div>
+            </div>
+
+            {/* Right Column - Beige text block + large image + mission text */}
+            <div className="col-span-4 flex flex-col gap-6">
+              {/* Top: Text block without background */}
+              <div className="relative pt-0">
+                {/* Картинка we_are абсолютно позиционирована, не влияет на поток */}
+                <div className="absolute top-0 left-0 w-full" style={{ transform: 'translateY(-100%)' }}>
+                  <img src="/svg/we_are.svg" alt="Мы" className="w-auto h-24" />
+                </div>
+                <div className="p-8 pt-0">
+                  <h4 className="great-vibes text-5xl mb-4" style={{ color: '#C74B50' }}>Горим своим делом</h4>
+                  <p className="text-gray-800 text-base leading-relaxed">{passionText}</p>
+                </div>
+              </div>
+
+              {/* Large image */}
+              <div className="rounded-3xl overflow-hidden">
+                <Image 
+                  src={images.extra2} 
+                  alt="Работа с тестом" 
+                  width={450} 
+                  height={400} 
+                  className="w-full h-auto object-contain" 
+                />
+              </div>
+              
+              {/* Mission text */}
+              <div className="space-y-2">
+                <h3 className="great-vibes text-5xl" style={{ color: '#C74B50' }}>{missionTitle}</h3>
+                <p className="text-gray-800 text-sm leading-relaxed">{missionText}</p>
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Desktop grid */}
-        <div className="hidden md:grid grid-cols-2 gap-8 max-w-7xl mx-auto">
-          <div className="flex flex-col gap-4">
+        {/* Mobile Layout */}
+        <div className="lg:hidden flex flex-col gap-8 max-w-xl mx-auto">
+          <div className="rounded-3xl overflow-hidden">
+            <Image src={images.main} alt="Главное фото" width={600} height={600} className="w-full object-cover" />
+          </div>
+          
+          <div className="space-y-3">
+            <h3 className="great-vibes text-5xl" style={{ color: '#C74B50' }}>{passionTitle}</h3>
+            <p className="text-gray-800 leading-relaxed">{passionText}</p>
+          </div>
+
+          <div className="rounded-3xl overflow-hidden">
+            <Image src={images.topRight} alt="Верхнее фото" width={600} height={400} className="w-full object-cover" />
+          </div>
+          
+          <div className="space-y-3">
+            <h3 className="great-vibes text-5xl" style={{ color: '#C74B50' }}>{prideTitle}</h3>
+            <p className="text-gray-800 leading-relaxed">{prideText}</p>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
             <div className="rounded-3xl overflow-hidden">
-              <Image src={images.main} alt="Главное фото" width={800} height={800} className="object-cover" />
+              <Image src={images.bottomLeft} alt="Фото слева" width={300} height={300} className="w-full object-cover" />
             </div>
-            <p className="mt-4 text-white text-lg">{passionText}</p>
-          </div>
-
-          <div className="grid grid-rows-2 gap-4">
-            <div className="flex justify-end">
-              <div className="w-1/2 rounded-3xl overflow-hidden">
-                <Image src={images.topRight} alt="Верхнее фото" width={400} height={400} className="object-cover" />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4 items-start">
-              <div className="flex flex-col gap-4">
-                <div className="rounded-3xl overflow-hidden">
-                  <Image src={images.bottomLeft} alt="Фото слева снизу" width={400} height={400} className="object-cover" />
-                </div>
-                <p className="text-white">{prideText}</p>
-              </div>
-
-              <div className="flex flex-col gap-4">
-                <div className="rounded-3xl overflow-hidden">
-                  <Image src={images.bottomRight} alt="Фото справа снизу" width={400} height={400} className="object-cover" />
-                </div>
-                <p className="text-white">{missionText}</p>
-              </div>
+            <div className="rounded-3xl overflow-hidden">
+              <Image src={images.bottomRight} alt="Фото справа" width={300} height={300} className="w-full object-cover" />
             </div>
           </div>
-        </div>
-
-        {/* Mobile layout */}
-        <div className="md:hidden flex flex-col gap-6 max-w-3xl mx-auto">
-          <div className="rounded-3xl overflow-hidden">
-            <Image src={images.main} alt="Главное фото" width={600} height={600} className="object-cover" />
+          
+          <div className="space-y-3">
+            <h3 className="great-vibes text-5xl" style={{ color: '#C74B50' }}>{missionTitle}</h3>
+            <p className="text-gray-800 leading-relaxed">{missionText}</p>
           </div>
-          <p className="text-white">{passionText}</p>
-
-          <div className="rounded-3xl overflow-hidden">
-            <Image src={images.bottomLeft} alt="Фото слева снизу" width={600} height={600} className="object-cover" />
-          </div>
-          <p className="text-white">{prideText}</p>
-
-          <div className="rounded-3xl overflow-hidden">
-            <Image src={images.bottomRight} alt="Фото справа снизу" width={600} height={600} className="object-cover" />
-          </div>
-          <p className="text-white">{missionText}</p>
         </div>
       </div>
     </section>
