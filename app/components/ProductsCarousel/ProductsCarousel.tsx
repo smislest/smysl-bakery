@@ -14,7 +14,7 @@ interface Product {
   description: string;
   ingredients?: string;
   weight?: number | string;
-  product_photo?: string | { url: string }; // id файла Directus или объект с url
+  product_photo?: string | { url: string };
 }
 
 export default function ProductsCarousel() {
@@ -30,7 +30,6 @@ export default function ProductsCarousel() {
     }).finally(() => setLoading(false));
   }, []);
 
-  // Получение URL изображения Directus
   const getImageUrl = (photo: Product['product_photo']) => {
     if (!photo) return "/img/placeholder.jpg";
     if (typeof photo === 'string') {
@@ -46,96 +45,202 @@ export default function ProductsCarousel() {
   const [isAnimating, setIsAnimating] = useState(false);
   const [mobileActiveIndex, setMobileActiveIndex] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
+  const animationRef = useRef<number | null>(null);
+  const dragContainerRef = useRef<HTMLDivElement>(null);
   
-  const [{ x }, api] = useSpring(() => ({ x: 0 }));
+  // Spring для центральной карточки
+  const [centerSpring, centerApi] = useSpring(() => ({ 
+    scale: 1,
+    opacity: 1,
+    config: { tension: 300, friction: 30 }
+  }));
 
-  // Навигация - оставляем ваш код
-  const nextProduct = useCallback(() => {
-    if (isAnimating || !products.length) return;
+  // Плавная навигация
+  const animateToIndex = useCallback((newIndex: number) => {
+    if (isAnimating || !products.length || newIndex === currentIndex) return;
+    
     setIsAnimating(true);
-    setCurrentIndex(prev => (prev + 1) % products.length);
-    setTimeout(() => setIsAnimating(false), 400);
-  }, [isAnimating, products.length]);
+    
+    // Анимация исчезновения
+    centerApi.start({
+      scale: 0.95,
+      opacity: 0.6,
+      config: { tension: 400, friction: 30 }
+    });
+    
+    // Меняем индекс с задержкой
+    setTimeout(() => {
+      setCurrentIndex(newIndex);
+      
+      // Анимация появления
+      setTimeout(() => {
+        centerApi.start({
+          scale: 1,
+          opacity: 1,
+          config: { tension: 350, friction: 25 }
+        });
+        setIsAnimating(false);
+      }, 50);
+    }, 150);
+  }, [isAnimating, products.length, currentIndex, centerApi]);
+
+  const nextProduct = useCallback(() => {
+    if (!products.length) return;
+    const nextIndex = (currentIndex + 1) % products.length;
+    animateToIndex(nextIndex);
+  }, [currentIndex, products.length, animateToIndex]);
 
   const prevProduct = useCallback(() => {
-    if (isAnimating || !products.length) return;
-    setIsAnimating(true);
-    setCurrentIndex(prev => (prev - 1 + products.length) % products.length);
-    setTimeout(() => setIsAnimating(false), 400);
-  }, [isAnimating, products.length]);
+    if (!products.length) return;
+    const prevIndex = (currentIndex - 1 + products.length) % products.length;
+    animateToIndex(prevIndex);
+  }, [currentIndex, products.length, animateToIndex]);
 
-  // Драг для десктопа - оставляем ваш код
-  const bindDrag = useDrag(({ active, movement: [mx], direction: [dx], velocity: [vx] }) => {
-    if (!active && (Math.abs(mx) > 100 || vx > 0.5)) {
-      if (dx > 0) prevProduct();
-      else nextProduct();
-      api.start({ x: 0 });
-    } else {
-      api.start({ x: active ? mx : 0, immediate: active });
+  // Drag для десктопа - ПРАВИЛЬНАЯ РЕАЛИЗАЦИЯ
+  const bindDrag = useDrag(({ 
+    active, 
+    movement: [mx], 
+    direction: [dx], 
+    velocity: [vx],
+    last 
+  }) => {
+    if (active) {
+      // Визуальная обратная связь при драге
+      const dragProgress = Math.min(Math.abs(mx) / 100, 1);
+      centerApi.start({
+        scale: 1 - dragProgress * 0.03,
+        opacity: 1 - dragProgress * 0.1,
+        immediate: true
+      });
+    }
+    
+    if (last) {
+      const shouldSwipe = Math.abs(mx) > 80 || vx > 0.3;
+      
+      if (shouldSwipe) {
+        if (mx > 0) {
+          prevProduct();
+        } else {
+          nextProduct();
+        }
+      }
+      // Возвращаем в исходное состояние
+      centerApi.start({
+        scale: 1,
+        opacity: 1,
+        config: { tension: 350, friction: 40 }
+      });
     }
   }, {
     axis: 'x',
     filterTaps: true,
-    rubberband: 0.2,
-    from: () => [x.get(), 0]
+    rubberband: 0.15,
   });
 
-  // Мобильный скролл
+
+  // Сначала scrollToMobileIndex, чтобы не было обращения до объявления
+  const scrollToMobileIndex = useCallback((index: number) => {
+    if (!containerRef.current || !products.length) return;
+    const container = containerRef.current;
+    const cardWidth = container.clientWidth * 0.85;
+    const gap = 20;
+    container.scrollTo({
+      left: index * (cardWidth + gap),
+      behavior: 'smooth'
+    });
+    setMobileActiveIndex(index);
+  }, [products.length]);
+
+  // Drag для мобильной версии
+  const bindMobileDrag = useDrag(({ 
+    active, 
+    movement: [mx], 
+    direction: [dx], 
+    velocity: [vx],
+    last 
+  }) => {
+    if (!containerRef.current) return;
+    const container = containerRef.current;
+    if (active) {
+      container.style.scrollBehavior = 'auto';
+      const scrollAmount = mx * 1.5;
+      container.scrollLeft -= scrollAmount;
+    }
+    if (last) {
+      container.style.scrollBehavior = 'smooth';
+      if (Math.abs(mx) > 50 || vx > 0.3) {
+        const cardWidth = container.clientWidth * 0.85;
+        const gap = 20;
+        const currentScroll = container.scrollLeft;
+        const currentIndex = Math.round(currentScroll / (cardWidth + gap));
+        let newIndex = currentIndex;
+        if (dx > 0 && currentIndex > 0) {
+          newIndex = currentIndex - 1;
+        } else if (dx < 0 && currentIndex < products.length - 1) {
+          newIndex = currentIndex + 1;
+        }
+        scrollToMobileIndex(newIndex);
+      }
+    }
+  }, {
+    axis: 'x',
+    filterTaps: true,
+    rubberband: 0.1
+  });
+
+  // Мобильная версия
   const handleMobileScroll = useCallback(() => {
     if (!containerRef.current || !products.length) return;
-    
     const container = containerRef.current;
     const scrollLeft = container.scrollLeft;
     const cardWidth = container.clientWidth * 0.85;
     const gap = 20;
-    
     const newIndex = Math.round(scrollLeft / (cardWidth + gap));
-    
     if (newIndex >= 0 && newIndex < products.length && newIndex !== mobileActiveIndex) {
       setMobileActiveIndex(newIndex);
     }
   }, [products.length, mobileActiveIndex]);
 
-  // Прокрутка на мобилке
-  const scrollToMobileIndex = useCallback((index: number) => {
-    if (!containerRef.current || !products.length) return;
-    
-    const container = containerRef.current;
-    const cardWidth = container.clientWidth * 0.85;
-    const gap = 20;
-    
-    container.scrollTo({
-      left: index * (cardWidth + gap),
-      behavior: 'smooth'
-    });
-    
-    setTimeout(() => {
-      setMobileActiveIndex(index);
-    }, 300);
-  }, [products.length]);
-
-  // Навигация по индексу
   const goToIndex = (index: number) => {
-    if (isAnimating || !products.length) return;
-    setIsAnimating(true);
-    setCurrentIndex(index);
-    setTimeout(() => setIsAnimating(false), 400);
+    animateToIndex(index);
   };
 
   useEffect(() => {
     const container = containerRef.current;
     if (container) {
-      container.addEventListener('scroll', handleMobileScroll);
+      container.addEventListener('scroll', handleMobileScroll, { passive: true });
       return () => container.removeEventListener('scroll', handleMobileScroll);
     }
   }, [handleMobileScroll]);
 
+  // Обработка клавиатуры
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft') prevProduct();
+      if (e.key === 'ArrowRight') nextProduct();
+    };
+    
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [prevProduct, nextProduct]);
+
   if (loading) {
-    return <div className="w-full py-12 text-center text-xl" style={{ color: '#fff' }}>Загрузка продуктов...</div>;
+    return <div className="w-full py-12 text-center text-xl text-white">Загрузка продуктов...</div>;
   }
+  
   if (!products.length) {
-    return <div className="w-full py-12 text-center text-xl" style={{ color: '#fff' }}>Нет доступных продуктов</div>;
+    return <div className="w-full py-12 text-center text-xl text-white">Нет доступных продуктов</div>;
   }
+
+  // Функция для получения видимых карточек
+  const getVisibleCards = () => {
+    if (products.length <= 3) {
+      // Для малого количества показываем все
+      return Array.from({ length: products.length }, (_, i) => i - Math.floor(products.length / 2));
+    }
+    return [-2, -1, 0, 1, 2];
+  };
+
   return (
     <section id="products" className="w-full py-12 bg-primary">
       <div className="max-w-7xl mx-auto px-6 relative">
@@ -145,6 +250,7 @@ export default function ProductsCarousel() {
             onClick={prevProduct}
             className={`${styles.navButton} ${styles.navButtonPrev}`}
             aria-label="Предыдущий"
+            disabled={isAnimating}
           >
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
               <path 
@@ -161,6 +267,7 @@ export default function ProductsCarousel() {
             onClick={nextProduct}
             className={`${styles.navButton} ${styles.navButtonNext}`}
             aria-label="Следующий"
+            disabled={isAnimating}
           >
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
               <path 
@@ -178,56 +285,53 @@ export default function ProductsCarousel() {
         <div className={styles.carouselWithBackground}>
           <div className={styles.carouselBackground} />
           
-          {/* ДЕСКТОП - ИСПРАВЛЕННЫЙ КОД */}
-          <animated.div
-            {...bindDrag()}
-            style={{ 
-              x, 
-              touchAction: 'pan-y',
-              // Добавляем центрирование
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '100%'
-            }}
-            className="hidden md:flex relative overflow-visible cursor-grab active:cursor-grabbing z-10"
-          >
-            {/* Ключевое изменение: используем [-2, -1, 0, 1, 2] без лишней логики */}
-            {[-2, -1, 0, 1, 2].map((offset) => {
-              const index = (currentIndex + offset + products.length) % products.length;
-              const product = products[index];
-              const uniqueKey = `${product.id || product.title}-${offset}`;
-              // Настройки масштаба и прозрачности
-              let scale = 1, opacity = 1, zIndex = 10;
-              if (offset === 0) { 
-                scale = 1; 
-                opacity = 1; 
-                zIndex = 30; 
-              } else if (Math.abs(offset) === 1) { 
-                scale = 0.85; 
-                opacity = 0.5; 
-                zIndex = 20; 
-              } else { 
-                scale = 0.75; 
-                opacity = 0.3; 
-                zIndex = 10; 
-              }
-              // ЦЕНТРАЛЬНАЯ КАРТОЧКА
-              if (offset === 0) {
-                return (
-                  <div 
-                    key={uniqueKey}
-                    className={`${styles.activeCard} ${isAnimating ? styles.animating : styles.notAnimating}`}
-                    style={{ 
-                      zIndex,
-                      // Центрируем активную карточку
-                      position: 'relative',
-                      margin: '0 20px' // Отступы для центрирования
-                    }}
-                  >
-                    <div className={styles.activeCardInner}>
-                      {/* Фото */}
-                      <div className={styles.activeImageContainer}>
+          {/* ДЕСКТОПНАЯ ВЕРСИЯ */}
+          <div className="hidden md:flex items-center justify-center w-full h-[600px] relative overflow-visible">
+            {/* Контейнер для drag */}
+            <animated.div
+              {...bindDrag()}
+              ref={dragContainerRef}
+              style={{
+                position: 'relative',
+                width: '100%',
+                height: '100%',
+                cursor: isAnimating ? 'default' : 'grab',
+                touchAction: 'pan-y'
+              }}
+              className="z-10"
+            >
+              {/* Рендерим все карточки */}
+              {getVisibleCards().map((offset) => {
+                const index = (currentIndex + offset + products.length) % products.length;
+                const product = products[index];
+                
+                if (!product) return null;
+                
+                const uniqueKey = `${product.id || product.title}-${offset}`;
+                
+                // Параметры для позиционирования
+                let transform = '';
+                let scale = 1;
+                let opacity = 1;
+                let zIndex = 10;
+                
+                if (offset === 0) {
+                  // ЦЕНТРАЛЬНАЯ КАРТОЧКА
+                  return (
+                    <animated.div
+                      key={uniqueKey}
+                      className={`${styles.activeCard} ${styles.centeredCard}`}
+                      style={{
+                        ...centerSpring,
+                        position: 'absolute',
+                        left: '50%',
+                        top: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        zIndex: 50,
+                      }}
+                    >
+                      <div className={styles.activeCardInner}>
+                        <div className={styles.activeImageContainer}>
                           <Image
                             src={getImageUrl(product.product_photo)}
                             alt={product.title}
@@ -236,83 +340,90 @@ export default function ProductsCarousel() {
                             sizes="432px"
                             priority
                           />
-                      </div>
-                      
-                      {/* Иконка */}
-                      <div className={styles.glutenFreeIcon}>
-                        <Image
-                          src="/svg/gl_free.svg"
-                          alt="Gluten Free"
-                          fill
-                          className="object-contain"
-                        />
-                      </div>
-                      
-                      {/* Контент */}
-                      <div className={styles.cardContent}>
-                        <div className={styles.productHeader}>
-                          <h3 className={styles.productTitle}>{product.title}</h3>
-                          <div className={styles.productWeight}>
-                            {product.weight}г
+                        </div>
+                        
+                        <div className={styles.glutenFreeIcon}>
+                          <Image
+                            src="/svg/gl_free.svg"
+                            alt="Gluten Free"
+                            fill
+                            className="object-contain"
+                          />
+                        </div>
+                        
+                        <div className={styles.cardContent}>
+                          <div className={styles.productHeader}>
+                            <h3 className={styles.productTitle}>{product.title}</h3>
+                            <div className={styles.productWeight}>
+                              {product.weight}г
+                            </div>
+                          </div>
+                          
+                          <p className={styles.productSubtitle}>{product.subtitle}</p>
+                          <p className={styles.productDescription}>{product.description}</p>
+                          
+                          <div className={styles.ingredients}>
+                            <h4 className={styles.ingredientsTitle}>Состав:</h4>
+                            <p className={styles.ingredientsText}>{product.ingredients}</p>
                           </div>
                         </div>
-                        
-                        <p className={styles.productSubtitle}>{product.subtitle}</p>
-                        <p className={styles.productDescription}>{product.description}</p>
-                        
-                        <div className={styles.ingredients}>
-                          <h4 className={styles.ingredientsTitle}>Состав:</h4>
-                          <p className={styles.ingredientsText}>{product.ingredients}</p>
-                        </div>
-                        
-                        {/* Цена убрана, так как её нет в Directus */}
                       </div>
+                    </animated.div>
+                  );
+                } else {
+                  // БОКОВЫЕ КАРТОЧКИ
+                  if (Math.abs(offset) === 1) {
+                    scale = 0.85;
+                    opacity = 0.7;
+                    zIndex = 20;
+                    transform = `translate(calc(-50% + ${offset * 320}px), -50%) scale(${scale})`;
+                  } else {
+                    scale = 0.65;
+                    opacity = 0.4;
+                    zIndex = 10;
+                    transform = `translate(calc(-50% + ${offset * 400}px), -50%) scale(${scale})`;
+                  }
+                  
+                  return (
+                    <div
+                      key={uniqueKey}
+                      className={`${styles.desktopOnly} ${styles.sideCard}`}
+                      style={
+                        {
+                          position: 'absolute',
+                          left: '50%',
+                          top: '50%',
+                          transform: transform,
+                          opacity: opacity,
+                          zIndex: zIndex,
+                          cursor: 'pointer'
+                        }
+                      }
+                      onClick={() => offset < 0 ? prevProduct() : nextProduct()}
+                    >
+                      <Image
+                        src={getImageUrl(product.product_photo)}
+                        alt={product.title}
+                        width={Math.abs(offset) === 1 ? 260 : 180}
+                        height={Math.abs(offset) === 1 ? 220 : 140}
+                        className="object-contain drop-shadow-xl"
+                      />
                     </div>
-                  </div>
-                );
-              } 
-              
-              // БОКОВЫЕ КАРТОЧКИ
-              else {
-                const imgWidth = Math.abs(offset) === 2 ? 180 : 260;
-                const imgHeight = Math.abs(offset) === 2 ? 140 : 220;
-                return (
-                  <div
-                    key={uniqueKey}
-                    className={`${styles.desktopOnly} relative z-10 transition-all duration-500`}
-                    style={{ 
-                      zIndex,
-                      transform: `scale(${scale})`, 
-                      opacity,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      margin: '0 10px',
-                      marginTop: Math.abs(offset) === 1 ? '30px' : '40px'
-                    }}
-                  >
-                    <Image
-                      src={getImageUrl(product.product_photo)}
-                      alt={product.title}
-                      width={imgWidth}
-                      height={imgHeight}
-                      className="object-contain drop-shadow-xl"
-                    />
-                  </div>
-                );
-              }
-            })}
-          </animated.div>
+                  );
+                }
+              })}
+            </animated.div>
+          </div>
           
-          {/* Мобильная версия - БЕЗ ИЗМЕНЕНИЙ */}
-          <div 
+          {/* МОБИЛЬНАЯ ВЕРСИЯ */}
+          <animated.div
+            {...bindMobileDrag()}
             ref={containerRef}
             className={`${styles.scrollSnapContainer} md:hidden`}
           >
-            {products.map((product) => (
+            {products.map((product, index) => (
               <div key={product.id || product.title} className={styles.scrollSnapCard}>
                 <div className={styles.mobileCard}>
-                  {/* Фото */}
                   <div className={styles.mobileImageWrapper}>
                     <Image
                       src={getImageUrl(product.product_photo)}
@@ -322,7 +433,6 @@ export default function ProductsCarousel() {
                       className={styles.mobileImage}
                     />
                   </div>
-                  {/* Иконка */}
                   <div className={styles.mobileIcon}>
                     <Image
                       src="/svg/gl_free.svg"
@@ -332,7 +442,6 @@ export default function ProductsCarousel() {
                       className="object-contain"
                     />
                   </div>
-                  {/* Контент */}
                   <div className={styles.mobileContent}>
                     <div className={styles.mobileHeader}>
                       <h3 className={styles.mobileTitle}>{product.title}</h3>
@@ -344,27 +453,23 @@ export default function ProductsCarousel() {
                       <h4 className={styles.mobileIngredientsTitle}>Состав:</h4>
                       <p className={styles.mobileIngredientsText}>{product.ingredients}</p>
                     </div>
-                    {/* Цена убрана */}
                   </div>
                 </div> 
               </div> 
             ))}
-          </div>
+          </animated.div>
         </div>
         
         {/* Индикаторы */}
         <div className="flex justify-center gap-2 mt-8">
           {products.map((_, index) => {
-            const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-            const isActive = isMobile 
-              ? mobileActiveIndex === index 
-              : currentIndex === index;
+            const isActive = mobileActiveIndex === index || currentIndex === index;
             
             return (
               <button
                 key={index}
                 onClick={() => {
-                  if (isMobile) {
+                  if (typeof window !== 'undefined' && window.innerWidth < 768) {
                     scrollToMobileIndex(index);
                   } else {
                     goToIndex(index);
@@ -376,6 +481,7 @@ export default function ProductsCarousel() {
                     : 'bg-[#fdebc1] opacity-40 hover:opacity-70'
                 }`}
                 aria-label={`Продукт ${index + 1}`}
+                disabled={isAnimating}
               />
             );
           })}

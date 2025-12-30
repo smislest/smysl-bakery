@@ -1,8 +1,9 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import directus from "@/app/lib/directus";
+import directus from "@/lib/directus";
 import { readItems } from "@directus/sdk";
+import { newsData } from '../../lib/news';
 
 export const metadata = {
   title: "Новости | СМЫСЛ есть",
@@ -10,8 +11,8 @@ export const metadata = {
 };
 
 interface NewsImage {
-  id: string;
-  filename_disk: string;
+  id?: string;
+  filename_disk?: string;
 }
 
 interface NewsItem {
@@ -24,21 +25,29 @@ interface NewsItem {
   content: string;
 }
 
+async function getNewsList() {
+  try {
+    return await directus.request(
+      readItems('news', {
+        fields: [
+          'id',
+          'slug',
+          'title',
+          'excerpt',
+          { news_photo: ['id', 'filename_disk'] },
+          'date',
+          'content',
+        ],
+        sort: ['-date'],
+      })
+    ) as NewsItem[];
+  } catch (e) {
+    return newsData;
+  }
+}
+
 export default async function NewsListPage() {
-  const news = await directus.request(
-    readItems('news', {
-      fields: [
-        'id',
-        'slug',
-        'title',
-        'excerpt',
-        { news_photo: ['id', 'filename_disk'] },
-        'date',
-        'content',
-      ],
-      sort: ['-date'],
-    })
-  ) as NewsItem[];
+  const news = await getNewsList();
 
   const DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || "http://localhost:8055";
   const getImageUrl = (img: NewsImage | null) => {
