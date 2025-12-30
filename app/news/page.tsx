@@ -1,24 +1,51 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import type { News } from '@/lib/directus/types';
+import directus from "@/app/lib/directus";
+import { readItems } from "@directus/sdk";
 
 export const metadata = {
   title: "Новости | СМЫСЛ есть",
   description: "Все новости и события пекарни 'СМЫСЛ есть'. Актуальные анонсы, победы, открытия и новинки!"
 };
 
-export const revalidate = 60; // ISR: обновлять раз в минуту
+interface NewsImage {
+  id: string;
+  filename_disk: string;
+}
 
-const DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || "http://localhost:8055";
-const getImageUrl = (img: any) => {
-  if (!img || !img.filename_disk) return "/img/placeholder.jpg";
-  return `${DIRECTUS_URL}/assets/${img.filename_disk}`;
-};
+interface NewsItem {
+  id: number | string;
+  slug: string;
+  title: string;
+  excerpt: string;
+  news_photo: NewsImage | null;
+  date: string;
+  content: string;
+}
 
 export default async function NewsListPage() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || ''}/api/news`, { cache: 'no-store' });
-  const news: News[] = await res.json();
+  const news = await directus.request(
+    readItems('news', {
+      fields: [
+        'id',
+        'slug',
+        'title',
+        'excerpt',
+        { news_photo: ['id', 'filename_disk'] },
+        'date',
+        'content',
+      ],
+      sort: ['-date'],
+    })
+  ) as NewsItem[];
+
+  const DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || "http://localhost:8055";
+  const getImageUrl = (img: NewsImage | null) => {
+    if (!img || !img.filename_disk) return "/img/placeholder.jpg";
+    return `${DIRECTUS_URL}/assets/${img.filename_disk}`;
+  };
+
   return (
     <section className="max-w-4xl mx-auto py-12 px-4 bg-white">
       <nav className="mb-6 text-sm text-brown/70">
@@ -26,7 +53,7 @@ export default async function NewsListPage() {
       </nav>
       <h1 className="text-3xl md:text-5xl font-bold mb-10 text-brown">Новости</h1>
       <div className="grid gap-8 md:grid-cols-2">
-        {news.map((item: News) => (
+        {news.map(item => (
           <Link key={item.slug} href={`/news/${item.slug}`} className="block bg-[#fdebc1] rounded-3xl overflow-hidden hover:shadow-xl transition-shadow">
             <div className="relative aspect-[16/9]">
               <Image src={getImageUrl(item.news_photo)} alt={item.title} fill className="object-cover rounded-t-3xl" />
