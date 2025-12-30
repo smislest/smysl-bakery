@@ -27,9 +27,9 @@ export default async function NewsListPage() {
       <h1 className="text-3xl md:text-5xl font-bold mb-10 text-brown">Новости</h1>
       <div className="grid gap-8 md:grid-cols-2">
         {news.map((item: News) => (
-          <Link key={item.id} href={`/news/${item.id}`} className="block bg-[#fdebc1] rounded-3xl overflow-hidden hover:shadow-xl transition-shadow">
+          <Link key={item.slug} href={`/news/${item.slug}`} className="block bg-[#fdebc1] rounded-3xl overflow-hidden hover:shadow-xl transition-shadow">
             <div className="relative aspect-[16/9]">
-              <Image src={getImageUrl(item.image)} alt={item.title} fill className="object-cover rounded-t-3xl" />
+              <Image src={getImageUrl(item.news_photo)} alt={item.title} fill className="object-cover rounded-t-3xl" />
               <div className="absolute top-4 left-4 px-3 py-1.5 rounded-2xl text-sm font-medium text-white bg-[#619e5a]">
                 {item.date}
               </div>
