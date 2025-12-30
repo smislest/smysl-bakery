@@ -9,6 +9,7 @@ html, body {
   width: 100%;
   margin: 0;
   padding: 0;
+  font-family: var(--font-montserrat, 'Montserrat', sans-serif);
 }
 
 img {
@@ -43,4 +44,9 @@ img {
   /* Золотое сечение */
   --golden-ratio: 1.618;
   --golden-ratio-inverse: 0.618;
+}
+
+/* fonts.css */
+.font-montserrat {
+  font-family: 'Montserrat', sans-serif;
 }

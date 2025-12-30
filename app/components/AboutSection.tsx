@@ -1,128 +1,106 @@
 
 "use client";
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { getAboutData } from '../../lib/aboutData';
 
 import type { AboutData } from '../../lib/aboutData';
 
+const DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'https://smysl-bakery-directus.onrender.com';
+
+// Helper function to convert Directus file reference to asset URL
+function getAssetUrl(file?: string | { id: string }): string {
+  if (!file) return '/img/staf3.png';
+  if (typeof file === 'string') {
+    // If it's already a full path, return as-is
+    if (file.startsWith('http') || file.startsWith('/')) return file;
+    // Otherwise, it's a file ID
+    return `${DIRECTUS_URL}/assets/${file}`;
+  }
+  // If it's an object with id
+  return `${DIRECTUS_URL}/assets/${file.id}`;
+}
+
 export default function AboutSection() {
-  const waveSvgRef = useRef<SVGElement>(null);
   const [about, setAbout] = useState<AboutData | null>(null);
 
   useEffect(() => {
-    getAboutData().then(setAbout);
+    getAboutData().then(setAbout).catch(() => setAbout(null));
   }, []);
 
-  useEffect(() => {
-    const observerOptions = {
-      threshold: 0.3,
-      rootMargin: '0px 0px -50px 0px'
-    };
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-          observer.unobserve(entry.target);
-        }
-      });
-    }, observerOptions);
-    document.querySelectorAll('.fade-in-scroll').forEach(el => observer.observe(el));
-    return () => {
-      observer.disconnect();
-    };
-  }, []);
+  const svgTitle = getAssetUrl(about?.svg_title);
+  const passionText = about?.passion_text || about?.text_c || about?.text_r || about?.text_r2 || 'Мы печём хлеб с душой.';
+  const prideText = about?.pride_text || 'Гордимся своим делом';
+  const missionText = about?.mission_text || 'Наша миссия — натуральность и вкус без компромиссов';
+  const images = {
+    main: getAssetUrl(about?.image_main),
+    topRight: getAssetUrl(about?.image_top_right),
+    bottomLeft: getAssetUrl(about?.image_bottom_left),
+    bottomRight: getAssetUrl(about?.image_bottom_right),
+  };
 
-  useEffect(() => {
-    const handleScroll = () => {
-      if (waveSvgRef.current) {
-        const rect = waveSvgRef.current.getBoundingClientRect();
-        const scrollProgress = (window.innerHeight - rect.top) / (window.innerHeight + rect.height);
-        const offset = Math.sin(scrollProgress * Math.PI * 2) * 20;
-        waveSvgRef.current.style.transform = `translateY(${offset}px)`;
-      }
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  if (!about) return null;
   return (
     <section id="about" className="w-full py-16 bg-primary relative overflow-visible">
-      {/* Полупрозрачный слой узоров */}
-      <div className="absolute inset-0 pointer-events-none z-[1] opacity-90">
-        <Image
-          src="/svg/uzr_bg.svg"
-          alt=""
-          width={1920}
-          height={1080}
-          className="w-full h-full"
-          style={{ objectFit: 'fill' }}
-          draggable={false}
-        />
-      </div>
       <div className="container mx-auto px-4 relative z-10">
-        <style jsx>{`
-          .fade-up {
-            opacity: 0;
-            transform: translateY(60px);
-            animation: fadeUp 1.2s cubic-bezier(.4,0,.2,1) forwards;
-          }
-          .fade-up.delay {
-            animation-delay: 0.5s;
-          }
-          @keyframes fadeUp {
-            to {
-              opacity: 1;
-              transform: translateY(0);
-            }
-          }
-          .fade-in-scroll {
-            opacity: 0;
-            transform: translateY(30px);
-          }
-          .fade-in-scroll.visible {
-            opacity: 1;
-            transform: translateY(0);
-            transition: opacity 0.8s ease, transform 0.8s ease;
-          }
-        `}</style>
-        <div className="text-center mb-8 relative z-10">
-          <h2 className="text-5xl md:text-8xl font-bold text-white mb-4 fade-up">
-            {about.title}
-          </h2>
+        {/* Header with SVG between lines */}
+        <div className="flex items-center justify-center gap-4 mb-8">
+          <div className="flex-1 h-[2px] bg-gray-300" />
+          <div className="flex-shrink-0">
+            <Image src={svgTitle} alt="Смысл есть" width={160} height={40} />
+          </div>
+          <div className="flex-1 h-[2px] bg-gray-300" />
         </div>
-        <div className="max-w-7xl mx-auto relative z-10">
-          <div className="md:hidden space-y-4">
-            <div className="flex justify-center mb-2">
-              <Image src="/svg/we_are.svg" alt="Мы" width={150} height={105} />
+
+        {/* Desktop grid */}
+        <div className="hidden md:grid grid-cols-2 gap-8 max-w-7xl mx-auto">
+          <div className="flex flex-col gap-4">
+            <div className="rounded-3xl overflow-hidden">
+              <Image src={images.main} alt="Главное фото" width={800} height={800} className="object-cover" />
             </div>
-            <div className="relative rounded-3xl overflow-hidden w-full mx-auto max-w-full aspect-[3/4]">
-              <Image src="/img/staf3.png" alt="О нас" fill className="object-contain" />
-            </div>
-            <div className="bg-beige rounded-3xl p-5">
-              <p className="text-white text-lg leading-tight">{about.text_c || about.text_r || about.text_r2 || ''}</p>
-            </div>
+            <p className="mt-4 text-white text-lg">{passionText}</p>
           </div>
-          {/* Правая колонка - текстовые блоки (пример, можно доработать под реальные поля) */}
-          <div className="w-1/3 flex flex-col gap-0">
-            <div className="bg-beige rounded-3xl pt-6 px-6 pb-4 flex flex-col justify-start relative overflow-visible fade-in-scroll">
-              <div className="absolute top-4 left-6 z-20">
-                <Image src="/svg/we_are.svg" alt="Мы" width={180} height={120} />
-              </div>
-              <div className="mt-16">
-                <h3 className="text-6xl font-bold text-white italic great-vibes mb-4">гордимся своим делом</h3>
-                <p className="text-white text-lg leading-tight">Благодаря нашей страсти к инновациям и строгому контролю качества, мы создаём натуральные продукты, которые наполняют жизнь вкусом</p>
+
+          <div className="grid grid-rows-2 gap-4">
+            <div className="flex justify-end">
+              <div className="w-1/2 rounded-3xl overflow-hidden">
+                <Image src={images.topRight} alt="Верхнее фото" width={400} height={400} className="object-cover" />
               </div>
             </div>
-            <div className="relative rounded-3xl overflow-hidden fade-in-scroll w-full aspect-[3/4]">
-              <Image src="/img/staf3.png" alt="Сотрудник" fill className="object-contain object-top" />
-            </div>
-            <div className="bg-beige rounded-3xl p-4 flex flex-col justify-center fade-in-scroll">
-              <p className="text-4xl md:text-6xl font-bold text-white italic great-vibes mb-2">наша миссия</p>
-              <p className="text-white text-lg leading-tight">Мы стремимся к тому, чтобы питание стало ОСОЗНАННЫМ, понятным и по-настоящему вкусным - без компромиссов между вкусом и пользой</p>
+
+            <div className="grid grid-cols-2 gap-4 items-start">
+              <div className="flex flex-col gap-4">
+                <div className="rounded-3xl overflow-hidden">
+                  <Image src={images.bottomLeft} alt="Фото слева снизу" width={400} height={400} className="object-cover" />
+                </div>
+                <p className="text-white">{prideText}</p>
+              </div>
+
+              <div className="flex flex-col gap-4">
+                <div className="rounded-3xl overflow-hidden">
+                  <Image src={images.bottomRight} alt="Фото справа снизу" width={400} height={400} className="object-cover" />
+                </div>
+                <p className="text-white">{missionText}</p>
+              </div>
             </div>
           </div>
+        </div>
+
+        {/* Mobile layout */}
+        <div className="md:hidden flex flex-col gap-6 max-w-3xl mx-auto">
+          <div className="rounded-3xl overflow-hidden">
+            <Image src={images.main} alt="Главное фото" width={600} height={600} className="object-cover" />
+          </div>
+          <p className="text-white">{passionText}</p>
+
+          <div className="rounded-3xl overflow-hidden">
+            <Image src={images.bottomLeft} alt="Фото слева снизу" width={600} height={600} className="object-cover" />
+          </div>
+          <p className="text-white">{prideText}</p>
+
+          <div className="rounded-3xl overflow-hidden">
+            <Image src={images.bottomRight} alt="Фото справа снизу" width={600} height={600} className="object-cover" />
+          </div>
+          <p className="text-white">{missionText}</p>
         </div>
       </div>
     </section>

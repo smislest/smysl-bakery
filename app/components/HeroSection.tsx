@@ -11,7 +11,13 @@ export default function HeroSection() {
   const [hero, setHero] = useState<any>(null);
 
   useEffect(() => {
-    getHeroData().then(setHero);
+    getHeroData().then(data => {
+      console.log('✅ Hero data loaded:', data);
+      setHero(data);
+    }).catch(error => {
+      console.error('❌ Hero data error:', error);
+      // оставляем hero null — ниже рендерим fallback, чтобы элемент не исчезал на десктопе
+    });
   }, []);
 
   useEffect(() => {
@@ -22,12 +28,28 @@ export default function HeroSection() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  if (!hero) return null;
+  // Если данные ещё не загрузились, рендерим fallback-контент (чтобы элемент всегда был видим)
+  const fallback = {
+    title: "Безглютеновый хлеб и десерты в Москве",
+    subtitle:
+      "Развиваем культуру осознанного ежедневного рациона и показываем, что полезная выпечка может быть вкусной и разнообразной.",
+    image: "/img/heart.png",
+    imageAlt: "Хлеб в форме сердца",
+    ctaLink: "#",
+    ctaText: "В каталог",
+    backgroundImage: "",
+  };
+  const data = hero || fallback;
+  console.log('🎨 Rendering with:', {
+    isFromDirectus: !!hero,
+    imageUrl: data.image,
+    title: data.title
+  });
   return (
-    <section 
-      className={styles.hero} 
-      id="hero" 
-      style={{ backgroundImage: `url(${hero.backgroundImage})` }}
+    <section
+      className={styles.hero}
+      id="hero"
+      style={{ backgroundImage: `url(${data.backgroundImage})` }}
     >
       {/* Фоновая волна */}
       <div className={styles.waveBg} aria-hidden="true">
@@ -71,8 +93,8 @@ export default function HeroSection() {
           <div className={`${styles.mobileImageContainer} ${styles.heartbeat}`}>
             <div className={styles.imageGradient} aria-hidden="true" />
             <Image
-              src={hero.image || "/img/heart.png"}
-              alt={hero.imageAlt || "Хлеб в форме сердца"}
+              src={data.image || "/img/heart.png"}
+              alt={data.imageAlt || "Хлеб в форме сердца"}
               fill
               className="object-contain"
               priority
@@ -82,20 +104,22 @@ export default function HeroSection() {
 
           <div className={styles.textContainer}>
             <h1 className={styles.title}>
-              {hero.title || "Безглютеновый хлеб и десерты в Москве"}
+              {data.title}
             </h1>
             
             <div className={styles.subtitle}>
-              {hero.subtitle || "Развиваем культуру осознанного ежедневного рациона и показываем, что полезная выпечка может быть вкусной и разнообразной."}
+              {data.subtitle}
             </div>
             
-            <Link 
-              href={hero.ctaLink || "#"} 
-              className={styles.button}
-              aria-label={hero.ctaText || "Перейти в каталог"}
-            >
-              {hero.ctaText || "В каталог"}
-            </Link>
+            {(() => {
+              const ctaLink = data.ctaLink || '#';
+              const ctaText = data.ctaText || 'В каталог';
+              return (
+                <Link href={ctaLink} className={styles.button} aria-label={ctaText}>
+                  {ctaText}
+                </Link>
+              );
+            })()}
           </div>
         </div>
 
@@ -103,27 +127,29 @@ export default function HeroSection() {
         <div className={styles.desktopLayout}>
           <div className={styles.textContainer}>
             <h1 className={styles.title}>
-              {hero.title || "Безглютеновый хлеб и десерты в Москве"}
+              {data.title}
             </h1>
             
             <div className={styles.subtitle}>
-              {hero.subtitle || "Развиваем культуру осознанного ежедневного рациона и показываем, что полезная выпечка может быть вкусной и разнообразной."}
+              {data.subtitle}
             </div>
             
-            <Link 
-              href={hero.ctaLink || "#"} 
-              className={styles.button}
-              aria-label={hero.ctaText || "Перейти в каталог"}
-            >
-              {hero.ctaText || "В каталог"}
-            </Link>
+            {(() => {
+              const ctaLink = data.ctaLink || '#';
+              const ctaText = data.ctaText || 'В каталог';
+              return (
+                <Link href={ctaLink} className={styles.button} aria-label={ctaText}>
+                  {ctaText}
+                </Link>
+              );
+            })()}
           </div>
 
           <div className={`${styles.imageContainer} ${styles.heartbeat}`}>
             <div className={styles.imageGradient} aria-hidden="true" />
             <Image
-              src={hero.image || "/img/heart.png"}
-              alt={hero.imageAlt || "Хлеб в форме сердца"}
+              src={data.image || "/img/heart.png"}
+              alt={data.imageAlt || "Хлеб в форме сердца"}
               fill
               className="object-contain"
               priority

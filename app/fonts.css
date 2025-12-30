@@ -1,7 +1,20 @@
+/* Great Vibes для декоративных текстов */
 @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
 
+/* Переменные для шрифтов */
+:root {
+  --font-montserrat: 'Montserrat', sans-serif;
+  --font-great-vibes: 'Great Vibes', cursive;
+}
+
+/* Основной шрифт - Montserrat */
+body {
+  font-family: var(--font-montserrat);
+}
+
+/* Класс для Great Vibes */
 .great-vibes {
-  font-family: 'Great Vibes', cursive;
+  font-family: var(--font-great-vibes);
   font-weight: 400;
   font-style: normal;
 }

@@ -8,7 +8,9 @@ import NewsSection from "./components/NewsSection";
 import HeartSection from "./components/HeartSection";
 import FooterClient from "./components/FooterClient";
 
-export const revalidate = 60; // ISR: обновлять раз в минуту
+// ISR: обновлять статические страницы каждую минуту
+// На Vercel это работает без проблем с HTTPS
+export const revalidate = 60;
 
 export default async function Home() {
   // Пример SSR/ISR: можно получать данные через sdk

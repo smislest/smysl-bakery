@@ -1,6 +1,7 @@
 
 
 import { getCollectionFromDirectus } from './directus';
+import { typograph } from './typograph';
 
 export interface Product {
   id: string;
@@ -14,5 +15,13 @@ export interface Product {
 
 export async function getProductsData(): Promise<Product[]> {
   const data = await getCollectionFromDirectus('products');
-  return data as Product[];
+  if (!Array.isArray(data)) return [];
+  
+  return data.map(item => ({
+    ...item,
+    title: typograph(item.title),
+    subtitle: typograph(item.subtitle),
+    description: typograph(item.description),
+    ingredients: typograph(item.ingredients),
+  }));
 }
