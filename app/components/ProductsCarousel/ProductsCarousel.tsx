@@ -142,7 +142,7 @@ export default function ProductsCarousel() {
   const scrollToMobileIndex = useCallback((index: number) => {
     if (!containerRef.current || !products.length) return;
     const container = containerRef.current;
-    const cardWidth = container.clientWidth * 0.85;
+    const cardWidth = container.clientWidth;
     const gap = 20;
     container.scrollTo({
       left: index * (cardWidth + gap),
@@ -151,49 +151,14 @@ export default function ProductsCarousel() {
     setMobileActiveIndex(index);
   }, [products.length]);
 
-  // Drag для мобильной версии
-  const bindMobileDrag = useDrag(({ 
-    active, 
-    movement: [mx], 
-    direction: [dx], 
-    velocity: [vx],
-    last 
-  }) => {
-    if (!containerRef.current) return;
-    const container = containerRef.current;
-    if (active) {
-      container.style.scrollBehavior = 'auto';
-      const scrollAmount = mx * 1.5;
-      container.scrollLeft -= scrollAmount;
-    }
-    if (last) {
-      container.style.scrollBehavior = 'smooth';
-      if (Math.abs(mx) > 50 || vx > 0.3) {
-        const cardWidth = container.clientWidth * 0.85;
-        const gap = 20;
-        const currentScroll = container.scrollLeft;
-        const currentIndex = Math.round(currentScroll / (cardWidth + gap));
-        let newIndex = currentIndex;
-        if (dx > 0 && currentIndex > 0) {
-          newIndex = currentIndex - 1;
-        } else if (dx < 0 && currentIndex < products.length - 1) {
-          newIndex = currentIndex + 1;
-        }
-        scrollToMobileIndex(newIndex);
-      }
-    }
-  }, {
-    axis: 'x',
-    filterTaps: true,
-    rubberband: 0.1
-  });
+  // Убрали drag для мобильной версии - используем только scroll-snap
 
-  // Мобильная версия
+  // Мобильная версия - трекинг текущего индекса при скролле
   const handleMobileScroll = useCallback(() => {
     if (!containerRef.current || !products.length) return;
     const container = containerRef.current;
     const scrollLeft = container.scrollLeft;
-    const cardWidth = container.clientWidth * 0.85;
+    const cardWidth = container.clientWidth;
     const gap = 20;
     const newIndex = Math.round(scrollLeft / (cardWidth + gap));
     if (newIndex >= 0 && newIndex < products.length && newIndex !== mobileActiveIndex) {
@@ -416,8 +381,7 @@ export default function ProductsCarousel() {
           </div>
           
           {/* МОБИЛЬНАЯ ВЕРСИЯ */}
-          <animated.div
-            {...bindMobileDrag()}
+          <div
             ref={containerRef}
             className={`${styles.scrollSnapContainer} md:hidden`}
           >
@@ -457,7 +421,7 @@ export default function ProductsCarousel() {
                 </div> 
               </div> 
             ))}
-          </animated.div>
+          </div>
         </div>
         
         {/* Индикаторы */}
