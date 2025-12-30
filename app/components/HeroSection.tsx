@@ -51,12 +51,21 @@ export default function HeroSection() {
       id="hero"
       style={{ backgroundImage: `url(${data.backgroundImage})` }}
     >
-      {/* Фоновая волна */}
+      {/* Фоновая волна - десктоп */}
       <div className={styles.waveBg} aria-hidden="true">
         <img
           src="/svg/muka_wave.svg"
           alt=""
           className={`${styles.waveSvg} ${waveScrolled ? styles.waveScrolled : ''}`}
+        />
+      </div>
+
+      {/* Фоновая волна - мобильная */}
+      <div className={styles.waveBgMobile} aria-hidden="true">
+        <img
+          src="/svg/muka_mob.svg"
+          alt=""
+          className={styles.waveSvgMobile}
         />
       </div>
 

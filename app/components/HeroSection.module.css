@@ -38,40 +38,50 @@
   }
 }
 
-/* Фоновые волны */
+/* Фоновые волны - десктоп */
 .waveBg {
   position: absolute;
   top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 80%;
-  height: 80%;
+  right: 5%;
+  transform: translateY(-50%);
+  width: 75%;
+  height: 75%;
   pointer-events: none;
   z-index: 1;
   overflow: visible;
+  display: none;
 }
 
-/* Мобильная версия волны */
-@media (max-width: 767px) {
-  .waveBg {
-    top: 25%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 220%;
-    height: 170%;
-  }
-}
-
-/* Десктопная версия волны */
 @media (min-width: 768px) {
   .waveBg {
-    top: 50%;
-    right: 5%;
-    left: auto;
-    transform: translateY(-50%);
-    width: 75%;
-    height: 75%;
+    display: block;
   }
+}
+
+/* Фоновая волна - мобильная */
+.waveBgMobile {
+  position: absolute;
+  top: 0%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 130%;
+  height: auto;
+  pointer-events: none;
+  z-index: 1;
+  overflow: visible;
+  display: block;
+}
+
+@media (min-width: 768px) {
+  .waveBgMobile {
+    display: none;
+  }
+}
+
+.waveSvgMobile {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
 }
 
 .waveSvg {
@@ -96,6 +106,12 @@
   pointer-events: none;
   z-index: 2;
   overflow: hidden;
+}
+
+@media (max-width: 767px) {
+  .breadsBg {
+    overflow: hidden;
+  }
 }
 
 .bread {
@@ -134,6 +150,39 @@
   animation-delay: 3s;
 }
 
+/* Увеличиваем хлеб в 2 раза на мобилке */
+@media (max-width: 767px) {
+  .bread {
+    animation: none;
+    opacity: 0.3;
+    z-index: 0;
+  }
+  
+  .breadMain {
+    width: clamp(400px, 80vw, 1040px);
+    left: clamp(15%, 20vw, 25%);
+    top: clamp(20%, 25vh, 30%);
+  }
+  
+  .bread1 {
+    width: clamp(200px, 40vw, 520px);
+    left: clamp(40%, 50vw, 55%);
+    top: clamp(25%, 30vh, 35%);
+  }
+  
+  .breadMin {
+    width: clamp(160px, 30vw, 360px);
+    left: clamp(5%, 10vw, 10%);
+    top: clamp(30%, 35vh, 40%);
+  }
+  
+  .breadMicro {
+    width: clamp(120px, 20vw, 240px);
+    left: clamp(0%, 2vw, 2%);
+    top: clamp(15%, 20vh, 25%);
+  }
+}
+
 @keyframes breadFly {
   0% {
     opacity: 0;
@@ -151,29 +200,7 @@
   }
 }
 
-@media (max-width: 767px) {
-  .bread {
-    animation: none;
-    opacity: 0.3;
-    z-index: 0;
-  }
-  
-  .breadMain {
-    top: clamp(20%, 25vh, 30%);
-  }
-  
-  .bread1 {
-    top: clamp(25%, 30vh, 35%);
-  }
-  
-  .breadMin {
-    top: clamp(30%, 35vh, 40%);
-  }
-  
-  .breadMicro {
-    top: clamp(15%, 20vh, 25%);
-  }
-}
+
 
 /* Декоративные колосья */
 .wheatDecor {
