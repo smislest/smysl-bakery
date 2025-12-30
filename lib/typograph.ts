@@ -3,15 +3,16 @@ import Typograf from 'typograf';
 // Инициализация типографа один раз
 const tp = new Typograf({ locale: ['ru', 'en-US'] });
 
-// Конфигурация правил типографирования
-tp.enableRule('ru/optalign');     // Оптическое выравнивание
+// Отключаем все правила по умолчанию для консистентности
+tp.disableRule('*');
+
+// Включаем только базовые, стабильные правила
+tp.enableRule('ru/nbsp/beforeParticle'); // Неразрывный пробел перед частицей (ли, же, ж)
 tp.enableRule('ru/nbsp/afterNumber'); // Неразрывный пробел после числа
-tp.enableRule('ru/nbsp/beforeParticle'); // Неразрывный пробел перед частицей (ли, же, ж, ать, ель)
-tp.enableRule('ru/nbsp/beforeSuspensivePoint'); // Неразрывный пробел перед многоточием
-tp.enableRule('ru/nbsp/doulbleSpace'); // Удаление двойных пробелов
 tp.enableRule('ru/dash/main'); // Замена дефисов на тире
+tp.enableRule('ru/dash/middot'); // Дефис для диапазонов
 tp.enableRule('ru/punctuation/exclamation'); // Пунктуация
-tp.enableRule('ru/liter/accent'); // Расставление ударений
+tp.enableRule('ru/spaces/punctuation'); // Пробелы вокруг пунктуации
 
 /**
  * Типографирование текста с применением русских правил
