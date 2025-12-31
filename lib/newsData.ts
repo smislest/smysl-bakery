@@ -19,11 +19,15 @@ export async function getNewsData(): Promise<NewsItem[]> {
 
     return filtered.map((item) => ({
         ...item,
+        id: item.id || '',
+        slug: item.slug,
+        date: item.date || '',
+        news_photo: item.news_photo || null,
         title: typograph(item.title),
         description: typograph(item.description || item.excerpt || ''),
         excerpt: typograph(item.excerpt || ''),
         content: typograph(item.content),
-      }));
+      })) as NewsItem[];
   } catch (error) {
     console.error('❌ Error in getNewsData:', error instanceof Error ? error.message : error);
     return [];

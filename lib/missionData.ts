@@ -16,8 +16,8 @@ export async function getMissionData(): Promise<MissionData | null> {
   
   if (Array.isArray(data) && data.length > 0) {
     item = data[0] as MissionData;
-  } else {
-    item = data as MissionData;
+  } else if (data) {
+    item = data as unknown as MissionData;
   }
   
   if (!item) return null;

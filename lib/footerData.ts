@@ -20,8 +20,8 @@ export async function getFooterData(): Promise<FooterData | null> {
   
   if (Array.isArray(data) && data.length > 0) {
     item = data[0] as FooterData;
-  } else {
-    item = data as FooterData;
+  } else if (data) {
+    item = data as unknown as FooterData;
   }
   
   if (!item) return null;

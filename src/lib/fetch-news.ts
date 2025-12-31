@@ -31,6 +31,6 @@ export async function fetchNewsBySlug(slug: string): Promise<NewsItem | null> {
 	} catch (error) {
 		// Fallback to static data if Directus is unavailable or env vars are missing
 		const fallback = newsData.find((n) => n.slug === slug) || null;
-		return fallback;
+		return fallback as NewsItem | null;
 	}
 }

@@ -19,9 +19,10 @@ export async function getProductsData(): Promise<Product[]> {
   
   return data.map(item => ({
     ...item,
+    id: item.id || '',
     title: typograph(item.title),
     subtitle: typograph(item.subtitle),
     description: typograph(item.description),
     ingredients: typograph(item.ingredients),
-  }));
+  })) as Product[];
 }
