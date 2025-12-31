@@ -37,7 +37,6 @@ export default function AboutSection() {
     bottomLeft: getAssetUrl(about?.image_bottom_left),
     bottomRight: getAssetUrl(about?.image_bottom_right),
     extra1: getAssetUrl(about?.image_extra1),
-    extra2: getAssetUrl(about?.image_extra2),
   };
 
   return (
@@ -54,11 +53,18 @@ export default function AboutSection() {
       </div>
 
       {/* Бежевый фон с изгибами - абсолютное позиционирование */}
-      <div className="absolute left-0 w-full z-0" style={{ backgroundColor: '#F5E6D3', top: '400px', bottom: 0 }}>
-        {/* SVG форма для верхнего изгиба */}
-        <div className="absolute top-0 left-0 w-full" style={{ height: '320px', transform: 'translateY(-319px)' }}>
-          <svg viewBox="0 0 1920 320" preserveAspectRatio="none" className="w-full h-full">
-            <path d="M0,0 C0,132.55 429.81,240 960,240 C1490.19,240 1920,132.55 1920,0 L1920,320 L0,320 Z" fill="#F5E6D3" />
+      <div className="absolute left-0 w-full z-0 md:top-[400px] top-[500px]" style={{ backgroundColor: '#F5E6D3', bottom: 0 }}>
+        {/* SVG форма для верхнего изгиба - Desktop */}
+        <div className="hidden md:block absolute top-0 left-0 w-full" style={{ height: '160px', transform: 'translateY(-159px)' }}>
+          <svg viewBox="0 0 1920 160" preserveAspectRatio="none" className="w-full h-full">
+            <path d="M0,0 C0,66.3 429.81,120 960,120 C1490.19,120 1920,66.3 1920,0 L1920,160 L0,160 Z" fill="#F5E6D3" />
+          </svg>
+        </div>
+        
+        {/* SVG форма для верхнего изгиба - Mobile (более плавный изгиб) */}
+        <div className="md:hidden absolute top-0 left-0 w-full" style={{ height: '80px', transform: 'translateY(-79px)' }}>
+          <svg viewBox="0 0 1920 80" preserveAspectRatio="none" className="w-full h-full">
+            <path d="M0,0 C0,20 429.81,40 960,40 C1490.19,40 1920,20 1920,0 L1920,80 L0,80 Z" fill="#F5E6D3" />
           </svg>
         </div>
       </div>
@@ -68,7 +74,7 @@ export default function AboutSection() {
 
         {/* Desktop Layout */}
         <div className="hidden lg:block max-w-[1400px] mx-auto">
-          <div className="grid grid-cols-12 gap-6 items-start">
+          <div className="grid grid-cols-12 gap-6 items-end">
             {/* Left Column - 2 images */}
             <div className="col-span-4 space-y-6">
               {/* Top: horizontal image (старый пекарь) */}
@@ -95,14 +101,14 @@ export default function AboutSection() {
             </div>
 
             {/* Center Column - Main image + pride text + lab image */}
-            <div className="col-span-4 flex flex-col gap-6">
+            <div className="col-span-4 flex flex-col gap-8">
               {/* Main image */}
               <div className="rounded-3xl overflow-hidden">
                 <Image 
                   src={images.main} 
                   alt="Главное фото" 
                   width={450} 
-                  height={420} 
+                  height={500} 
                   className="w-full h-auto object-contain" 
                 />
               </div>
@@ -110,7 +116,7 @@ export default function AboutSection() {
               {/* Pride text */}
               <div className="space-y-2">
                 <h3 className="great-vibes text-5xl" style={{ color: '#C74B50' }}>{prideTitle}</h3>
-                <p className="text-gray-800 text-sm leading-relaxed">{prideText}</p>
+                <p className="text-gray-800 text-base leading-relaxed">{prideText}</p>
               </div>
 
               {/* Lab image */}
@@ -129,11 +135,11 @@ export default function AboutSection() {
             <div className="col-span-4 flex flex-col gap-6">
               {/* Top: Text block without background */}
               <div className="relative pt-0">
-                {/* Картинка we_are абсолютно позиционирована, не влияет на поток */}
-                <div className="absolute top-0 left-0 w-full" style={{ transform: 'translateY(-100%)' }}>
-                  <img src="/svg/we_are.svg" alt="Мы" className="w-auto h-24" />
+                {/* Отдельный слой для SVG - не влияет на контент */}
+                <div className="absolute left-0 right-0 top-0 pointer-events-none hidden lg:block">
+                  <img src="/svg/we_are.svg" alt="Мы" style={{ width: 'auto', height: '96px', transform: 'translateY(-150px)' }} />
                 </div>
-                <div className="p-8 pt-0">
+                <div className="p-8 pt-0 pb-0">
                   <h4 className="great-vibes text-5xl mb-4" style={{ color: '#C74B50' }}>Горим своим делом</h4>
                   <p className="text-gray-800 text-base leading-relaxed">{passionText}</p>
                 </div>
@@ -142,7 +148,7 @@ export default function AboutSection() {
               {/* Large image */}
               <div className="rounded-3xl overflow-hidden">
                 <Image 
-                  src={images.extra2} 
+                  src={images.bottomLeft} 
                   alt="Работа с тестом" 
                   width={450} 
                   height={400} 
@@ -151,9 +157,9 @@ export default function AboutSection() {
               </div>
               
               {/* Mission text */}
-              <div className="space-y-2">
+              <div className="space-y-2 px-8">
                 <h3 className="great-vibes text-5xl" style={{ color: '#C74B50' }}>{missionTitle}</h3>
-                <p className="text-gray-800 text-sm leading-relaxed">{missionText}</p>
+                <p className="text-gray-800 text-base leading-relaxed">{missionText}</p>
               </div>
             </div>
           </div>
@@ -164,7 +170,7 @@ export default function AboutSection() {
           {/* we_are.svg над главным фото */}
           <div className="relative">
             <div className="mb-4">
-              <img src="/svg/we_are.svg" alt="Мы" className="w-auto h-8 mx-auto" />
+              <img src="/svg/we_are.svg" alt="Мы" style={{ width: '200px', height: 'auto' }} className="mx-auto" />
             </div>
             <div className="rounded-3xl overflow-hidden">
               <Image src={images.main} alt="Главное фото" width={600} height={600} className="w-full object-cover" />
@@ -173,7 +179,7 @@ export default function AboutSection() {
           
           <div className="space-y-3">
             <h3 className="great-vibes text-5xl" style={{ color: '#C74B50' }}>Горим своим делом</h3>
-            <p className="text-gray-800 leading-relaxed">{passionText}</p>
+            <p className="text-gray-800 text-base leading-relaxed">{passionText}</p>
           </div>
 
           <div className="rounded-3xl overflow-hidden">
@@ -182,16 +188,16 @@ export default function AboutSection() {
 
           <div className="space-y-3">
             <h3 className="great-vibes text-5xl" style={{ color: '#C74B50' }}>{prideTitle}</h3>
-            <p className="text-gray-800 leading-relaxed">{prideText}</p>
+            <p className="text-gray-800 text-base leading-relaxed">{prideText}</p>
           </div>
 
           <div className="rounded-3xl overflow-hidden">
-            <Image src={images.bottomRight} alt="Работа с тестом" width={600} height={600} className="block w-full object-cover" />
+            <Image src={images.bottomLeft} alt="Работа с тестом" width={600} height={600} className="block w-full object-cover" />
           </div>
 
           <div className="space-y-3">
             <h3 className="great-vibes text-5xl" style={{ color: '#C74B50' }}>{missionTitle}</h3>
-            <p className="text-gray-800 leading-relaxed">{missionText}</p>
+            <p className="text-gray-800 text-base leading-relaxed">{missionText}</p>
           </div>
         </div>
       </div>
