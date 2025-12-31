@@ -1,109 +1,210 @@
 // app/news/[slug]/page.tsx
+"use client";
+
+import { useState, useEffect } from "react";
+import { useParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import type { Metadata } from "next";
 import DOMPurify from 'isomorphic-dompurify';
-import { fetchNewsBySlug } from "@/lib/fetch-news";
+import { createDirectus, rest, readItems } from '@directus/sdk';
+import type { NewsItem } from '../../../lib/news';
+import FooterClient from "../../components/FooterClient";
 
-interface NewsPageProps {
-  params: { slug: string };
-}
+export default function NewsPage() {
+  const params = useParams();
+  const slug = params.slug as string;
+  const [news, setNews] = useState<NewsItem | null>(null);
+  const [allNews, setAllNews] = useState<NewsItem[]>([]);
+  const [nextNews, setNextNews] = useState<NewsItem | null>(null);
+  const [loading, setLoading] = useState(true);
 
-export const dynamic = "force-dynamic";
+  useEffect(() => {
+    async function fetchNews() {
+      try {
+        const DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'https://smysl-bakery-directus.onrender.com';
+        const directus = createDirectus(DIRECTUS_URL).with(rest());
+        
+        // Загружаем все новости для навигации
+        const allData = await directus.request(
+          readItems('news' as any, {
+            fields: [
+              'id',
+              'slug',
+              'title',
+              'excerpt',
+              { news_photo: ['id', 'filename_disk'] },
+              'date',
+              'content'
+            ] as any,
+            sort: ['-date'] as any,
+          })
+        ) as NewsItem[];
+        
+        setAllNews(allData || []);
+        
+        // Находим текущую новость
+        const currentNews = allData.find(n => n.slug === slug);
+        setNews(currentNews || null);
+        
+        // Находим следующую новость
+        if (currentNews) {
+          const currentIndex = allData.findIndex(n => n.slug === slug);
+          const next = allData[currentIndex + 1] || allData[0]; // Циклическая навигация
+          setNextNews(next);
+        }
+        
+        console.log('📄 Загружена новость:', currentNews?.title || 'не найдена');
+      } catch (e) {
+        console.error("Ошибка загрузки новости:", e);
+        setNews(null);
+      } finally {
+        setLoading(false);
+      }
+    }
+    if (slug) fetchNews();
+  }, [slug]);
 
-export async function generateMetadata({ params }: NewsPageProps): Promise<Metadata> {
-  const news = await fetchNewsBySlug(params.slug);
+  // Скролл вверх при смене новости
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [slug]);
 
-  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
-  const DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'http://localhost:8055';
-
-  if (!news) {
-    return {
-      title: "Новость не найдена | СМЫСЛ есть",
-      description: "Страница не найдена.",
-    };
-  }
-
-  const imageUrl = news.news_photo
-    ? `${DIRECTUS_URL}/assets/${news.news_photo.filename_disk}`
-    : null;
-
-  return {
-    title: `${news.title} | СМЫСЛ есть`,
-    description: news.excerpt,
-    openGraph: {
-      title: news.title,
-      description: news.excerpt,
-      images: imageUrl ? [{ url: imageUrl }] : [],
-      type: "article",
-      url: `${SITE_URL}/news/${news.slug}`,
-    },
-    alternates: {
-      canonical: `${SITE_URL}/news/${news.slug}`,
-    },
-  };
-}
-
-export default async function NewsPage({ params }: NewsPageProps) {
-  const news = await fetchNewsBySlug(params.slug);
-  const DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'http://localhost:8055';
-
-  if (!news) {
+  if (loading) {
     return (
-      <div className="max-w-2xl mx-auto py-20 text-center bg-white">
-        <h1 className="text-3xl font-bold mb-4">Новость не найдена</h1>
-        <Link href="/news" className="text-primary underline">
-          Назад к новостям
-        </Link>
-      </div>
+      <>
+        <div className="min-h-screen bg-white">
+          <div className="max-w-5xl mx-auto py-20 px-6 text-center">
+            <p className="text-gray-500 text-lg">Загрузка новости...</p>
+          </div>
+        </div>
+        <FooterClient />
+      </>
     );
   }
 
+  if (!news) {
+    return (
+      <>
+        <div className="min-h-screen bg-white">
+          <div className="max-w-5xl mx-auto py-20 px-6 text-center">
+            <h1 className="text-4xl font-bold mb-6 text-gray-900">Новость не найдена</h1>
+            <Link href="/news" className="text-[#619e5a] hover:underline text-lg">
+              ← Назад к новостям
+            </Link>
+          </div>
+        </div>
+        <FooterClient />
+      </>
+    );
+  }
+
+  const DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'https://smysl-bakery-directus.onrender.com';
   const imageUrl = news.news_photo
     ? `${DIRECTUS_URL}/assets/${news.news_photo.filename_disk}`
     : '/img/placeholder.jpg';
 
   const cleanContent = DOMPurify.sanitize(news.content);
 
-  const isDev = process.env.NODE_ENV === 'development';
-
   return (
-    <article className="max-w-2xl mx-auto py-12 px-4 bg-white">
+    <>
+      <div className="min-h-screen bg-white">
+        <article className="max-w-5xl mx-auto px-6 py-8">
+        
+        {/* Шапка с хлебными крошками и кнопкой закрытия */}
+        <div className="flex items-start justify-between mb-10">
+          <nav className="text-sm text-gray-400">
+            <Link href="/" className="hover:text-gray-600 transition">
+              Главная
+            </Link>
+            <span className="mx-2">•</span>
+            <Link href="/news" className="hover:text-gray-600 transition">
+              Новости
+            </Link>
+          </nav>
+          
+          <Link 
+            href="/news"
+            className="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-100 hover:bg-gray-200 transition"
+            title="Закрыть"
+          >
+            <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </Link>
+        </div>
 
-      <nav className="mb-6 text-sm text-brown/70">
-        <Link href="/news" className="hover:underline">
-          Новости
-        </Link>{" "}
-        / <span>{news.title}</span>
-      </nav>
+        {/* Заголовок */}
+        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight max-w-4xl" style={{ color: '#675b53' }}>
+          {news.title}
+        </h1>
 
-      <h1 className="text-3xl md:text-5xl font-bold mb-6 text-brown">
-        {news.title}
-      </h1>
+        {/* Дата */}
+        <time className="block mb-10 text-gray-400 text-base">
+          {news.date}
+        </time>
 
-      <div className="relative w-full aspect-[16/9] rounded-2xl overflow-hidden mb-6">
-        <Image
-          src={imageUrl}
-          alt={news.title}
-          fill
-          className="object-cover"
-          sizes="(max-width: 768px) 100vw, 700px"
+        {/* Главное изображение */}
+        <div className="relative w-full max-w-4xl aspect-[16/9] mb-10 rounded-lg overflow-hidden">
+          <Image
+            src={imageUrl}
+            alt={news.title}
+            fill
+            className="object-cover"
+            sizes="(max-width: 768px) 100vw, 1280px"
+            priority
+          />
+        </div>
+
+        {/* Контент статьи */}
+        <div
+          className="prose prose-lg max-w-4xl
+            prose-headings:font-bold prose-headings:mt-10 prose-headings:mb-5
+            prose-h2:text-3xl prose-h3:text-2xl
+            prose-p:text-gray-700 prose-p:leading-relaxed prose-p:mb-5 prose-p:text-lg
+            prose-a:text-[#619e5a] prose-a:no-underline hover:prose-a:underline
+            prose-strong:font-semibold
+            prose-ul:my-5 prose-ul:text-gray-700
+            prose-ol:my-5 prose-ol:text-gray-700
+            prose-li:mb-2 prose-li:text-lg
+            prose-img:rounded-lg prose-img:my-8"
+          style={{ color: '#675b53' }}
+          dangerouslySetInnerHTML={{ __html: cleanContent }}
         />
+
+        {/* Разделитель */}
+        <div className="border-t border-gray-200 my-16"></div>
+
+        {/* Следующая статья */}
+        {nextNews && (
+          <div className="mb-12">
+            <p className="text-sm text-gray-400 uppercase tracking-wider mb-4">
+              Следующая статья
+            </p>
+            <Link 
+              href={`/news/${nextNews.slug}`}
+              className="group block"
+            >
+              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 group-hover:text-[#619e5a] transition leading-snug">
+                {nextNews.title}
+              </h2>
+            </Link>
+          </div>
+        )}
+
+        {/* Кнопка назад */}
+        <Link
+          href="/news"
+          className="inline-flex items-center text-gray-600 hover:text-gray-900 transition text-lg"
+        >
+          <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+          Все новости
+        </Link>
+
+      </article>
       </div>
-
-      <time className="block mb-4 text-brown/60 text-sm">{news.date}</time>
-
-      <div
-        className="text-lg text-brown/90 leading-relaxed mb-8"
-        dangerouslySetInnerHTML={{ __html: cleanContent }}
-      />
-
-      <Link
-        href="/news"
-        className="inline-block px-6 py-2 bg-primary text-white rounded-full hover:bg-primary/80 transition"
-      >
-        Назад к новостям
-      </Link>
-    </article>
+      <FooterClient />
+    </>
   );
 }

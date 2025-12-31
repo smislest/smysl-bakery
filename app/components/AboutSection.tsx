@@ -47,18 +47,18 @@ export default function AboutSection() {
         <div className="flex items-center justify-center gap-4 mb-8">
           <div className="flex-1 h-[2px]" style={{ backgroundColor: 'rgba(255,255,255,0.3)' }} />
           <div className="flex-shrink-0">
-            <Image src={svgTitle} alt="Смысл есть" width={200} height={50} className="object-contain" />
+            <Image src={svgTitle} alt="Смысл есть" width={260} height={65} className="object-contain" />
           </div>
           <div className="flex-1 h-[2px]" style={{ backgroundColor: 'rgba(255,255,255,0.3)' }} />
         </div>
       </div>
 
       {/* Бежевый фон с изгибами - абсолютное позиционирование */}
-      <div className="absolute left-0 w-full z-0" style={{ backgroundColor: '#F5E6D3', minHeight: '800px', top: '400px' }}>
+      <div className="absolute left-0 w-full z-0" style={{ backgroundColor: '#F5E6D3', top: '400px', bottom: 0 }}>
         {/* SVG форма для верхнего изгиба */}
-        <div className="absolute top-0 left-0 w-full" style={{ height: '225px', transform: 'translateY(-224px)' }}>
-          <svg viewBox="0 0 1920 225" preserveAspectRatio="none" className="w-full h-full">
-            <path d="M 0,225 L 0,0 Q 960,225 1920,0 L 1920,225 Z" fill="#F5E6D3"/>
+        <div className="absolute top-0 left-0 w-full" style={{ height: '320px', transform: 'translateY(-319px)' }}>
+          <svg viewBox="0 0 1920 320" preserveAspectRatio="none" className="w-full h-full">
+            <path d="M0,0 C0,132.55 429.81,240 960,240 C1490.19,240 1920,132.55 1920,0 L1920,320 L0,320 Z" fill="#F5E6D3" />
           </svg>
         </div>
       </div>
@@ -161,33 +161,34 @@ export default function AboutSection() {
 
         {/* Mobile Layout */}
         <div className="lg:hidden flex flex-col gap-8 max-w-xl mx-auto">
-          <div className="rounded-3xl overflow-hidden">
-            <Image src={images.main} alt="Главное фото" width={600} height={600} className="w-full object-cover" />
+          {/* we_are.svg над главным фото */}
+          <div className="relative">
+            <div className="mb-4">
+              <img src="/svg/we_are.svg" alt="Мы" className="w-auto h-8 mx-auto" />
+            </div>
+            <div className="rounded-3xl overflow-hidden">
+              <Image src={images.main} alt="Главное фото" width={600} height={600} className="w-full object-cover" />
+            </div>
           </div>
           
           <div className="space-y-3">
-            <h3 className="great-vibes text-5xl" style={{ color: '#C74B50' }}>{passionTitle}</h3>
+            <h3 className="great-vibes text-5xl" style={{ color: '#C74B50' }}>Горим своим делом</h3>
             <p className="text-gray-800 leading-relaxed">{passionText}</p>
           </div>
 
           <div className="rounded-3xl overflow-hidden">
-            <Image src={images.topRight} alt="Верхнее фото" width={600} height={400} className="w-full object-cover" />
+            <Image src={images.topRight} alt="Процесс приготовления" width={600} height={400} className="block w-full object-cover" />
           </div>
-          
+
           <div className="space-y-3">
             <h3 className="great-vibes text-5xl" style={{ color: '#C74B50' }}>{prideTitle}</h3>
             <p className="text-gray-800 leading-relaxed">{prideText}</p>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="rounded-3xl overflow-hidden">
-              <Image src={images.bottomLeft} alt="Фото слева" width={300} height={300} className="w-full object-cover" />
-            </div>
-            <div className="rounded-3xl overflow-hidden">
-              <Image src={images.bottomRight} alt="Фото справа" width={300} height={300} className="w-full object-cover" />
-            </div>
+          <div className="rounded-3xl overflow-hidden">
+            <Image src={images.bottomRight} alt="Работа с тестом" width={600} height={600} className="block w-full object-cover" />
           </div>
-          
+
           <div className="space-y-3">
             <h3 className="great-vibes text-5xl" style={{ color: '#C74B50' }}>{missionTitle}</h3>
             <p className="text-gray-800 leading-relaxed">{missionText}</p>

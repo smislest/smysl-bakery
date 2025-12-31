@@ -1,22 +1,33 @@
-// Переменные окружения для Directus
-export const DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'http://localhost:8055';
-export const DIRECTUS_TOKEN = process.env.NEXT_PUBLIC_DIRECTUS_TOKEN || '';
+import { createDirectus, rest, readItems } from '@directus/sdk';
+
+// Переменные окружения для Directus (с безопасным запасным URL)
+export const DIRECTUS_URL =
+  process.env.NEXT_PUBLIC_DIRECTUS_URL ||
+  process.env.DIRECTUS_URL ||
+  'https://smysl-bakery-directus.onrender.com';
+
+export const DIRECTUS_TOKEN = process.env.NEXT_PUBLIC_DIRECTUS_TOKEN || process.env.DIRECTUS_TOKEN || '';
+
+// Создаём Directus клиент с REST
+const directusClient = createDirectus(DIRECTUS_URL).with(rest());
 
 // Универсальная функция для получения коллекции из Directus
 export async function getCollectionFromDirectus(collection: string) {
-  const response = await fetch(
-    `${DIRECTUS_URL}/items/${collection}`,
-    {
-      headers: {
-        Authorization: `Bearer ${DIRECTUS_TOKEN}`,
-      },
-    }
-  );
-  const data = await response.json();
-  if (data && data.data) {
-    return data.data;
+  try {
+    console.log(`📡 Fetching ${collection} from Directus...`);
+    
+    const response = await directusClient.request(
+      readItems(collection as any, {
+        fields: ['*.*'] as any
+      })
+    );
+    
+    console.log(`✅ Got ${Array.isArray(response) ? response.length : 1} items from ${collection}`);
+    return response;
+  } catch (error) {
+    console.error(`❌ Error fetching collection ${collection}:`, error instanceof Error ? error.message : error);
+    return null;
   }
-  return null;
 }
 
 // ...existing code...

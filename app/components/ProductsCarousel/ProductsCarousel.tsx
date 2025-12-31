@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, useRef, useCallback, useEffect } from "react";
-import { getProductsData } from '../../../lib/productsData';
 import Image from "next/image";
 import { useSpring, animated } from '@react-spring/web';
 import { useDrag } from '@use-gesture/react';
+import { createDirectus, rest, readItems } from '@directus/sdk';
 import styles from './ProductsCarousel.module.css';
 
 interface Product {
@@ -14,29 +14,51 @@ interface Product {
   description: string;
   ingredients?: string;
   weight?: number | string;
-  product_photo?: string | { url: string };
+  product_photo?: { id: string; filename_disk: string } | string;
 }
 
 export default function ProductsCarousel() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || "http://localhost:8055";
+  const DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || "https://smysl-bakery-directus.onrender.com";
 
   useEffect(() => {
-    getProductsData().then(data => {
-      setProducts(data || []);
-    }).catch(e => {
-      console.error("Ошибка загрузки продуктов:", e);
-    }).finally(() => setLoading(false));
-  }, []);
+    async function fetchProducts() {
+      try {
+        const directus = createDirectus(DIRECTUS_URL).with(rest());
+        
+        const data = await directus.request(
+          readItems('products' as any, {
+            fields: [
+              'id',
+              'title',
+              'subtitle',
+              'description',
+              'ingredients',
+              'weight',
+              { product_photo: ['id', 'filename_disk'] }
+            ] as any,
+          })
+        ) as Product[];
+        
+        console.log('🍞 Загружено продуктов:', data?.length || 0);
+        setProducts(data || []);
+      } catch (e) {
+        console.error("Ошибка загрузки продуктов:", e);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchProducts();
+  }, [DIRECTUS_URL]);
 
   const getImageUrl = (photo: Product['product_photo']) => {
     if (!photo) return "/img/placeholder.jpg";
+    if (typeof photo === 'object' && photo.filename_disk) {
+      return `${DIRECTUS_URL}/assets/${photo.filename_disk}`;
+    }
     if (typeof photo === 'string') {
       return `${DIRECTUS_URL}/assets/${photo}`;
-    }
-    if (typeof photo === 'object' && photo.url) {
-      return photo.url;
     }
     return "/img/placeholder.jpg";
   };
@@ -143,7 +165,7 @@ export default function ProductsCarousel() {
     if (!containerRef.current || !products.length) return;
     const container = containerRef.current;
     const cardWidth = container.clientWidth;
-    const gap = 20;
+    const gap = 16;
     container.scrollTo({
       left: index * (cardWidth + gap),
       behavior: 'smooth'
@@ -159,7 +181,7 @@ export default function ProductsCarousel() {
     const container = containerRef.current;
     const scrollLeft = container.scrollLeft;
     const cardWidth = container.clientWidth;
-    const gap = 20;
+    const gap = 16;
     const newIndex = Math.round(scrollLeft / (cardWidth + gap));
     if (newIndex >= 0 && newIndex < products.length && newIndex !== mobileActiveIndex) {
       setMobileActiveIndex(newIndex);
@@ -208,7 +230,7 @@ export default function ProductsCarousel() {
 
   return (
     <section id="products" className="w-full py-12 bg-primary">
-      <div className="max-w-7xl mx-auto px-6 relative">
+      <div className="max-w-7xl mx-auto px-0 md:px-6 relative">
         {/* Навигация */}
         <div className="hidden md:block">
           <button

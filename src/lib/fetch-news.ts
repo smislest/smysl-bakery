@@ -1,4 +1,5 @@
-
+import { newsData } from '../../lib/news';
+import { DIRECTUS_URL, DIRECTUS_TOKEN } from '@/lib/directus';
 
 export interface NewsItem {
 	id: string;
@@ -10,23 +11,26 @@ export interface NewsItem {
 	news_photo: {
 		id: string;
 		filename_disk: string;
-		width?: number;
-		height?: number;
 	} | null;
 }
 
-
 export async function fetchNewsBySlug(slug: string): Promise<NewsItem | null> {
-	const url = `${process.env.DIRECTUS_URL}/items/news?fields=id,slug,title,excerpt,date,content,news_photo.id,news_photo.filename_disk,news_photo.width,news_photo.height&filter[slug][_eq]=${encodeURIComponent(slug)}&limit=1`;
-	const res = await fetch(url, {
-		headers: {
-			Authorization: `Bearer ${process.env.DIRECTUS_TOKEN}`,
-		},
-		cache: 'no-store',
-	});
-	if (!res.ok) {
-		return null;
+
+	try {
+		const url = `${DIRECTUS_URL}/items/news?fields=id,slug,title,excerpt,date,content,news_photo.id,news_photo.filename_disk,news_photo.width,news_photo.height&filter[slug][_eq]=${encodeURIComponent(slug)}&limit=1`;
+		const headers: Record<string, string> = {};
+		if (DIRECTUS_TOKEN) headers.Authorization = `Bearer ${DIRECTUS_TOKEN}`;
+
+		const res = await fetch(url, { headers, cache: 'no-store' });
+		if (!res.ok) {
+			throw new Error(`Failed to fetch news ${slug}: ${res.status}`);
+		}
+		const json = await res.json();
+		const item = json.data?.[0];
+		return item ?? null;
+	} catch (error) {
+		// Fallback to static data if Directus is unavailable or env vars are missing
+		const fallback = newsData.find((n) => n.slug === slug) || null;
+		return fallback;
 	}
-	const json = await res.json();
-	return json.data?.[0] || null;
 }

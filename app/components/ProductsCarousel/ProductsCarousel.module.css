@@ -23,7 +23,7 @@
   .scrollSnapContainer {
     -webkit-overflow-scrolling: touch;
     overscroll-behavior-x: contain;
-    scroll-padding: 0 20px;
+    scroll-padding: 0;
   }
 }
 
@@ -286,10 +286,11 @@
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
   scroll-behavior: smooth;
-  gap: 20px;
-  padding: 16px 20px;
-  margin: 0;
+  gap: 16px;
+  padding: 0 0 0 20px;
+  margin: 0 auto;
   width: 100%;
+  max-width: 100vw;
   overscroll-behavior-x: contain;
 }
 
@@ -305,8 +306,8 @@
 /* ОДИНАКОВАЯ МИНИМАЛЬНАЯ ВЫСОТА ДЛЯ ВСЕХ КАРТОЧЕК */
 .scrollSnapCard {
   flex: 0 0 auto;
-  width: calc(100vw - 80px);
-  max-width: 340px;
+  width: calc(100vw - 60px);
+  max-width: 360px;
   scroll-snap-align: center;
   scroll-snap-stop: always;
   height: auto !important;
