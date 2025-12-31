@@ -14,7 +14,7 @@ export default function Footer() {
           {/* Логотип и иконки */}
           <div>
             <div className="mb-6">
-              <Image src="/svg/logo_white.svg" alt="СМЫСЛ есть" className="h-12" width={60} height={24} />
+              <Image src="/svg/logo_white.svg" alt="СМЫСЛ есть" style={{ height: '64px', width: 'auto' }} width={80} height={32} />
             </div>
             <div className="flex gap-4">
               <a
