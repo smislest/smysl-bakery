@@ -10,7 +10,8 @@ export interface Product {
   description: string;
   ingredients?: string;
   weight?: number | string;
-  product_photo?: string | { url: string };
+  // Может быть: id файла Directus, объект {id, filename_disk} или {url}
+  product_photo?: string | { id: string; filename_disk: string } | { url: string };
 }
 
 export async function getProductsData(): Promise<Product[]> {

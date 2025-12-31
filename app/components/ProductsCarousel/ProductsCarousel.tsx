@@ -14,7 +14,8 @@ interface Product {
   description: string;
   ingredients?: string;
   weight?: number | string;
-  product_photo?: { id: string; filename_disk: string } | string;
+  // Поддерживаем Directus файл (id+filename_disk), строковый id и {url}
+  product_photo?: { id: string; filename_disk: string } | { url: string } | string;
 }
 
 interface ProductsCarouselProps {
@@ -66,8 +67,11 @@ export default function ProductsCarousel({ initialProducts = [] }: ProductsCarou
 
   const getImageUrl = (photo: Product['product_photo']) => {
     if (!photo) return "/img/placeholder.jpg";
-    if (typeof photo === 'object' && photo.filename_disk) {
-      return `${DIRECTUS_URL}/assets/${photo.filename_disk}`;
+    if (typeof photo === 'object') {
+      if ('url' in photo && photo.url) return photo.url;
+      if ('filename_disk' in photo && photo.filename_disk) {
+        return `${DIRECTUS_URL}/assets/${photo.filename_disk}`;
+      }
     }
     if (typeof photo === 'string') {
       return `${DIRECTUS_URL}/assets/${photo}`;
