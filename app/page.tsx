@@ -8,7 +8,7 @@ import { getProductsData } from "../lib/productsData";
 import { getHeroData } from "../lib/heroData";
 
 // Динамический импорт для тяжелых компонентов с SSR
-const ProductsSection = dynamic(() => import("./components/ProductsSection"), {
+const ProductsSection = dynamic(() => import("./components/ProductsSection").then(m => m.default), {
   loading: () => <div className="h-96 bg-gray-100 animate-pulse" />,
   ssr: true,
 });
