@@ -20,7 +20,20 @@ export default function Header() {
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [header] = useState<HeaderData>(headerStatic);
+  const DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || "https://smysl-bakery-directus.onrender.com";
   // fetchHeaderDataClient отключён, используется статика
+
+  const getLogoUrl = (logo: any) => {
+    if (!logo) return "/svg/logo.svg";
+    if (typeof logo === 'string') return logo;
+    if (logo.filename_disk) {
+      return `${DIRECTUS_URL}/assets/${logo.filename_disk}`;
+    }
+    if (logo.url && typeof logo.url === 'string') {
+      return logo.url;
+    }
+    return "/svg/logo.svg";
+  };
 
   useEffect(() => {
     if (isMenuOpen) {
@@ -73,11 +86,7 @@ export default function Header() {
 
           <Link href="/">
             <div className={styles.mobileLogo}>
-              {header.logo && header.logo.url ? (
-                <Image src={header.logo.url} alt="СМЫСЛ есть" width={120} height={60} priority />
-              ) : (
-                <Image src="/img/logo.png" alt="СМЫСЛ есть" width={120} height={60} priority />
-              )}
+              <Image src={getLogoUrl(header.logo)} alt="СМЫСЛ есть" width={120} height={60} priority />
             </div>
           </Link>
         </div>
@@ -107,11 +116,7 @@ export default function Header() {
 
           <Link href="/">
             <div className={styles.desktopLogo}>
-              {header.logo && header.logo.url ? (
-                <Image src={header.logo.url} alt="СМЫСЛ есть" width={120} height={60} priority />
-              ) : (
-                <Image src="/img/logo.png" alt="СМЫСЛ есть" width={120} height={60} priority />
-              )}
+              <Image src={getLogoUrl(header.logo)} alt="СМЫСЛ есть" width={120} height={60} priority />
             </div>
           </Link>
         </div>
@@ -132,11 +137,7 @@ export default function Header() {
             </button>
 
             <div className={styles.menuLogo}>
-              {header.logo && header.logo.url ? (
-                <Image src={header.logo.url} alt="СМЫСЛ есть" width={120} height={60} priority />
-              ) : (
-                <Image src="/img/logo.png" alt="СМЫСЛ есть" width={120} height={60} priority />
-              )}
+              <Image src={getLogoUrl(header.logo)} alt="СМЫСЛ есть" width={120} height={60} priority />
             </div>
           </div>
 
