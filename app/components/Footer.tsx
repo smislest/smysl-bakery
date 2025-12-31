@@ -1,15 +1,9 @@
 import { FaInstagram, FaVk, FaTelegramPlane, FaPhoneAlt, FaEnvelope, FaMapMarkerAlt } from "react-icons/fa";
 import Image from "./Image";
-
-import { useEffect, useState } from "react";
-import { getFooterData } from '../../lib/footerData';
+import footerStatic from "../../content/footer.json";
 
 export default function Footer() {
-  const [footer, setFooter] = useState<any>(null);
-  useEffect(() => {
-    getFooterData().then(setFooter);
-  }, []);
-  if (!footer) return null;
+  const footer = footerStatic;
   return (
     <footer id="contacts" className="w-full py-16" style={{ backgroundColor: '#544a44' }}>
       <div className="max-w-7xl mx-auto px-4">
@@ -17,7 +11,7 @@ export default function Footer() {
           {/* Логотип и иконки */}
           <div>
             <div className="mb-6">
-              <Image src="/svg/logo.svg" alt="СМЫСЛ есть" className="h-12" width={60} height={24} />
+              <Image src="/svg/logo_white.svg" alt="СМЫСЛ есть" className="h-12" width={60} height={24} />
             </div>
             <div className="flex gap-4">
               <a

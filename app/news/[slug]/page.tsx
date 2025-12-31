@@ -111,7 +111,7 @@ export default function NewsPage() {
         <article className="max-w-5xl mx-auto px-6 py-8">
         
         {/* Шапка с хлебными крошками и кнопкой закрытия */}
-        <div className="flex items-start justify-between mb-10">
+        <div className="flex items-start justify-between mb-4">
           <nav className="text-sm text-gray-400">
             <Link href="/" className="hover:text-gray-600 transition">
               Главная
@@ -134,12 +134,12 @@ export default function NewsPage() {
         </div>
 
         {/* Заголовок */}
-        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight max-w-4xl" style={{ color: '#675b53' }}>
+        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-2 leading-tight max-w-4xl" style={{ color: '#675b53' }}>
           {news.title}
         </h1>
 
         {/* Дата */}
-        <time className="block mb-10 text-gray-400 text-base">
+        <time className="block mb-8 text-gray-400 text-base">
           {news.date}
         </time>
 

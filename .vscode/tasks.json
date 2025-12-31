@@ -17,6 +17,13 @@
 			"command": "npm run dev",
 			"isBackground": false,
 			"group": "build"
+		},
+		{
+			"label": "Run Next.js dev server",
+			"type": "shell",
+			"command": "npm run dev",
+			"isBackground": false,
+			"group": "build"
 		}
 	]
 }

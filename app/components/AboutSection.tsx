@@ -23,7 +23,7 @@ export default function AboutSection() {
     getAboutData().then(setAbout).catch(() => setAbout(null));
   }, []);
 
-  const svgTitle = getAssetUrl(about?.svg_title);
+  const svgTitle = "/svg/logo_white.svg";
   const passionTitle = about?.passion_title || 'Мы...';
   const passionText = about?.passion_text || 'Благодаря нашей страсти к инновациям и строгому контролю качества, мы создаём натуральные продукты, которые наполняют жизнь вкусом';
   const prideTitle = about?.pride_title || 'гордимся';
