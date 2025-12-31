@@ -1,33 +1,55 @@
+import dynamic from "next/dynamic";
 import Header from "./components/Header";
-import TestDirectus from "./TestDirectus";
 import HeroSection from "./components/HeroSection";
 import ScrollingIcons from "./components/ScrollingIcons";
-import ProductsSection from "./components/ProductsSection";
-import AboutSectionClient from "./components/AboutSectionClient";
-import NewsSection from "./components/NewsSection";
-import HeartSection from "./components/HeartSection";
 import FooterClient from "./components/FooterClient";
+import { getNewsData } from "../lib/newsData";
+import { getProductsData } from "../lib/productsData";
+import { getHeroData } from "../lib/heroData";
+
+// Динамический импорт для тяжелых компонентов с SSR
+const ProductsSection = dynamic(() => import("./components/ProductsSection"), {
+  loading: () => <div className="h-96 bg-gray-100 animate-pulse" />,
+  ssr: true,
+});
+
+const AboutSectionClient = dynamic(() => import("./components/AboutSectionClient"), {
+  loading: () => <div className="h-96 bg-gray-100 animate-pulse" />,
+  ssr: true,
+});
+
+const NewsSection = dynamic(() => import("./components/NewsSection"), {
+  loading: () => <div className="h-96 bg-gray-100 animate-pulse" />,
+  ssr: true,
+});
+
+const HeartSection = dynamic(() => import("./components/HeartSection"), {
+  loading: () => <div className="h-64 bg-gray-100 animate-pulse" />,
+  ssr: true,
+});
 
 // ISR: обновлять статические страницы каждую минуту
 // На Vercel это работает без проблем с HTTPS
 export const revalidate = 60;
 
 export default async function Home() {
-  // Пример SSR/ISR: можно получать данные через sdk
-  // const header = await sdk.header();
-  // const products = await sdk.products();
-  // ...
+  // SSR/ISR: Загружаем данные на сервере
+  const [newsData, productsData, heroData] = await Promise.all([
+    getNewsData().catch(() => []),
+    getProductsData().catch(() => []),
+    getHeroData().catch(() => null),
+  ]);
+
   return (
     <>
       <Header />
       <main>
-        <HeroSection />
+        <HeroSection initialData={heroData} />
         <ScrollingIcons />
-        <ProductsSection />
+        <ProductsSection initialProducts={productsData} />
         <AboutSectionClient />
-        <NewsSection />
+        <NewsSection initialNews={newsData} />
         <HeartSection />
-        <TestDirectus />
       </main>
       <FooterClient />
     </>

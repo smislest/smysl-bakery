@@ -5,20 +5,34 @@ import Image from "next/image";
 import styles from "./HeroSection.module.css";
 import { useEffect, useState } from "react";
 import { getHeroData } from '../../lib/heroData';
+import type { HeroData } from '../../lib/heroData';
 
-export default function HeroSection() {
+interface HeroSectionProps {
+  initialData?: HeroData | null;
+}
+
+export default function HeroSection({ initialData = null }: HeroSectionProps) {
   const [waveScrolled, setWaveScrolled] = useState(false);
-  const [hero, setHero] = useState<any>(null);
+  const [hero, setHero] = useState<HeroData | null>(initialData);
 
+  // Клиентская загрузка для подстраховки (если серверная не сработала)
   useEffect(() => {
-    getHeroData().then(data => {
-      console.log('✅ Hero data loaded:', data);
-      setHero(data);
-    }).catch(error => {
-      console.error('❌ Hero data error:', error);
-      // оставляем hero null — ниже рендерим fallback, чтобы элемент не исчезал на десктопе
-    });
-  }, []);
+    async function fetchHero() {
+      // Если уже есть данные с сервера, пропускаем
+      if (initialData) {
+        return;
+      }
+
+      try {
+        const data = await getHeroData();
+        console.log('✅ Hero data loaded (client fallback):', data);
+        setHero(data);
+      } catch (error) {
+        console.error('❌ Hero data error:', error);
+      }
+    }
+    fetchHero();
+  }, [initialData]);
 
   useEffect(() => {
     const onScroll = () => {
@@ -66,15 +80,16 @@ export default function HeroSection() {
           src="/svg/muka_mob.svg"
           alt=""
           className={styles.waveSvgMobile}
+          loading="lazy"
         />
       </div>
 
       {/* Декоративные хлеба */}
       <div className={styles.breadsBg} aria-hidden="true">
-        <img src="/img/bread_.png" alt="" className={`${styles.bread} ${styles.breadMain}`} />
-        <img src="/img/bread_1.png" alt="" className={`${styles.bread} ${styles.bread1}`} />
-        <img src="/img/bread_min.png" alt="" className={`${styles.bread} ${styles.breadMin}`} />
-        <img src="/img/bread_micro.png" alt="" className={`${styles.bread} ${styles.breadMicro}`} />
+        <img src="/img/bread_.png" alt="" className={`${styles.bread} ${styles.breadMain}`} loading="lazy" />
+        <img src="/img/bread_1.png" alt="" className={`${styles.bread} ${styles.bread1}`} loading="lazy" />
+        <img src="/img/bread_min.png" alt="" className={`${styles.bread} ${styles.breadMin}`} loading="lazy" />
+        <img src="/img/bread_micro.png" alt="" className={`${styles.bread} ${styles.breadMicro}`} loading="lazy" />
       </div>
 
       {/* Декоративные колосья */}
@@ -84,6 +99,7 @@ export default function HeroSection() {
           alt="Декоративные колосья"
           className="w-full h-auto select-none"
           draggable={false}
+          loading="lazy"
         />
       </div>
       <div className={`${styles.wheatDecor} ${styles.wheatRight}`}>
@@ -92,6 +108,7 @@ export default function HeroSection() {
           alt="Декоративные колосья"
           className="w-full h-auto select-none"
           draggable={false}
+          loading="lazy"
         />
       </div>
 

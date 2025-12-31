@@ -17,13 +17,25 @@ interface Product {
   product_photo?: { id: string; filename_disk: string } | string;
 }
 
-export default function ProductsCarousel() {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
+interface ProductsCarouselProps {
+  initialProducts?: Product[];
+}
+
+export default function ProductsCarousel({ initialProducts = [] }: ProductsCarouselProps) {
+  const [products, setProducts] = useState<Product[]>(initialProducts);
+  const [loading, setLoading] = useState(false);
   const DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || "https://smysl-bakery-directus.onrender.com";
 
+  // Клиентская загрузка для подстраховки (если серверная не сработала)
   useEffect(() => {
     async function fetchProducts() {
+      // Если уже есть данные с сервера, пропускаем
+      if (initialProducts && initialProducts.length > 0) {
+        setLoading(false);
+        return;
+      }
+
+      setLoading(true);
       try {
         const directus = createDirectus(DIRECTUS_URL).with(rest());
         
@@ -41,7 +53,7 @@ export default function ProductsCarousel() {
           })
         ) as Product[];
         
-        console.log('🍞 Загружено продуктов:', data?.length || 0);
+        console.log('🍞 Загружено продуктов (client fallback):', data?.length || 0);
         setProducts(data || []);
       } catch (e) {
         console.error("Ошибка загрузки продуктов:", e);
@@ -50,7 +62,7 @@ export default function ProductsCarousel() {
       }
     }
     fetchProducts();
-  }, [DIRECTUS_URL]);
+  }, [initialProducts, DIRECTUS_URL]);
 
   const getImageUrl = (photo: Product['product_photo']) => {
     if (!photo) return "/img/placeholder.jpg";
@@ -326,6 +338,7 @@ export default function ProductsCarousel() {
                             className={styles.activeImage}
                             sizes="432px"
                             priority
+                            loading="eager"
                           />
                         </div>
                         
@@ -335,6 +348,7 @@ export default function ProductsCarousel() {
                             alt="Gluten Free"
                             fill
                             className="object-contain"
+                            loading="lazy"
                           />
                         </div>
                         
@@ -394,6 +408,7 @@ export default function ProductsCarousel() {
                         width={Math.abs(offset) === 1 ? 260 : 180}
                         height={Math.abs(offset) === 1 ? 220 : 140}
                         className="object-contain drop-shadow-xl"
+                        loading="lazy"
                       />
                     </div>
                   );
@@ -417,6 +432,7 @@ export default function ProductsCarousel() {
                       width={308}
                       height={220}
                       className={styles.mobileImage}
+                      loading={index === mobileActiveIndex ? "eager" : "lazy"}
                     />
                   </div>
                   <div className={styles.mobileIcon}>
@@ -426,6 +442,7 @@ export default function ProductsCarousel() {
                       width={56}
                       height={56}
                       className="object-contain"
+                      loading="lazy"
                     />
                   </div>
                   <div className={styles.mobileContent}>

@@ -1,16 +1,28 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { createDirectus, rest, readItems } from '@directus/sdk';
 import type { NewsItem, NewsImage } from '../../lib/news';
 
-export default function NewsSection() {
-  const [news, setNews] = useState<NewsItem[]>([]);
+interface NewsSectionProps {
+  initialNews?: NewsItem[];
+}
 
+export default function NewsSection({ initialNews = [] }: NewsSectionProps) {
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
+  const [news, setNews] = useState<NewsItem[]>(initialNews);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  // Клиентская загрузка для подстраховки (если серверная не сработала)
   useEffect(() => {
     async function fetchNews() {
+      // Если уже есть данные с сервера, пропускаем
+      if (initialNews && initialNews.length > 0) {
+        return;
+      }
+
       try {
         const DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'https://smysl-bakery-directus.onrender.com';
         const directus = createDirectus(DIRECTUS_URL).with(rest());
@@ -30,14 +42,14 @@ export default function NewsSection() {
           })
         ) as NewsItem[];
         
-        console.log('📰 Fetched news:', data?.length || 0);
+        console.log('📰 Fetched news (client fallback):', data?.length || 0);
         setNews(data || []);
       } catch (e) {
         console.error("Ошибка загрузки новостей:", e);
       }
     }
     fetchNews();
-  }, []);
+  }, [initialNews]);
 
   // Получение URL изображения через filename_disk
   const DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || "https://smysl-bakery-directus.onrender.com";
@@ -46,8 +58,90 @@ export default function NewsSection() {
     return `${DIRECTUS_URL}/assets/${img.filename_disk}`;
   };
 
+  const nextNews = () => {
+    setCurrentIndex((prev: number) => (prev + 1) % news.length);
+  };
 
+  const prevNews = () => {
+    setCurrentIndex((prev: number) => (prev - 1 + news.length) % news.length);
+  };
 
+  const handleDotClick = (index: number) => {
+    // Для мобильных: скроллим к карточке
+    if (scrollContainerRef.current && window.innerWidth <= 768) {
+      const container = scrollContainerRef.current;
+      const cardWidth = container.clientWidth * 0.85;
+      container.scrollTo({
+        left: index * (cardWidth + 20),
+        behavior: 'smooth'
+      });
+    } else {
+      setCurrentIndex(index);
+    }
+  };
+
+  // Обновляем styles для новостей
+  const addNewsScrollSnapStyles = () => {
+    if (typeof window === 'undefined') return;
+    
+    const styleId = 'news-scroll-snap-styles';
+    if (document.getElementById(styleId)) return;
+    
+    const style = document.createElement('style');
+    style.id = styleId;
+    style.textContent = `
+      .news-scroll-container {
+        display: flex;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        scroll-behavior: smooth;
+        gap: 20px;
+        padding: 16px 0 16px 16px;
+        margin: 0 -20px 0 -16px;
+        width: calc(100% + 36px);
+        cursor: grab;
+      }
+      
+      .news-scroll-container:active {
+        cursor: grabbing;
+      }
+      
+      .news-scroll-container::-webkit-scrollbar {
+        display: none;
+      }
+      
+      .news-scroll-container {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+      
+      .news-scroll-card {
+        flex: 0 0 auto;
+        width: 85vw;
+        max-width: 320px;
+        scroll-snap-align: center;
+      }
+      
+      @media (min-width: 768px) {
+        .news-scroll-container {
+          display: none;
+        }
+      }
+      
+      @media (max-width: 768px) {
+        .news-scroll-card * {
+          animation: none !important;
+          transition: none !important;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+  };
+
+  useEffect(() => {
+    addNewsScrollSnapStyles();
+  }, []);
 
 
   return (
@@ -66,64 +160,166 @@ export default function NewsSection() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 relative z-10">
-        {/* Заголовок */}
+        {/* Стрелки управления ТОЛЬКО для десктопа */}
+        <button
+          onClick={prevNews}
+          className="hidden md:flex absolute left-0 top-1/2 w-10 h-10 md:w-12 md:h-12 rounded-full border-2 transition-all flex items-center justify-center cursor-pointer group"
+          style={{
+            borderColor: '#fdebc1',
+            backgroundColor: '#fdebc1',
+            zIndex: 10,
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = '#675b53';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = '#fdebc1';
+          }}
+          aria-label="Предыдущая новость"
+        >
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="12" fill="none" />
+            <path d="M14 6L8 12L14 18" stroke="#675b53" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="group-hover:stroke-[#fdebc1]" />
+          </svg>
+        </button>
+        
+        <button
+          onClick={nextNews}
+          className="hidden md:flex absolute right-0 top-1/2 w-10 h-10 md:w-12 md:h-12 rounded-full border-2 transition-all flex items-center justify-center cursor-pointer group"
+          style={{
+            borderColor: '#fdebc1',
+            backgroundColor: '#fdebc1',
+            zIndex: 10,
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = '#675b53';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = '#fdebc1';
+          }}
+          aria-label="Следующая новость"
+        >
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="12" fill="none" />
+            <path d="M10 6L16 12L10 18" stroke="#675b53" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="group-hover:stroke-[#fdebc1]" />
+          </svg>
+        </button>
+
+        {/* Заголовок и иконка по центру */}
         <div className="mb-8 md:mb-12 flex flex-col items-center justify-center">
-          <Image src="/svg/symbol.svg" alt="" width={80} height={80} className="w-15 h-15 md:w-20 md:h-20 mb-2" />
+          <Image src="/svg/symbol.svg" alt="" width={80} height={80} className="w-15 h-15 md:w-20 md:h-20 mb-2" loading="lazy" />
           <h2 className="text-3xl md:text-5xl font-normal text-white uppercase text-center">
             НАШИ НОВОСТИ
           </h2>
         </div>
 
-        {/* Простая сетка новостей */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {news.slice(0, 6).map((item) => (
-            <Link
-              key={item.slug}
-              href={`/news/${item.slug}`}
-              className="rounded-3xl overflow-hidden hover:shadow-2xl transition-all hover:scale-[1.02] cursor-pointer"
-              style={{ backgroundColor: '#f5f5f0' }}
-            >
-              {/* Изображение с датой */}
-              <div className="relative aspect-[4/3]">
-                <Image
-                  src={getImageUrl(item.news_photo)}
-                  alt={item.title}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                />
-                <div className="absolute top-4 left-4 px-4 py-1.5 rounded-full text-sm font-normal z-10 text-white" style={{ backgroundColor: '#619e5a' }}>
-                  {item.date}
-                </div>
+        {/* Мобильная версия - горизонтальный скролл с CSS Scroll Snap */}
+        <div className="md:hidden">
+          <div ref={scrollContainerRef} className="news-scroll-container">
+            {news.map((item) => (
+              <div key={item.slug} className="news-scroll-card">
+                <Link href={`/news/${item.slug}`} className="w-full h-full rounded-3xl overflow-hidden hover:shadow-2xl transition-all hover:scale-[1.02] cursor-pointer text-left flex flex-col min-h-[420px]" style={{ backgroundColor: '#f5f5f0' }}>
+                  <div className="relative aspect-video overflow-hidden flex-shrink-0">
+                    <Image
+                      src={getImageUrl(item.news_photo)}
+                      alt={item.title}
+                      width={400}
+                      height={300}
+                      className="w-full h-full object-cover"
+                      loading="lazy"
+                    />
+                    <div className="absolute top-4 left-4 px-3 py-1.5 rounded-2xl text-sm font-medium text-white bg-[#619e5a]">
+                      {item.date}
+                    </div>
+                  </div>
+                  <div className="flex-1 p-5 flex flex-col">
+                    <div className="flex-1 space-y-3">
+                      <h3 className="text-lg font-bold leading-tight line-clamp-2" style={{ color: '#675b53' }}>
+                        {item.title}
+                      </h3>
+                      <p className="text-base leading-relaxed line-clamp-4" style={{ color: '#8b7f77' }}>
+                        {item.excerpt}
+                      </p>
+                    </div>
+                    <div className="pt-6 mt-auto">
+                      <span className="font-medium hover:opacity-70 transition-opacity inline-flex items-center gap-1 text-base" style={{ color: '#675b53' }}>
+                        Читать далее →
+                      </span>
+                    </div>
+                  </div>
+                </Link>
               </div>
-              
-              {/* Контент карточки */}
-              <div className="p-6 space-y-3">
-                <h3 className="text-lg md:text-xl font-bold leading-tight line-clamp-2" style={{ color: '#675b53' }}>
-                  {item.title}
-                </h3>
-                <p className="text-sm md:text-base leading-relaxed line-clamp-3" style={{ color: '#8b7f77' }}>
-                  {item.excerpt}
-                </p>
-                <div className="text-sm font-normal hover:opacity-70 transition-opacity inline-flex items-center gap-1 pt-2" style={{ color: '#b0a8a0' }}>
-                  Читать далее →
-                </div>
-              </div>
-            </Link>
+            ))}
+          </div>
+        </div>
+
+        {/* Десктопная версия - карусель из 3 карточек */}
+        <div className="hidden md:grid md:grid-cols-3 gap-6">
+          {(() => {
+            if (news.length === 0) return null;
+            const prevIndex = (currentIndex - 1 + news.length) % news.length;
+            const nextIndex = (currentIndex + 1) % news.length;
+            const visibleIndices = [prevIndex, currentIndex, nextIndex];
+            return visibleIndices.map((index) => {
+              const item = news[index];
+              return (
+                <Link
+                  key={item.slug}
+                  href={`/news/${item.slug}`}
+                  className="rounded-3xl overflow-hidden hover:shadow-2xl transition-all hover:scale-[1.02] cursor-pointer text-left"
+                  style={{ backgroundColor: '#f5f5f0' }}
+                >
+                  <div className="relative">
+                    <div className="absolute top-4 left-4 px-3 py-1.5 rounded-2xl text-sm font-medium z-10 text-white" style={{ backgroundColor: '#619e5a' }}>
+                      {item.date}
+                    </div>
+                    <div className="relative aspect-[4/3] bg-gray-200">
+                      <Image
+                        src={getImageUrl(item.news_photo)}
+                        alt={item.title}
+                        fill
+                        className="object-cover"
+                        loading={index === currentIndex ? "eager" : "lazy"}
+                        priority={item.id === "1"}
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      />
+                    </div>
+                  </div>
+                  <div className="p-5 md:p-6 space-y-3">
+                    <h3 className="text-base md:text-lg font-bold leading-tight line-clamp-2" style={{ color: '#675b53' }}>
+                      {item.title}
+                    </h3>
+                    <p className="text-sm md:text-base leading-relaxed line-clamp-3" style={{ color: '#8b7f77' }}>
+                      {item.excerpt}
+                    </p>
+                    <div className="font-medium hover:opacity-70 transition-opacity inline-flex items-center gap-1" style={{ color: '#675b53' }}>
+                      Читать далее →
+                    </div>
+                  </div>
+                </Link>
+              );
+            });
+          })()}
+        </div>
+
+        {/* Индикаторы */}
+        <div className="hidden md:flex justify-center gap-2 mt-8">
+          {news.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => handleDotClick(index)}
+              className={`h-2 rounded-full transition-all cursor-pointer ${
+                index === currentIndex
+                  ? "w-8"
+                  : "w-2 hover:bg-opacity-70"
+              }`}
+              style={{
+                backgroundColor: index === currentIndex ? '#ffecc6' : 'rgba(255, 236, 198, 0.5)',
+              }}
+            />
           ))}
         </div>
 
-        {/* Кнопка "Все новости" */}
-        {news.length > 6 && (
-          <div className="flex justify-center mt-10">
-            <Link
-              href="/news"
-              className="px-8 py-3 bg-[#fdebc1] text-brown font-medium rounded-full hover:bg-[#fdebc1]/90 transition-colors"
-            >
-              Все новости
-            </Link>
-          </div>
-        )}
       </div>
     </section>
   );
