@@ -32,8 +32,8 @@ export async function getAboutData(): Promise<AboutData | null> {
     
     if (Array.isArray(data) && data.length > 0) {
       item = data[0] as AboutData;
-    } else {
-      item = data as AboutData;
+    } else if (data) {
+      item = data as unknown as AboutData;
     }
     
     if (!item) {
