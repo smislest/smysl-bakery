@@ -2,8 +2,11 @@ import { FaInstagram, FaVk, FaTelegramPlane, FaPhoneAlt, FaEnvelope, FaMapMarker
 import Image from "./Image";
 import footerStatic from "../../content/footer.json";
 
+type FooterLink = { label: string; href: string };
+type FooterData = { text: string; links?: FooterLink[] };
+
 export default function Footer() {
-  const footer = footerStatic;
+  const footer: FooterData = footerStatic;
   return (
     <footer id="contacts" className="w-full py-16" style={{ backgroundColor: '#544a44' }}>
       <div className="max-w-7xl mx-auto px-4">
@@ -116,7 +119,7 @@ export default function Footer() {
         <div className="text-center text-white opacity-70 pt-8 border-t" style={{ borderColor: 'rgba(255, 236, 198, 0.2)' }}>
           {footer.text}
           <div className="flex justify-center gap-4 mt-2">
-            {(footer.links || []).map((link: any) => (
+            {(footer.links || []).map((link) => (
               <a key={link.href} href={link.href} className="underline hover:opacity-80 transition-colors">{link.label}</a>
             ))}
           </div>

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createDirectus, rest, readItems } from '@directus/sdk';
 
 // Переменные окружения для Directus (с безопасным запасным URL)

@@ -7,8 +7,8 @@ import type { AboutData } from '../../lib/aboutData';
 
 const DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'https://smysl-bakery-directus.onrender.com';
 
-function getAssetUrl(file?: string | { id: string }): string {
-  if (!file) return '/img/staf3.png';
+function getAssetUrl(file: string | { id: string } | undefined, fallback: string): string {
+  if (!file) return fallback;
   if (typeof file === 'string') {
     if (file.startsWith('http') || file.startsWith('/')) return file;
     return `${DIRECTUS_URL}/assets/${file}`;
@@ -24,6 +24,13 @@ export default function AboutSection() {
   }, []);
 
   const svgTitle = "/svg/logo_white.svg";
+  const fallbackImages = {
+    main: '/img/staf3.png',
+    topRight: '/img/staf1.png',
+    bottomLeft: '/img/staf3.png',
+    bottomRight: '/img/staf4.png',
+    extra1: '/img/staf5.png',
+  };
   const passionTitle = about?.passion_title || 'Мы...';
   const passionText = about?.passion_text || 'Благодаря нашей страсти к инновациям и строгому контролю качества, мы создаём натуральные продукты, которые наполняют жизнь вкусом';
   const prideTitle = about?.pride_title || 'гордимся';
@@ -32,15 +39,15 @@ export default function AboutSection() {
   const missionText = about?.mission_text || 'Мы стремимся к тому, чтобы питание стало ОСОЗНАННЫМ, понятным и по-настоящему вкусным — Вся компромисса между пользой и удовольствием';
   
   const images = {
-    main: getAssetUrl(about?.image_main),
-    topRight: getAssetUrl(about?.image_top_right),
-    bottomLeft: getAssetUrl(about?.image_bottom_left),
-    bottomRight: getAssetUrl(about?.image_bottom_right),
-    extra1: getAssetUrl(about?.image_extra1),
+    main: getAssetUrl(about?.image_main, fallbackImages.main),
+    topRight: getAssetUrl(about?.image_top_right, fallbackImages.topRight),
+    bottomLeft: getAssetUrl(about?.image_bottom_left, fallbackImages.bottomLeft),
+    bottomRight: getAssetUrl(about?.image_bottom_right, fallbackImages.bottomRight),
+    extra1: getAssetUrl(about?.image_extra1, fallbackImages.extra1),
   };
 
   return (
-    <section id="about" className="w-full relative" style={{ paddingBottom: '100px' }}>
+    <section id="about" className="w-full relative" style={{ paddingBottom: '100px', zIndex: 10 }}>
       {/* Заголовок на зелёном фоне */}
       <div className="container mx-auto px-4 py-12 relative z-10">
         <div className="flex items-center justify-center gap-4 mb-8">
@@ -53,20 +60,21 @@ export default function AboutSection() {
       </div>
 
       {/* Бежевый фон с изгибами - абсолютное позиционирование */}
-      <div className="absolute left-0 w-full z-0 md:top-[400px] top-[500px]" style={{ backgroundColor: '#F5E6D3', bottom: 0 }}>
+      <div className="absolute left-0 w-full z-0 md:top-[300px] top-[500px]" style={{ backgroundColor: '#F5E6D3', bottom: 0 }}>
         {/* SVG форма для верхнего изгиба - Desktop */}
-        <div className="hidden md:block absolute top-0 left-0 w-full" style={{ height: '160px', transform: 'translateY(-159px)' }}>
-          <svg viewBox="0 0 1920 160" preserveAspectRatio="none" className="w-full h-full">
-            <path d="M0,0 C0,66.3 429.81,120 960,120 C1490.19,120 1920,66.3 1920,0 L1920,160 L0,160 Z" fill="#F5E6D3" />
+        <div className="hidden md:block absolute top-0 left-0 w-full" style={{ height: '70px', transform: 'translateY(-69px)' }}>
+          <svg viewBox="0 0 1920 70" preserveAspectRatio="none" className="w-full h-full">
+            <path d="M0,0 C0,20 429.81,70 960,70 C1490.19,70 1920,20 1920,0 L1920,70 L0,70 Z" fill="#F5E6D3" />
           </svg>
         </div>
         
         {/* SVG форма для верхнего изгиба - Mobile (более плавный изгиб) */}
-        <div className="md:hidden absolute top-0 left-0 w-full" style={{ height: '80px', transform: 'translateY(-79px)' }}>
-          <svg viewBox="0 0 1920 80" preserveAspectRatio="none" className="w-full h-full">
-            <path d="M0,0 C0,20 429.81,40 960,40 C1490.19,40 1920,20 1920,0 L1920,80 L0,80 Z" fill="#F5E6D3" />
+        <div className="md:hidden absolute top-0 left-0 w-full" style={{ height: '35px', transform: 'translateY(-34px)' }}>
+          <svg viewBox="0 0 1920 35" preserveAspectRatio="none" className="w-full h-full">
+            <path d="M0,0 C0,10 429.81,35 960,35 C1490.19,35 1920,10 1920,0 L1920,35 L0,35 Z" fill="#F5E6D3" />
           </svg>
         </div>
+
       </div>
 
       {/* Контент поверх бежевого фона */}
@@ -115,7 +123,7 @@ export default function AboutSection() {
               
               {/* Pride text */}
               <div className="space-y-2">
-                <h3 className="great-vibes text-5xl" style={{ color: '#C74B50' }}>{prideTitle}</h3>
+                <h3 className="great-vibes text-5xl" style={{ color: '#611717' }}>{prideTitle}</h3>
                 <p className="text-gray-800 text-base leading-relaxed">{prideText}</p>
               </div>
 
@@ -140,7 +148,7 @@ export default function AboutSection() {
                   <img src="/svg/we_are.svg" alt="Мы" style={{ width: 'auto', height: '96px', transform: 'translateY(-150px)' }} />
                 </div>
                 <div className="p-8 pt-0 pb-0">
-                  <h4 className="great-vibes text-5xl mb-4" style={{ color: '#C74B50' }}>Горим своим делом</h4>
+                  <h4 className="great-vibes text-5xl mb-4" style={{ color: '#611717' }}>Горим своим делом</h4>
                   <p className="text-gray-800 text-base leading-relaxed">{passionText}</p>
                 </div>
               </div>
@@ -158,7 +166,7 @@ export default function AboutSection() {
               
               {/* Mission text */}
               <div className="space-y-2 px-8">
-                <h3 className="great-vibes text-5xl" style={{ color: '#C74B50' }}>{missionTitle}</h3>
+                <h3 className="great-vibes text-5xl" style={{ color: '#611717' }}>{missionTitle}</h3>
                 <p className="text-gray-800 text-base leading-relaxed">{missionText}</p>
               </div>
             </div>
@@ -178,7 +186,7 @@ export default function AboutSection() {
           </div>
           
           <div className="space-y-3">
-            <h3 className="great-vibes text-5xl" style={{ color: '#C74B50' }}>Горим своим делом</h3>
+            <h3 className="great-vibes text-5xl" style={{ color: '#611717' }}>Горим своим делом</h3>
             <p className="text-gray-800 text-base leading-relaxed">{passionText}</p>
           </div>
 
@@ -187,7 +195,7 @@ export default function AboutSection() {
           </div>
 
           <div className="space-y-3">
-            <h3 className="great-vibes text-5xl" style={{ color: '#C74B50' }}>{prideTitle}</h3>
+            <h3 className="great-vibes text-5xl" style={{ color: '#611717' }}>{prideTitle}</h3>
             <p className="text-gray-800 text-base leading-relaxed">{prideText}</p>
           </div>
 
@@ -196,7 +204,7 @@ export default function AboutSection() {
           </div>
 
           <div className="space-y-3">
-            <h3 className="great-vibes text-5xl" style={{ color: '#C74B50' }}>{missionTitle}</h3>
+            <h3 className="great-vibes text-5xl" style={{ color: '#611717' }}>{missionTitle}</h3>
             <p className="text-gray-800 text-base leading-relaxed">{missionText}</p>
           </div>
         </div>

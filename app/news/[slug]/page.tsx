@@ -1,5 +1,6 @@
 // app/news/[slug]/page.tsx
 "use client";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";

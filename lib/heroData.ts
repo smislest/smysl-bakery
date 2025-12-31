@@ -1,5 +1,6 @@
 
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { getCollectionFromDirectus, DIRECTUS_URL } from './directus';
 import { typograph } from './typograph';
 

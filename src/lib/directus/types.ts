@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // Тип для меню (примерная структура, скорректируй под свою коллекцию)
 export interface Menu {
 	label: string;

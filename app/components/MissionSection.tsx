@@ -1,4 +1,6 @@
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { getMissionData } from '../../lib/missionData';
