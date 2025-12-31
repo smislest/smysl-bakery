@@ -6,6 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { createDirectus, rest, readItems } from '@directus/sdk';
 import type { NewsItem, NewsImage } from '../../lib/news';
+import { newsData as fallbackNews } from '../../lib/news';
 import FooterClient from "../components/FooterClient";
 
 export default function NewsListPage() {
@@ -34,9 +35,10 @@ export default function NewsListPage() {
         ) as NewsItem[];
         
         console.log('📰 Загружено новостей:', data?.length || 0);
-        setNews(data || []);
+        setNews((data && data.length > 0 ? data : fallbackNews) || []);
       } catch (e) {
         console.error("Ошибка загрузки новостей:", e);
+        setNews(fallbackNews);
       } finally {
         setLoading(false);
       }

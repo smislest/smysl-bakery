@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createDirectus, rest, readItems } from '@directus/sdk';
+import { Agent, setGlobalDispatcher } from 'undici';
 
 // Переменные окружения для Directus (с безопасным запасным URL)
 export const DIRECTUS_URL =
@@ -8,6 +9,15 @@ export const DIRECTUS_URL =
   'https://smysl-bakery-directus.onrender.com';
 
 export const DIRECTUS_TOKEN = process.env.NEXT_PUBLIC_DIRECTUS_TOKEN || process.env.DIRECTUS_TOKEN || '';
+
+// На сервере отключаем кэш TLS сессий (ошибка ERR_SSL_INVALID_SESSION_ID на некоторых хостингах)
+if (typeof window === 'undefined') {
+  try {
+    setGlobalDispatcher(new Agent({ connect: { maxCachedSessions: 0 } }));
+  } catch (err) {
+    console.error('Failed to set undici agent for Directus:', err);
+  }
+}
 
 // Создаём Directus клиент с REST
 const directusClient = createDirectus(DIRECTUS_URL).with(rest());

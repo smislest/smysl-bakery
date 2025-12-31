@@ -10,8 +10,8 @@ export async function getNewsData(): Promise<NewsItem[]> {
     console.log('📦 Directus response:', data ? `${data.length} items` : 'null');
     
     if (!Array.isArray(data) || data.length === 0) {
-      console.log('⚠️ No news data from Directus, returning empty array');
-      return [];
+      console.log('⚠️ No news data from Directus, using local fallback');
+      return newsData;
     }
 
     const filtered = data.filter((item) => item.slug);
@@ -30,6 +30,6 @@ export async function getNewsData(): Promise<NewsItem[]> {
       })) as NewsItem[];
   } catch (error) {
     console.error('❌ Error in getNewsData:', error instanceof Error ? error.message : error);
-    return [];
+    return newsData;
   }
 }

@@ -9,6 +9,7 @@ import Link from "next/link";
 import DOMPurify from 'isomorphic-dompurify';
 import { createDirectus, rest, readItems } from '@directus/sdk';
 import type { NewsItem } from '../../../lib/news';
+import { newsData as fallbackNews } from '../../../lib/news';
 import FooterClient from "../../components/FooterClient";
 
 export default function NewsPage() {
@@ -41,23 +42,31 @@ export default function NewsPage() {
           })
         ) as NewsItem[];
         
-        setAllNews(allData || []);
+        setAllNews((allData && allData.length > 0 ? allData : fallbackNews) || []);
         
         // Находим текущую новость
-        const currentNews = allData.find(n => n.slug === slug);
+        const currentNews = (allData && allData.length > 0 ? allData : fallbackNews).find(n => n.slug === slug);
         setNews(currentNews || null);
         
         // Находим следующую новость
         if (currentNews) {
-          const currentIndex = allData.findIndex(n => n.slug === slug);
-          const next = allData[currentIndex + 1] || allData[0]; // Циклическая навигация
+          const pool = (allData && allData.length > 0 ? allData : fallbackNews);
+          const currentIndex = pool.findIndex(n => n.slug === slug);
+          const next = pool[currentIndex + 1] || pool[0]; // Циклическая навигация
           setNextNews(next);
         }
         
         console.log('📄 Загружена новость:', currentNews?.title || 'не найдена');
       } catch (e) {
         console.error("Ошибка загрузки новости:", e);
-        setNews(null);
+        const fallback = fallbackNews.find(n => n.slug === slug) || null;
+        setAllNews(fallbackNews);
+        setNews(fallback);
+        if (fallback) {
+          const idx = fallbackNews.findIndex(n => n.slug === slug);
+          const next = fallbackNews[idx + 1] || fallbackNews[0];
+          setNextNews(next || null);
+        }
       } finally {
         setLoading(false);
       }
