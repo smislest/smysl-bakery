@@ -15,11 +15,20 @@ export default async function NewsPage(props: PageProps) {
   const params = await props.params;
   const slug = params.slug;
   
+  console.log('📄 Loading news page for slug:', slug);
+  
   // Загружаем все новости на сервере (Directus → Supabase → fallback)
-  const allNews = await getNewsData().catch(() => fallbackNews);
+  const allNews = await getNewsData().catch((err) => {
+    console.error('❌ Error loading news data:', err);
+    return fallbackNews;
+  });
+  
+  console.log('📦 Total news loaded:', allNews.length);
   
   // Находим текущую новость
   const news = allNews.find(n => n.slug === slug) || null;
+  
+  console.log('📰 Found news:', news ? news.title : 'NOT FOUND');
   
   // Находим следующую новость
   let nextNews: NewsItem | null = null;
@@ -49,7 +58,7 @@ export default async function NewsPage(props: PageProps) {
     ? `${DIRECTUS_URL}/assets/${news.news_photo.filename_disk}`
     : '/img/placeholder.jpg';
 
-  const cleanContent = DOMPurify.sanitize(news.content);
+  const cleanContent = DOMPurify.sanitize(news.content || '');
 
   return (
     <>
