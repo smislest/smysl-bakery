@@ -4,7 +4,6 @@ import Link from "next/link";
 import Image from "next/image";
 import styles from "./HeroSection.module.css";
 import { useEffect, useState } from "react";
-import { getHeroData } from '../../lib/heroData';
 import type { HeroData } from '../../lib/heroData';
 
 interface HeroSectionProps {
@@ -15,20 +14,8 @@ export default function HeroSection({ initialData = null }: HeroSectionProps) {
   const [waveScrolled, setWaveScrolled] = useState(false);
   const [hero, setHero] = useState<HeroData | null>(initialData);
 
-  // Клиентская загрузка для подстраховки (если серверная не сработала)
   useEffect(() => {
-    async function fetchHero() {
-      try {
-        const data = await getHeroData();
-        console.log('✅ Hero data loaded (client refresh):', data);
-        if (data) {
-          setHero(data);
-        }
-      } catch (error) {
-        console.error('❌ Hero data error:', error);
-      }
-    }
-    fetchHero();
+    setHero(initialData);
   }, [initialData]);
 
   useEffect(() => {

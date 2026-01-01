@@ -4,7 +4,6 @@
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { createDirectus, rest, readItems } from '@directus/sdk';
 import type { NewsItem, NewsImage } from '../../lib/news';
 
 interface NewsSectionProps {
@@ -33,56 +32,11 @@ export default function NewsSection({ initialNews = [] }: NewsSectionProps) {
       } catch (err) {
         console.warn('News cache read error:', err);
       }
-
-      try {
-        const DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'https://smysl-bakery-directus.onrender.com';
-        const directus = createDirectus(DIRECTUS_URL).with(rest());
-        
-        const data = await directus.request(
-          readItems('news' as any, {
-            fields: [
-              'id',
-              'slug',
-              'title',
-              'excerpt',
-              { news_photo: ['id', 'filename_disk'] },
-              'date',
-              'content'
-            ] as any,
-            sort: ['-date'] as any,
-          })
-        ) as NewsItem[];
-        
-        console.log('📰 Fetched news (client refresh):', data?.length || 0);
-        if (data && data.length > 0) {
-          setNews(data);
-          try {
-            if (typeof window !== 'undefined') {
-              localStorage.setItem(cacheKey, JSON.stringify(data));
-            }
-          } catch (err) {
-            console.warn('News cache write error:', err);
-          }
-        }
-      } catch (e) {
-        console.error("Ошибка загрузки новостей:", e);
-        try {
-          if (typeof window !== 'undefined') {
-            const cached = localStorage.getItem('news-cache-v1');
-            if (cached) {
-              const parsed = JSON.parse(cached) as NewsItem[];
-              if (Array.isArray(parsed) && parsed.length > 0) {
-                setNews(parsed);
-              }
-            }
-          }
-        } catch (err) {
-          console.warn('News cache fallback error:', err);
-        }
-      }
     }
-    fetchNews();
-  }, [initialNews, news.length]);
+    if (news.length === 0) {
+      fetchNews();
+    }
+  }, [news.length]);
 
   // Получение URL изображения через filename_disk
   const DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || "https://smysl-bakery-directus.onrender.com";
