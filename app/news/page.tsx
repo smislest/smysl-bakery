@@ -31,7 +31,7 @@ export default function NewsListPage() {
         const DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'https://smysl-bakery-directus.onrender.com';
         const directus = createDirectus(DIRECTUS_URL).with(rest());
         
-        console.log('🔍 [Firefox check] Попытка загрузки новостей из Directus...');
+        console.log('🔍 Попытка загрузки новостей из Directus...');
         const data = await directus.request(
           readItems('news' as any, {
             fields: [
