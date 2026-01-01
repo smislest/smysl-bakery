@@ -9,6 +9,27 @@ import type { NewsItem, NewsImage } from '../../lib/news';
 import { newsData as fallbackNews } from '../../lib/news';
 import FooterClient from "../components/FooterClient";
 
+// Попытка загрузить из Supabase S3 (с клиента это может не работать, но попытаемся)
+async function fetchFromSupabase(): Promise<NewsItem[] | null> {
+  try {
+    const endpoint = 'https://cjvtmhjdvyobtomsorwo.storage.supabase.co/storage/v1/s3';
+    const key = 'news.json';
+    const url = `${endpoint}/${key}`;
+    
+    const response = await fetch(url);
+    if (!response.ok) return null;
+    
+    const data = await response.json() as NewsItem[];
+    if (Array.isArray(data) && data.length > 0) {
+      console.log('📦 Загружено новостей из Supabase fallback:', data.length);
+      return data;
+    }
+  } catch (err) {
+    console.log('Supabase fallback недоступен с клиента');
+  }
+  return null;
+}
+
 export default function NewsListPage() {
   const [news, setNews] = useState<NewsItem[]>(fallbackNews);
   const [loading, setLoading] = useState(true);
@@ -60,7 +81,26 @@ export default function NewsListPage() {
         }
       } catch (e) {
         console.error("Ошибка загрузки новостей из Directus:", e);
-        console.log('📦 Используем fallback новости');
+        console.log('📦 Пытаемся загрузить из Supabase fallback...');
+        
+        // Попытка загрузить из Supabase fallback
+        const supabaseData = await fetchFromSupabase();
+        if (supabaseData && supabaseData.length > 0) {
+          console.log('✅ Используем Supabase fallback');
+          setNews(supabaseData);
+          try {
+            if (typeof window !== 'undefined') {
+              localStorage.setItem(cacheKey, JSON.stringify(supabaseData));
+            }
+          } catch (err) {
+            console.warn('News cache write error:', err);
+          }
+          setLoading(false);
+          return;
+        }
+        
+        // Если Supabase не доступен, используем локальный кэш или fallback
+        console.log('📦 Используем локальный fallback новости');
         try {
           const cached = typeof window !== 'undefined' ? localStorage.getItem(cacheKey) : null;
           if (cached) {
