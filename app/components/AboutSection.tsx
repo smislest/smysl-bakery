@@ -25,8 +25,8 @@ export default function AboutSection() {
 
   const svgTitle = "/svg/logo_white.svg";
   const fallbackImages = {
-    main: '/img/staf3.png',
-    topRight: '/img/staf1.png',
+    main: '/img/staf1.png',
+    topRight: '/img/staf2.png',
     bottomLeft: '/img/staf3.png',
     bottomRight: '/img/staf4.png',
     extra1: '/img/staf5.png',
@@ -36,7 +36,7 @@ export default function AboutSection() {
   const prideTitle = about?.pride_title || 'гордимся';
   const prideText = about?.pride_text || 'Мы с гордостью предлагаем широкий ассортимент вкусной и натуральной выпечки на безглютеновой основе';
   const missionTitle = about?.mission_title || 'наша миссия';
-  const missionText = about?.mission_text || 'Мы стремимся к тому, чтобы питание стало ОСОЗНАННЫМ, понятным и по-настоящему вкусным — Вся компромисса между пользой и удовольствием';
+  const missionText = about?.mission_text || 'Мы стремимся к тому, чтобы питание стало ОСОЗНАННЫМ, понятным и по-настоящему вкусным — Без компромисса между пользой и удовольствием';
   
   const images = {
     main: getAssetUrl(about?.image_main, fallbackImages.main),
