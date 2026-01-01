@@ -29,8 +29,8 @@ export interface AboutData {
 const localFallback: AboutData = {
   ...(aboutFallback as AboutData),
   svg_title: '/svg/logo_white.svg',
-  image_main: '/img/staf3.png',
-  image_top_right: '/img/staf1.png',
+  image_main: '/img/staf1.png',
+  image_top_right: '/img/staf2.png',
   image_bottom_left: '/img/staf3.png',
   image_bottom_right: '/img/staf4.png',
   image_extra1: '/img/staf5.png',
@@ -41,8 +41,8 @@ function withImageDefaults(item: AboutData): AboutData {
   return {
     ...item,
     svg_title: item.svg_title || '/svg/logo_white.svg',
-    image_main: item.image_main || '/img/staf3.png',
-    image_top_right: item.image_top_right || '/img/staf1.png',
+    image_main: item.image_main || '/img/staf1.png',
+    image_top_right: item.image_top_right || '/img/staf2.png',
     image_bottom_left: item.image_bottom_left || '/img/staf3.png',
     image_bottom_right: item.image_bottom_right || '/img/staf4.png',
     image_extra1: item.image_extra1 || '/img/staf5.png',

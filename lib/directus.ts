@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createDirectus, rest, readItems } from '@directus/sdk';
-import { Agent, setGlobalDispatcher } from 'undici';
 
 // Переменные окружения для Directus (с безопасным запасным URL)
 export const DIRECTUS_URL =
@@ -11,13 +10,22 @@ export const DIRECTUS_URL =
 export const DIRECTUS_TOKEN = process.env.NEXT_PUBLIC_DIRECTUS_TOKEN || process.env.DIRECTUS_TOKEN || '';
 
 // На сервере отключаем кэш TLS сессий (ошибка ERR_SSL_INVALID_SESSION_ID на некоторых хостингах)
-if (typeof window === 'undefined') {
-  try {
-    setGlobalDispatcher(new Agent({ connect: { maxCachedSessions: 0 } }));
-  } catch (err) {
-    console.error('Failed to set undici agent for Directus:', err);
+const initializeUndiciAgent = async () => {
+  if (typeof window === 'undefined') {
+    try {
+      // Динамический импорт undici только на сервере
+      const { Agent, setGlobalDispatcher } = await import('undici');
+      setGlobalDispatcher(new Agent({ connect: { maxCachedSessions: 0 } }));
+    } catch (err) {
+      console.warn('Failed to configure undici agent for Directus:', err instanceof Error ? err.message : err);
+    }
   }
-}
+};
+
+// Инициализируем при импорте (только на сервере)
+initializeUndiciAgent().catch(err => {
+  console.warn('Error initializing undici:', err instanceof Error ? err.message : err);
+});
 
 // Создаём Directus клиент с REST
 const directusClient = createDirectus(DIRECTUS_URL).with(rest());
