@@ -1,123 +1,11 @@
-"use client";
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
-import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { createDirectus, rest, readItems } from '@directus/sdk';
 import type { NewsItem, NewsImage } from '../../lib/news';
-import { newsData as fallbackNews } from '../../lib/news';
+import { getNewsData } from '../../lib/newsData';
 import FooterClient from "../components/FooterClient";
 
-// Попытка загрузить из Supabase S3 (с клиента это может не работать, но попытаемся)
-async function fetchFromSupabase(): Promise<NewsItem[] | null> {
-  try {
-    const endpoint = 'https://cjvtmhjdvyobtomsorwo.storage.supabase.co/storage/v1/s3';
-    const key = 'news.json';
-    const url = `${endpoint}/${key}`;
-    
-    const response = await fetch(url);
-    if (!response.ok) return null;
-    
-    const data = await response.json() as NewsItem[];
-    if (Array.isArray(data) && data.length > 0) {
-      console.log('📦 Загружено новостей из Supabase fallback:', data.length);
-      return data;
-    }
-  } catch (err) {
-    console.log('Supabase fallback недоступен с клиента');
-  }
-  return null;
-}
-
-export default function NewsListPage() {
-  const [news, setNews] = useState<NewsItem[]>(fallbackNews);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchNews() {
-      const cacheKey = 'news-cache-v1';
-      try {
-        const cached = typeof window !== 'undefined' ? localStorage.getItem(cacheKey) : null;
-        if (cached) {
-          const parsed = JSON.parse(cached) as NewsItem[];
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            setNews(parsed);
-          }
-        }
-      } catch (err) {
-        console.warn('News cache read error:', err);
-      }
-      try {
-        const DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'https://smysl-bakery-directus.onrender.com';
-        const directus = createDirectus(DIRECTUS_URL).with(rest());
-        
-        console.log('🔍 Попытка загрузки новостей из Directus...');
-        const data = await directus.request(
-          readItems('news' as any, {
-            fields: [
-              'id',
-              'slug',
-              'title',
-              'excerpt',
-              { news_photo: ['id', 'filename_disk'] },
-              'date',
-              'content'
-            ] as any,
-            sort: ['-date'] as any,
-          })
-        ) as NewsItem[];
-        
-        console.log('📰 Загружено новостей из Directus:', data?.length || 0);
-        if (data && data.length > 0) {
-          setNews(data);
-          try {
-            if (typeof window !== 'undefined') {
-              localStorage.setItem(cacheKey, JSON.stringify(data));
-            }
-          } catch (err) {
-            console.warn('News cache write error:', err);
-          }
-        }
-      } catch (e) {
-        console.error("Ошибка загрузки новостей из Directus:", e);
-        console.log('📦 Пытаемся загрузить из Supabase fallback...');
-        
-        // Попытка загрузить из Supabase fallback
-        const supabaseData = await fetchFromSupabase();
-        if (supabaseData && supabaseData.length > 0) {
-          console.log('✅ Используем Supabase fallback');
-          setNews(supabaseData);
-          try {
-            if (typeof window !== 'undefined') {
-              localStorage.setItem(cacheKey, JSON.stringify(supabaseData));
-            }
-          } catch (err) {
-            console.warn('News cache write error:', err);
-          }
-          setLoading(false);
-          return;
-        }
-        
-        // Если Supabase не доступен, используем локальный кэш или fallback
-        console.log('📦 Используем локальный fallback новости');
-        try {
-          const cached = typeof window !== 'undefined' ? localStorage.getItem(cacheKey) : null;
-          if (cached) {
-            const parsed = JSON.parse(cached) as NewsItem[];
-            if (Array.isArray(parsed) && parsed.length > 0) {
-              setNews(parsed);
-            }
-          }
-        } catch (err) {
-          console.warn('News cache fallback error:', err);
-        }
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchNews();
-  }, []);
+export default async function NewsListPage() {
+  const news = await getNewsData();
 
   const DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'https://smysl-bakery-directus.onrender.com';
 
@@ -125,25 +13,6 @@ export default function NewsListPage() {
     if (!img || !img.filename_disk) return "/img/placeholder.jpg";
     return `${DIRECTUS_URL}/assets/${img.filename_disk}`;
   };
-
-  if (loading) {
-    return (
-      <>
-        <section className="max-w-6xl mx-auto py-12 px-6 bg-white">
-          <nav className="mb-6 text-sm text-gray-400">
-            <Link href="/" className="hover:text-gray-600 transition">Главная</Link>
-            <span className="mx-2">•</span>
-            <span>Новости</span>
-          </nav>
-          <h1 className="text-4xl md:text-5xl font-bold mb-12" style={{ color: '#675b53' }}>Новости</h1>
-          <div className="text-center py-20">
-            <p className="text-gray-600 text-lg">Загрузка новостей...</p>
-          </div>
-        </section>
-        <FooterClient />
-      </>
-    );
-  }
 
   return (
     <>
