@@ -1,95 +1,30 @@
 // app/news/[slug]/page.tsx
-"use client";
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
-import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import DOMPurify from 'isomorphic-dompurify';
-import { createDirectus, rest, readItems } from '@directus/sdk';
 import type { NewsItem } from '../../../lib/news';
+import { getNewsData } from '../../../lib/newsData';
 import { newsData as fallbackNews } from '../../../lib/news';
 import FooterClient from "../../components/FooterClient";
 
-export default function NewsPage() {
-  const params = useParams();
-  const slug = params.slug as string;
-  const [news, setNews] = useState<NewsItem | null>(null);
-  const [allNews, setAllNews] = useState<NewsItem[]>([]);
-  const [nextNews, setNextNews] = useState<NewsItem | null>(null);
-  const [loading, setLoading] = useState(true);
+interface PageProps {
+  params: Promise<{ slug: string }>;
+}
 
-  useEffect(() => {
-    async function fetchNews() {
-      try {
-        const DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'https://smysl-bakery-directus.onrender.com';
-        const directus = createDirectus(DIRECTUS_URL).with(rest());
-        
-        // Загружаем все новости для навигации
-        const allData = await directus.request(
-          readItems('news' as any, {
-            fields: [
-              'id',
-              'slug',
-              'title',
-              'excerpt',
-              { news_photo: ['id', 'filename_disk'] },
-              'date',
-              'content'
-            ] as any,
-            sort: ['-date'] as any,
-          })
-        ) as NewsItem[];
-        
-        setAllNews((allData && allData.length > 0 ? allData : fallbackNews) || []);
-        
-        // Находим текущую новость
-        const currentNews = (allData && allData.length > 0 ? allData : fallbackNews).find(n => n.slug === slug);
-        setNews(currentNews || null);
-        
-        // Находим следующую новость
-        if (currentNews) {
-          const pool = (allData && allData.length > 0 ? allData : fallbackNews);
-          const currentIndex = pool.findIndex(n => n.slug === slug);
-          const next = pool[currentIndex + 1] || pool[0]; // Циклическая навигация
-          setNextNews(next);
-        }
-        
-        console.log('📄 Загружена новость:', currentNews?.title || 'не найдена');
-      } catch (e) {
-        console.error("Ошибка загрузки новости:", e);
-        const fallback = fallbackNews.find(n => n.slug === slug) || null;
-        setAllNews(fallbackNews);
-        setNews(fallback);
-        if (fallback) {
-          const idx = fallbackNews.findIndex(n => n.slug === slug);
-          const next = fallbackNews[idx + 1] || fallbackNews[0];
-          setNextNews(next || null);
-        }
-      } finally {
-        setLoading(false);
-      }
-    }
-    if (slug) fetchNews();
-  }, [slug]);
-
-  // Скролл вверх при смене новости
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, [slug]);
-
-  if (loading) {
-    return (
-      <>
-        <div className="min-h-screen bg-white">
-          <div className="max-w-5xl mx-auto py-20 px-6 text-center">
-            <p className="text-gray-500 text-lg">Загрузка новости...</p>
-          </div>
-        </div>
-        <FooterClient />
-      </>
-    );
+export default async function NewsPage({ params }: PageProps) {
+  const { slug } = await params;
+  
+  // Загружаем все новости на сервере (Directus → Supabase → fallback)
+  const allNews = await getNewsData().catch(() => fallbackNews);
+  
+  // Находим текущую новость
+  const news = allNews.find(n => n.slug === slug) || null;
+  
+  // Находим следующую новость
+  let nextNews: NewsItem | null = null;
+  if (news) {
+    const currentIndex = allNews.findIndex(n => n.slug === slug);
+    nextNews = allNews[currentIndex + 1] || allNews[0] || null; // Циклическая навигация
   }
 
   if (!news) {
