@@ -8,11 +8,13 @@ import { newsData as fallbackNews } from '../../../lib/news';
 import FooterClient from "../../components/FooterClient";
 
 interface PageProps {
-  params: Promise<{ slug: string }>;
+  params: { slug: string } | Promise<{ slug: string }>;
 }
 
 export default async function NewsPage({ params }: PageProps) {
-  const { slug } = await params;
+  // Handle both Promise and direct params (Next.js version compatibility)
+  const resolvedParams = params instanceof Promise ? await params : params;
+  const { slug } = resolvedParams;
   
   // Загружаем все новости на сервере (Directus → Supabase → fallback)
   const allNews = await getNewsData().catch(() => fallbackNews);
