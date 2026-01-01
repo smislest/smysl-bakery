@@ -1,11 +1,11 @@
 // app/news/[slug]/page.tsx
 import Image from "next/image";
 import Link from "next/link";
-import DOMPurify from 'isomorphic-dompurify';
 import type { NewsItem } from '../../../lib/news';
 import { getNewsData } from '../../../lib/newsData';
 import { newsData as fallbackNews } from '../../../lib/news';
 import FooterClient from "../../components/FooterClient";
+import SafeContent from "../../components/SafeContent";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -58,8 +58,6 @@ export default async function NewsPage(props: PageProps) {
     ? `${DIRECTUS_URL}/assets/${news.news_photo.filename_disk}`
     : '/img/placeholder.jpg';
 
-  const cleanContent = DOMPurify.sanitize(news.content || '');
-
   return (
     <>
       <div className="min-h-screen bg-white">
@@ -111,7 +109,8 @@ export default async function NewsPage(props: PageProps) {
         </div>
 
         {/* Контент статьи */}
-        <div
+        <SafeContent
+          content={news.content || ''}
           className="prose prose-lg max-w-4xl
             prose-headings:font-bold prose-headings:mt-10 prose-headings:mb-5
             prose-h2:text-3xl prose-h3:text-2xl
@@ -123,7 +122,6 @@ export default async function NewsPage(props: PageProps) {
             prose-li:mb-2 prose-li:text-lg
             prose-img:rounded-lg prose-img:my-8"
           style={{ color: '#675b53' }}
-          dangerouslySetInnerHTML={{ __html: cleanContent }}
         />
 
         {/* Разделитель */}
