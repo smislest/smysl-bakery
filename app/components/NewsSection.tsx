@@ -19,9 +19,19 @@ export default function NewsSection({ initialNews = [] }: NewsSectionProps) {
   // Клиентская загрузка для подстраховки (если серверная не сработала)
   useEffect(() => {
     async function fetchNews() {
-      // Если уже есть данные с сервера, пропускаем
-      if (initialNews && initialNews.length > 0) {
-        return;
+      const cacheKey = 'news-cache-v1';
+      try {
+        if (typeof window !== 'undefined') {
+          const cached = localStorage.getItem(cacheKey);
+          if (cached) {
+            const parsed = JSON.parse(cached) as NewsItem[];
+            if (Array.isArray(parsed) && parsed.length > 0 && news.length === 0) {
+              setNews(parsed);
+            }
+          }
+        }
+      } catch (err) {
+        console.warn('News cache read error:', err);
       }
 
       try {
@@ -43,14 +53,36 @@ export default function NewsSection({ initialNews = [] }: NewsSectionProps) {
           })
         ) as NewsItem[];
         
-        console.log('📰 Fetched news (client fallback):', data?.length || 0);
-        setNews(data || []);
+        console.log('📰 Fetched news (client refresh):', data?.length || 0);
+        if (data && data.length > 0) {
+          setNews(data);
+          try {
+            if (typeof window !== 'undefined') {
+              localStorage.setItem(cacheKey, JSON.stringify(data));
+            }
+          } catch (err) {
+            console.warn('News cache write error:', err);
+          }
+        }
       } catch (e) {
         console.error("Ошибка загрузки новостей:", e);
+        try {
+          if (typeof window !== 'undefined') {
+            const cached = localStorage.getItem('news-cache-v1');
+            if (cached) {
+              const parsed = JSON.parse(cached) as NewsItem[];
+              if (Array.isArray(parsed) && parsed.length > 0) {
+                setNews(parsed);
+              }
+            }
+          }
+        } catch (err) {
+          console.warn('News cache fallback error:', err);
+        }
       }
     }
     fetchNews();
-  }, [initialNews]);
+  }, [initialNews, news.length]);
 
   // Получение URL изображения через filename_disk
   const DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || "https://smysl-bakery-directus.onrender.com";

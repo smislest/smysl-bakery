@@ -10,15 +10,28 @@ import { newsData as fallbackNews } from '../../lib/news';
 import FooterClient from "../components/FooterClient";
 
 export default function NewsListPage() {
-  const [news, setNews] = useState<NewsItem[]>([]);
+  const [news, setNews] = useState<NewsItem[]>(fallbackNews);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchNews() {
+      const cacheKey = 'news-cache-v1';
+      try {
+        const cached = typeof window !== 'undefined' ? localStorage.getItem(cacheKey) : null;
+        if (cached) {
+          const parsed = JSON.parse(cached) as NewsItem[];
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setNews(parsed);
+          }
+        }
+      } catch (err) {
+        console.warn('News cache read error:', err);
+      }
       try {
         const DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'https://smysl-bakery-directus.onrender.com';
         const directus = createDirectus(DIRECTUS_URL).with(rest());
         
+        console.log('🔍 [Firefox check] Попытка загрузки новостей из Directus...');
         const data = await directus.request(
           readItems('news' as any, {
             fields: [
@@ -34,11 +47,31 @@ export default function NewsListPage() {
           })
         ) as NewsItem[];
         
-        console.log('📰 Загружено новостей:', data?.length || 0);
-        setNews((data && data.length > 0 ? data : fallbackNews) || []);
+        console.log('📰 Загружено новостей из Directus:', data?.length || 0);
+        if (data && data.length > 0) {
+          setNews(data);
+          try {
+            if (typeof window !== 'undefined') {
+              localStorage.setItem(cacheKey, JSON.stringify(data));
+            }
+          } catch (err) {
+            console.warn('News cache write error:', err);
+          }
+        }
       } catch (e) {
-        console.error("Ошибка загрузки новостей:", e);
-        setNews(fallbackNews);
+        console.error("Ошибка загрузки новостей из Directus:", e);
+        console.log('📦 Используем fallback новости');
+        try {
+          const cached = typeof window !== 'undefined' ? localStorage.getItem(cacheKey) : null;
+          if (cached) {
+            const parsed = JSON.parse(cached) as NewsItem[];
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              setNews(parsed);
+            }
+          }
+        } catch (err) {
+          console.warn('News cache fallback error:', err);
+        }
       } finally {
         setLoading(false);
       }

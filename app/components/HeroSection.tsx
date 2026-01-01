@@ -18,15 +18,12 @@ export default function HeroSection({ initialData = null }: HeroSectionProps) {
   // Клиентская загрузка для подстраховки (если серверная не сработала)
   useEffect(() => {
     async function fetchHero() {
-      // Если уже есть данные с сервера, пропускаем
-      if (initialData) {
-        return;
-      }
-
       try {
         const data = await getHeroData();
-        console.log('✅ Hero data loaded (client fallback):', data);
-        setHero(data);
+        console.log('✅ Hero data loaded (client refresh):', data);
+        if (data) {
+          setHero(data);
+        }
       } catch (error) {
         console.error('❌ Hero data error:', error);
       }

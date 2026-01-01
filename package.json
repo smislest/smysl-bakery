@@ -7,10 +7,12 @@
     "dev:webpack": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "seed:supabase": "node scripts/seed-supabase-fallback.js"
   },
   "dependencies": {
     "@directus/sdk": "^20.3.0",
+    "@aws-sdk/client-s3": "^3.744.0",
     "@react-spring/web": "^10.0.3",
     "@svgr/webpack": "^8.1.0",
     "@use-gesture/react": "^10.3.1",

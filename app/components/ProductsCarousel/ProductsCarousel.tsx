@@ -31,13 +31,10 @@ export default function ProductsCarousel({ initialProducts = [] }: ProductsCarou
   // Клиентская загрузка для подстраховки (если серверная не сработала)
   useEffect(() => {
     async function fetchProducts() {
-      // Если уже есть данные с сервера, пропускаем
-      if (initialProducts && initialProducts.length > 0) {
-        setLoading(false);
-        return;
+      const shouldShowLoader = !(initialProducts && initialProducts.length > 0);
+      if (shouldShowLoader) {
+        setLoading(true);
       }
-
-      setLoading(true);
       try {
         const directus = createDirectus(DIRECTUS_URL).with(rest());
         
@@ -55,12 +52,16 @@ export default function ProductsCarousel({ initialProducts = [] }: ProductsCarou
           })
         ) as Product[];
         
-        console.log('🍞 Загружено продуктов (client fallback):', data?.length || 0);
-        setProducts(data || []);
+        console.log('🍞 Загружено продуктов (client refresh):', data?.length || 0);
+        if (data && data.length > 0) {
+          setProducts(data);
+        }
       } catch (e) {
         console.error("Ошибка загрузки продуктов:", e);
       } finally {
-        setLoading(false);
+        if (shouldShowLoader) {
+          setLoading(false);
+        }
       }
     }
     fetchProducts();
@@ -238,16 +239,32 @@ export default function ProductsCarousel({ initialProducts = [] }: ProductsCarou
 
   // Функция для получения видимых карточек
   const getVisibleCards = () => {
-    if (products.length <= 3) {
-      // Для малого количества показываем все
-      return Array.from({ length: products.length }, (_, i) => i - Math.floor(products.length / 2));
+    const total = products.length;
+    if (total === 0) return [];
+    if (total <= 5) {
+      // Для малого количества показываем все карточки
+      return Array.from({ length: total }, (_, i) => i - Math.floor((total - 1) / 2));
     }
+    // Для большого количества - фиксированное окно из 5 карточек
     return [-2, -1, 0, 1, 2];
+  };
+
+  // Фиксированные позиции для каждого offset
+  const getCardPosition = (offset: number) => {
+    const positions: Record<number, { position: number; scale: number; opacity: number; zIndex: number }> = {
+      '-2': { position: -520, scale: 0.65, opacity: 0.4, zIndex: 20 },
+      '-1': { position: -340, scale: 0.85, opacity: 0.7, zIndex: 30 },
+      '0':  { position: 0,    scale: 1.0,  opacity: 1.0, zIndex: 50 },
+      '1':  { position: 340,  scale: 0.85, opacity: 0.7, zIndex: 30 },
+      '2':  { position: 520,  scale: 0.65, opacity: 0.4, zIndex: 20 }
+    };
+    
+    return positions[offset] || positions['0'];
   };
 
   return (
     <section id="products" className="w-full py-12 bg-primary">
-      <div className="max-w-7xl mx-auto px-0 md:px-6 relative">
+      <div className="mx-auto relative overflow-visible" style={{ maxWidth: 'calc(100% - 0px)' }}>
         {/* Навигация */}
         <div className="hidden md:block">
           <button
@@ -259,7 +276,7 @@ export default function ProductsCarousel({ initialProducts = [] }: ProductsCarou
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
               <path 
                 d="M14 6L8 12L14 18" 
-                stroke="#7BA862" 
+                className={styles.navArrow}
                 strokeWidth="2.5" 
                 strokeLinecap="round" 
                 strokeLinejoin="round"
@@ -276,7 +293,7 @@ export default function ProductsCarousel({ initialProducts = [] }: ProductsCarou
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
               <path 
                 d="M10 6L16 12L10 18" 
-                stroke="#7BA862" 
+                className={styles.navArrow}
                 strokeWidth="2.5" 
                 strokeLinecap="round" 
                 strokeLinejoin="round"
@@ -286,11 +303,11 @@ export default function ProductsCarousel({ initialProducts = [] }: ProductsCarou
         </div>
 
         {/* Карусель */}
-        <div className={styles.carouselWithBackground}>
+        <div className={styles.carouselWithBackground} style={{ overflow: 'visible' }}>
           <div className={styles.carouselBackground} />
           
           {/* ДЕСКТОПНАЯ ВЕРСИЯ */}
-          <div className="hidden md:flex items-center justify-center w-full h-[600px] relative overflow-visible">
+          <div className="hidden md:flex items-center justify-center w-full h-[600px] relative" style={{ overflow: 'visible' }}>
             {/* Контейнер для drag */}
             <animated.div
               {...bindDrag()}
@@ -300,7 +317,8 @@ export default function ProductsCarousel({ initialProducts = [] }: ProductsCarou
                 width: '100%',
                 height: '100%',
                 cursor: isAnimating ? 'default' : 'grab',
-                touchAction: 'pan-y'
+                touchAction: 'pan-y',
+                overflow: 'visible'
               }}
               className="z-10"
             >
@@ -312,12 +330,6 @@ export default function ProductsCarousel({ initialProducts = [] }: ProductsCarou
                 if (!product) return null;
                 
                 const uniqueKey = `${product.id || product.title}-${offset}`;
-                
-                // Параметры для позиционирования
-                let transform = '';
-                let scale = 1;
-                let opacity = 1;
-                let zIndex = 10;
                 
                 if (offset === 0) {
                   // ЦЕНТРАЛЬНАЯ КАРТОЧКА
@@ -378,43 +390,41 @@ export default function ProductsCarousel({ initialProducts = [] }: ProductsCarou
                   );
                 } else {
                   // БОКОВЫЕ КАРТОЧКИ
-                  if (Math.abs(offset) === 1) {
-                    scale = 0.85;
-                    opacity = 0.7;
-                    zIndex = 20;
-                    transform = `translate(calc(-50% + ${offset * 320}px), -50%) scale(${scale})`;
-                  } else {
-                    scale = 0.65;
-                    opacity = 0.4;
-                    zIndex = 10;
-                    transform = `translate(calc(-50% + ${offset * 400}px), -50%) scale(${scale})`;
-                  }
+                  const { position, scale, opacity, zIndex } = getCardPosition(offset);
                   
                   return (
                     <div
                       key={uniqueKey}
                       className={`${styles.desktopOnly} ${styles.sideCard}`}
-                      style={
-                        {
-                          position: 'absolute',
-                          left: '50%',
-                          top: '50%',
-                          transform: transform,
-                          opacity: opacity,
-                          zIndex: zIndex,
-                          cursor: 'pointer'
-                        }
-                      }
+                      style={{
+                        position: 'absolute',
+                        left: `calc(50% + ${position}px)`,
+                        top: '50%',
+                        transform: `translateX(-50%) translateY(-50%) scale(${scale})`,
+                        transformOrigin: 'center center',
+                        opacity: opacity,
+                        zIndex: zIndex,
+                        cursor: 'pointer',
+                        willChange: 'transform, opacity'
+                      }}
                       onClick={() => offset < 0 ? prevProduct() : nextProduct()}
                     >
-                      <Image
-                        src={getImageUrl(product.product_photo)}
-                        alt={product.title}
-                        width={Math.abs(offset) === 1 ? 260 : 180}
-                        height={Math.abs(offset) === 1 ? 220 : 140}
-                        className="object-contain drop-shadow-xl"
-                        loading="lazy"
-                      />
+                      <div
+                        style={{
+                          position: 'relative',
+                          width: Math.abs(offset) === 1 ? '260px' : '180px',
+                          height: Math.abs(offset) === 1 ? '220px' : '140px',
+                        }}
+                      >
+                        <Image
+                          src={getImageUrl(product.product_photo)}
+                          alt={product.title}
+                          fill
+                          className="object-contain drop-shadow-xl"
+                          sizes="(max-width: 768px) 100vw, 260px"
+                          loading="lazy"
+                        />
+                      </div>
                     </div>
                   );
                 }

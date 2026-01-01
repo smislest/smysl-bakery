@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { createDirectus, rest, readItems } from '@directus/sdk';
+import { createDirectus, rest, readItems, staticToken } from '@directus/sdk';
 
 // Переменные окружения для Directus (с безопасным запасным URL)
 export const DIRECTUS_URL =
@@ -27,13 +27,19 @@ initializeUndiciAgent().catch(err => {
   console.warn('Error initializing undici:', err instanceof Error ? err.message : err);
 });
 
-// Создаём Directus клиент с REST
-const directusClient = createDirectus(DIRECTUS_URL).with(rest());
+// Создаём Directus клиент с REST (если есть токен, используем его)
+const directusClient = (() => {
+  let client = createDirectus(DIRECTUS_URL);
+  if (DIRECTUS_TOKEN) {
+    client = client.with(staticToken(DIRECTUS_TOKEN));
+  }
+  return client.with(rest());
+})();
 
 // Универсальная функция для получения коллекции из Directus
 export async function getCollectionFromDirectus(collection: string) {
   try {
-    console.log(`📡 Fetching ${collection} from Directus...`);
+    console.log(`📡 Fetching ${collection} from Directus at ${DIRECTUS_URL} (token: ${DIRECTUS_TOKEN ? 'yes' : 'no'})...`);
     
     const response = await directusClient.request(
       readItems(collection as any, {
@@ -44,7 +50,11 @@ export async function getCollectionFromDirectus(collection: string) {
     console.log(`✅ Got ${Array.isArray(response) ? response.length : 1} items from ${collection}`);
     return response;
   } catch (error) {
-    console.error(`❌ Error fetching collection ${collection}:`, error instanceof Error ? error.message : error);
+    const errorMsg = error instanceof Error ? error.message : String(error);
+    console.error(`❌ Error fetching collection ${collection}: ${errorMsg}`);
+    if (error instanceof Error && error.stack) {
+      console.error(`Stack: ${error.stack.split('\n').slice(0, 3).join(' ')}`);
+    }
     return null;
   }
 }
