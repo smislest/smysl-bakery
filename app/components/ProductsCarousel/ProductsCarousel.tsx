@@ -84,6 +84,7 @@ export default function ProductsCarousel({ initialProducts = [] }: ProductsCarou
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [mobileActiveIndex, setMobileActiveIndex] = useState(0);
+  const [isMobileView, setIsMobileView] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const animationRef = useRef<number | null>(null);
   const dragContainerRef = useRef<HTMLDivElement>(null);
@@ -217,6 +218,14 @@ export default function ProductsCarousel({ initialProducts = [] }: ProductsCarou
       return () => container.removeEventListener('scroll', handleMobileScroll);
     }
   }, [handleMobileScroll]);
+
+  // Отслеживаем текущую ширину вьюпорта, чтобы подсветка точек была единой
+  useEffect(() => {
+    const updateView = () => setIsMobileView(window.innerWidth < 768);
+    updateView();
+    window.addEventListener('resize', updateView);
+    return () => window.removeEventListener('resize', updateView);
+  }, []);
 
   // Обработка клавиатуры
   useEffect(() => {
@@ -481,13 +490,14 @@ export default function ProductsCarousel({ initialProducts = [] }: ProductsCarou
         {/* Индикаторы */}
         <div className="flex justify-center gap-2 mt-8">
           {products.map((_, index) => {
-            const isActive = mobileActiveIndex === index || currentIndex === index;
+            const activeIndex = isMobileView ? mobileActiveIndex : currentIndex;
+            const isActive = activeIndex === index;
             
             return (
               <button
                 key={index}
                 onClick={() => {
-                  if (typeof window !== 'undefined' && window.innerWidth < 768) {
+                  if (isMobileView) {
                     scrollToMobileIndex(index);
                   } else {
                     goToIndex(index);
