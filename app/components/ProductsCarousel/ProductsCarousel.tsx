@@ -183,14 +183,15 @@ export default function ProductsCarousel({ initialProducts = [] }: ProductsCarou
   const scrollToMobileIndex = useCallback((index: number) => {
     if (!containerRef.current || !products.length) return;
     const container = containerRef.current;
-    const cardWidth = container.clientWidth;
+    const card = container.querySelector('.' + styles.scrollSnapCard);
+    const cardWidth = card ? (card as HTMLElement).offsetWidth : container.clientWidth;
     const gap = 16;
     container.scrollTo({
       left: index * (cardWidth + gap),
       behavior: 'smooth'
     });
     setMobileActiveIndex(index);
-  }, [products.length]);
+  }, [products.length, styles.scrollSnapCard]);
 
   // Убрали drag для мобильной версии - используем только scroll-snap
 
@@ -199,13 +200,14 @@ export default function ProductsCarousel({ initialProducts = [] }: ProductsCarou
     if (!containerRef.current || !products.length) return;
     const container = containerRef.current;
     const scrollLeft = container.scrollLeft;
-    const cardWidth = container.clientWidth;
+    const card = container.querySelector('.' + styles.scrollSnapCard);
+    const cardWidth = card ? (card as HTMLElement).offsetWidth : container.clientWidth;
     const gap = 16;
     const newIndex = Math.round(scrollLeft / (cardWidth + gap));
     if (newIndex >= 0 && newIndex < products.length && newIndex !== mobileActiveIndex) {
       setMobileActiveIndex(newIndex);
     }
-  }, [products.length, mobileActiveIndex]);
+  }, [products.length, mobileActiveIndex, styles.scrollSnapCard]);
 
   const goToIndex = (index: number) => {
     animateToIndex(index);

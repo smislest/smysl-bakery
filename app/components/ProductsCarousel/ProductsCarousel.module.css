@@ -288,7 +288,7 @@
   -webkit-overflow-scrolling: touch;
   scroll-behavior: smooth;
   gap: 16px;
-  padding: 0 0 0 20px;
+  padding: 0 20px 0 20px;
   margin: 0 auto;
   width: 100%;
   max-width: 100vw;
@@ -317,8 +317,12 @@
 
 /* МОБИЛЬНАЯ КАРТОЧКА - АДАПТИВНАЯ ВЫСОТА */
 .mobileCard {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(8px);
+  background: #fff;
+  backdrop-filter: none;
+    .mobileCard {
+      background: #fff !important;
+      backdrop-filter: none !important;
+    }
   border-radius: 1.5rem;
   overflow: visible;
   display: flex;
