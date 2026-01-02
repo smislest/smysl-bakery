@@ -53,17 +53,25 @@ export default function NewsSection({ initialNews = [] }: NewsSectionProps) {
     setCurrentIndex((prev: number) => (prev - 1 + news.length) % news.length);
   };
 
+  const getMobileStep = (container: HTMLDivElement) => {
+    const gap = 16;
+    const style = window.getComputedStyle(container);
+    const paddingLeft = parseFloat(style.paddingLeft || '0');
+    const card = container.querySelector('.news-scroll-card') as HTMLElement | null;
+    const cardWidth = card ? card.getBoundingClientRect().width : Math.min(container.clientWidth * 0.85, 320);
+    return { step: cardWidth + gap, paddingLeft };
+  };
+
   const handleDotClick = (index: number) => {
-    // Для мобильных: скроллим к карточке
+    // Для мобильных: скроллим к карточке с учётом реальной ширины
     if (scrollContainerRef.current && window.innerWidth <= 768) {
       const container = scrollContainerRef.current;
-      const gap = 16;
-      const cardWidth = Math.min(container.clientWidth * 0.85, 320);
-      const step = cardWidth + gap;
+      const { step, paddingLeft } = getMobileStep(container);
       container.scrollTo({
-        left: index * step,
+        left: paddingLeft + index * step,
         behavior: 'smooth'
       });
+      setCurrentIndex(index);
     } else {
       setCurrentIndex(index);
     }
@@ -130,6 +138,22 @@ export default function NewsSection({ initialNews = [] }: NewsSectionProps) {
   useEffect(() => {
     addNewsScrollSnapStyles();
   }, []);
+
+  // Трекинг активной карточки на мобильных при скролле
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const onScroll = () => {
+      const { step, paddingLeft } = getMobileStep(container);
+      const raw = (container.scrollLeft - paddingLeft) / step;
+      const nextIndex = Math.max(0, Math.min(news.length - 1, Math.round(raw)));
+      if (nextIndex !== currentIndex) setCurrentIndex(nextIndex);
+    };
+
+    container.addEventListener('scroll', onScroll, { passive: true });
+    return () => container.removeEventListener('scroll', onScroll);
+  }, [news.length, currentIndex]);
 
 
   return (
