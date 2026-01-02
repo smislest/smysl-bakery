@@ -1,7 +1,7 @@
 
 import { getCollectionFromDirectus } from './directus';
 import { NewsItem, newsData } from '../lib/news';
-import { typograph } from './typograph';
+import { typograph, typographHtml } from './typograph';
 import { readJsonFallback, writeJsonFallback } from './supabaseFallback';
 
 const NEWS_FALLBACK_KEY = process.env.SUPABASE_NEWS_KEY || 'news.json';
@@ -18,7 +18,8 @@ const normalizeNews = (items: any[]): NewsItem[] => {
     title: typograph(item.title),
     description: typograph(item.description || item.excerpt || ''),
     excerpt: typograph(item.excerpt || ''),
-    content: typograph(item.content),
+    // Сохраняем HTML из WYSIWYG: берём content/body/text и пропускаем через typographHtml, чтобы не терять теги
+    content: typographHtml(item.content || item.body || item.text || ''),
   })) as NewsItem[];
 };
 
