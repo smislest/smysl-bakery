@@ -1,5 +1,4 @@
 import dynamic from "next/dynamic";
-import Header from "./components/Header";
 import HeroSection from "./components/HeroSection";
 import ScrollingIcons from "./components/ScrollingIcons";
 import FooterClient from "./components/FooterClient";
@@ -42,7 +41,6 @@ export default async function Home() {
 
   return (
     <>
-      <Header />
       <main>
         <HeroSection initialData={heroData} />
         <ScrollingIcons />

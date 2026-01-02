@@ -311,10 +311,11 @@ export default function ProductsCarousel({ initialProducts = [] }: ProductsCarou
           </button>
         </div>
 
+        {/* Градиент под каруселью */}
+        <div className={styles.carouselBackground} />
+
         {/* Карусель */}
         <div className={styles.carouselWithBackground} style={{ overflow: 'visible' }}>
-          <div className={styles.carouselBackground} />
-          
           {/* ДЕСКТОПНАЯ ВЕРСИЯ */}
           <div className="hidden md:flex items-center justify-center w-full h-[600px] relative" style={{ overflow: 'visible' }}>
             {/* Контейнер для drag */}

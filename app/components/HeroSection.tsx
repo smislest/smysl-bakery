@@ -100,16 +100,18 @@ export default function HeroSection({ initialData = null }: HeroSectionProps) {
       <div className={styles.content}>
         {/* МОБИЛЬНАЯ ВЕРСИЯ - КАРТИНКА СВЕРХУ */}
         <div className={styles.mobileLayout}>
-          <div className={`${styles.mobileImageContainer} ${styles.heartbeat}`}>
+          <div className={styles.mobileImageContainer}>
             <div className={styles.imageGradient} aria-hidden="true" />
-            <Image
-              src={data.image || "/img/heart.png"}
-              alt={data.imageAlt || "Хлеб в форме сердца"}
-              fill
-              className="object-contain"
-              priority
-              sizes="(max-width: 767px) 90vw, 500px"
-            />
+            <div className={`${styles.heartImage} ${styles.heartbeat}`}>
+              <Image
+                src={data.image || "/img/heart.png"}
+                alt={data.imageAlt || "Хлеб в форме сердца"}
+                fill
+                className="object-contain"
+                priority
+                sizes="(max-width: 767px) 90vw, 500px"
+              />
+            </div>
           </div>
 
           <div className={styles.textContainer}>
@@ -155,16 +157,18 @@ export default function HeroSection({ initialData = null }: HeroSectionProps) {
             })()}
           </div>
 
-          <div className={`${styles.imageContainer} ${styles.heartbeat}`}>
+          <div className={styles.imageContainer}>
             <div className={styles.imageGradient} aria-hidden="true" />
-            <Image
-              src={data.image || "/img/heart.png"}
-              alt={data.imageAlt || "Хлеб в форме сердца"}
-              fill
-              className="object-contain"
-              priority
-              sizes="(min-width: 768px) 50vw, (min-width: 1024px) 40vw, 600px"
-            />
+            <div className={`${styles.heartImage} ${styles.heartbeat}`}>
+              <Image
+                src={data.image || "/img/heart.png"}
+                alt={data.imageAlt || "Хлеб в форме сердца"}
+                fill
+                className="object-contain"
+                priority
+                sizes="(min-width: 768px) 50vw, (min-width: 1024px) 40vw, 600px"
+              />
+            </div>
           </div>
         </div>
       </div>

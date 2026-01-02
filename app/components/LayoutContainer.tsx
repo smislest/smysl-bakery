@@ -10,7 +10,14 @@ export default function LayoutContainer({ children }: { children: React.ReactNod
   return (
     <div className={`min-h-screen overflow-x-hidden ${!isNewsPage ? 'bg-gradient-to-b from-[#9BC381] via-[#7BA862] to-[#5F8A48]' : 'bg-white'}`}>
       <Header />
-      <main className="pt-[80px] md:pt-[160px]">
+      <main
+        className="w-full mx-auto"
+        style={{
+          paddingTop: 'clamp(80px, 10vw, 140px)',
+          paddingInline: 0,
+          maxWidth: 'var(--page-max-width, 100%)',
+        }}
+      >
         {children}
       </main>
     </div>

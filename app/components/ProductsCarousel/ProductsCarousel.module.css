@@ -88,11 +88,11 @@
 }
 
 .navButtonPrev {
-  left: -1.5rem !important;
+  left: 0.5rem !important;
 }
 
 .navButtonNext {
-  right: -1.5rem !important;
+  right: 0.5rem !important;
 }
 
 .navArrow {
@@ -115,7 +115,7 @@
 
 .carouselBackground {
   position: absolute;
-  top: 50%;
+  top: calc(50% + 1.5rem);
   left: 50%;
   transform: translate(-50%, -50%);
   pointer-events: none;

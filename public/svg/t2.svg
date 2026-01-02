@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg id="_Слой_2" data-name="Слой 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 427.28 17.64">
+<svg id="_Слой_2" data-name="Слой 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 437.28 17.64">
   <defs>
     <style>
       .cls-1 {
@@ -11,7 +11,7 @@
       }
     </style>
   </defs>
-  <g id="_Слой_1-2" data-name="Слой 1">
+  <g id="_Слой_1-2" data-name="Слой 1" transform="translate(5 0)">
     <g>
       <path class="cls-1" d="M11.54,3.55v13.81h-1.44v-6.37H1.46v6.37H0V3.55h1.46v6.16h8.64V3.55h1.44Z"/>
       <path class="cls-1" d="M25.04,13.67h-7.69l-1.66,3.69h-1.52l6.31-13.81h1.44l6.31,13.81h-1.54l-1.66-3.69ZM24.5,12.49l-3.31-7.42-3.32,7.42h6.63Z"/>

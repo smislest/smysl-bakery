@@ -57,9 +57,11 @@ export default function NewsSection({ initialNews = [] }: NewsSectionProps) {
     // Для мобильных: скроллим к карточке
     if (scrollContainerRef.current && window.innerWidth <= 768) {
       const container = scrollContainerRef.current;
-      const cardWidth = container.clientWidth * 0.85;
+      const gap = 16;
+      const cardWidth = Math.min(container.clientWidth * 0.85, 320);
+      const step = cardWidth + gap;
       container.scrollTo({
-        left: index * (cardWidth + 20),
+        left: index * step,
         behavior: 'smooth'
       });
     } else {
@@ -83,10 +85,10 @@ export default function NewsSection({ initialNews = [] }: NewsSectionProps) {
         scroll-snap-type: x mandatory;
         -webkit-overflow-scrolling: touch;
         scroll-behavior: smooth;
-        gap: 20px;
-        padding: 16px 0 16px 16px;
-        margin: 0 -20px 0 -16px;
-        width: calc(100% + 36px);
+        gap: 16px;
+        padding: 16px clamp(1rem, 4vw, 1.5rem) 20px;
+        margin: 0;
+        width: 100%;
         cursor: grab;
       }
       
@@ -105,8 +107,7 @@ export default function NewsSection({ initialNews = [] }: NewsSectionProps) {
       
       .news-scroll-card {
         flex: 0 0 auto;
-        width: 85vw;
-        max-width: 320px;
+        width: min(85vw, 320px);
         scroll-snap-align: center;
       }
       

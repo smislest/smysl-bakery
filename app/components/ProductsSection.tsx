@@ -21,18 +21,18 @@ interface ProductsSectionProps {
 export default function ProductsSection({ initialProducts = [] }: ProductsSectionProps) {
   return (
     <section id="products" className={styles.section}>
+      {/* Заголовок в контейнере */}
       <div className={styles.container}>
-        {/* Заголовок */}
         <div className={styles.titleContainer}>
           <h2 className={styles.title}>
             Наша выпечка <br />и десерты
           </h2>
         </div>
+      </div>
 
-        {/* Карусель */}
-        <div className={styles.carouselWrapper}>
-          <ProductsCarousel initialProducts={initialProducts} />
-        </div>
+      {/* Карусель на полную ширину без ограничений */}
+      <div className={styles.carouselWrapper}>
+        <ProductsCarousel initialProducts={initialProducts} />
       </div>
     </section>
   );

@@ -20,6 +20,9 @@ img {
 :root {
   --header-height-mobile: 80px;
   --header-height-desktop: 160px;
+  --container-max: 1200px;
+  --container-padding: clamp(1rem, 3vw, 2.5rem);
+  --font-size-body: clamp(1rem, 1.2vw + 0.6rem, 1.1rem);
   --color-primary: #5F8A48;
   --color-secondary: #7BA862;
   --color-accent: #9BC381;
@@ -49,4 +52,14 @@ img {
 /* fonts.css */
 .font-montserrat {
   font-family: 'Montserrat', sans-serif;
+}
+
+body {
+  font-size: var(--font-size-body);
+  line-height: 1.55;
+}
+
+img, video, iframe {
+  max-width: 100%;
+  height: auto;
 }
