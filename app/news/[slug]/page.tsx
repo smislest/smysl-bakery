@@ -1,7 +1,6 @@
 // app/news/[slug]/page.tsx
 import Image from "next/image";
 import Link from "next/link";
-import { typograph } from '../../../lib/typograph';
 import type { NewsItem } from '../../../lib/news';
 import { getNewsData } from '../../../lib/newsData';
 import { newsData as fallbackNews } from '../../../lib/news';
@@ -89,7 +88,7 @@ export default async function NewsPage(props: PageProps) {
 
         {/* Заголовок */}
         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-2 leading-tight max-w-4xl" style={{ color: '#675b53' }}>
-          {typograph(news.title)}
+          {news.title}
         </h1>
 
         {/* Дата */}
@@ -139,7 +138,7 @@ export default async function NewsPage(props: PageProps) {
               className="group block"
             >
               <h2 className="text-2xl md:text-3xl font-bold text-gray-900 group-hover:text-[#619e5a] transition leading-snug">
-                {typograph(nextNews.title)}
+                {nextNews.title}
               </h2>
             </Link>
           </div>

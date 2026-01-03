@@ -76,7 +76,19 @@ export async function getAboutData(): Promise<AboutData | null> {
     
     if (!item) {
       console.log('⚠️ No about data from Directus, using fallback');
-      return localFallback;
+      // Типографируем fallback данные
+      return {
+        ...localFallback,
+        text_r: typograph(localFallback.text_r),
+        text_c: typograph(localFallback.text_c),
+        text_r2: typograph(localFallback.text_r2),
+        passion_title: typograph(localFallback.passion_title),
+        passion_text: typograph(localFallback.passion_text),
+        pride_title: typograph(localFallback.pride_title),
+        pride_text: typograph(localFallback.pride_text),
+        mission_title: typograph(localFallback.mission_title),
+        mission_text: typograph(localFallback.mission_text),
+      };
     }
     
     // Типографирование текстовых полей + нормализация и дефолты картинок
@@ -95,6 +107,18 @@ export async function getAboutData(): Promise<AboutData | null> {
   } catch (error) {
     console.error('❌ Error loading about data:', error);
     console.log('📦 Using fallback about data');
-    return localFallback;
+    // Типографируем fallback данные
+    return {
+      ...localFallback,
+      text_r: typograph(localFallback.text_r),
+      text_c: typograph(localFallback.text_c),
+      text_r2: typograph(localFallback.text_r2),
+      passion_title: typograph(localFallback.passion_title),
+      passion_text: typograph(localFallback.passion_text),
+      pride_title: typograph(localFallback.pride_title),
+      pride_text: typograph(localFallback.pride_text),
+      mission_title: typograph(localFallback.mission_title),
+      mission_text: typograph(localFallback.mission_text),
+    };
   }
 }

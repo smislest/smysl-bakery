@@ -15,24 +15,38 @@ export interface FooterData {
   copyright?: string;
 }
 
+const footerFallback: FooterData = {
+  id: '0',
+  phone: typograph('+7 (903) 169-68-88'),
+  email: typograph('hello@smysl.ru'),
+  address: typograph('Москва'),
+  address_details: typograph(''),
+  copyright: typograph('© 2024 Смысл. Все права защищены.'),
+};
+
 export async function getFooterData(): Promise<FooterData | null> {
-  const data = await getCollectionFromDirectus('footer');
-  let item: FooterData | null = null;
-  
-  if (Array.isArray(data) && data.length > 0) {
-    item = data[0] as FooterData;
-  } else if (data) {
-    item = data as unknown as FooterData;
+  try {
+    const data = await getCollectionFromDirectus('footer');
+    let item: FooterData | null = null;
+    
+    if (Array.isArray(data) && data.length > 0) {
+      item = data[0] as FooterData;
+    } else if (data) {
+      item = data as unknown as FooterData;
+    }
+    
+    if (!item) return footerFallback;
+    
+    return {
+      ...item,
+      phone: typograph(item.phone),
+      email: typograph(item.email),
+      address: typograph(item.address),
+      address_details: typograph(item.address_details),
+      copyright: typograph(item.copyright),
+    };
+  } catch (error) {
+    console.error('❌ Error loading footer data:', error);
+    return footerFallback;
   }
-  
-  if (!item) return null;
-  
-  return {
-    ...item,
-    phone: typograph(item.phone),
-    email: typograph(item.email),
-    address: typograph(item.address),
-    address_details: typograph(item.address_details),
-    copyright: typograph(item.copyright),
-  };
 }

@@ -3,16 +3,7 @@ import Typograf from 'typograf';
 // Инициализация типографа один раз
 const tp = new Typograf({ locale: ['ru', 'en-US'] });
 
-// Отключаем все правила по умолчанию для консистентности
-tp.disableRule('*');
-
-// Включаем только базовые, стабильные правила
-tp.enableRule('ru/nbsp/beforeParticle'); // Неразрывный пробел перед частицей (ли, же, ж)
-tp.enableRule('ru/nbsp/afterNumber'); // Неразрывный пробел после числа
-tp.enableRule('ru/dash/main'); // Замена дефисов на тире
-tp.enableRule('ru/dash/middot'); // Дефис для диапазонов
-tp.enableRule('ru/punctuation/exclamation'); // Пунктуация
-tp.enableRule('ru/spaces/punctuation'); // Пробелы вокруг пунктуации
+// Используем все правила по умолчанию для полного типографирования
 
 /**
  * Типографирование текста с применением русских правил

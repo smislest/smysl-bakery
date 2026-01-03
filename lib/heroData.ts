@@ -1,5 +1,4 @@
 
-
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { getCollectionFromDirectus, DIRECTUS_URL } from './directus';
 import { typograph } from './typograph';
@@ -15,6 +14,16 @@ export interface HeroData {
   ctaLink?: string;
   ctaText?: string;
 }
+
+const heroFallback: HeroData = {
+  title: typograph("Безглютеновый хлеб и десерты в Москве"),
+  subtitle: typograph("Развиваем культуру осознанного ежедневного рациона и показываем, что полезная выпечка может быть вкусной и разнообразной."),
+  image: "/img/heart.png",
+  imageAlt: "Хлеб в форме сердца",
+  ctaLink: "#products",
+  ctaText: "В каталог",
+  backgroundImage: "",
+};
 
 function normalizeFileRef(fileRef: any): string | undefined {
   if (!fileRef) return undefined;
@@ -34,20 +43,25 @@ function normalizeFileRef(fileRef: any): string | undefined {
 }
 
 export async function getHeroData(): Promise<HeroData | null> {
-  const data: any = await getCollectionFromDirectus('hero');
-  const item = Array.isArray(data) && data.length > 0 ? data[0] : data;
-  if (!item) return null;
+  try {
+    const data: any = await getCollectionFromDirectus('hero');
+    const item = Array.isArray(data) && data.length > 0 ? data[0] : data;
+    if (!item) return heroFallback;
 
-  const image = normalizeFileRef(item.hero_image || item.hero_photo || item.image || item.hero_photo_id || item.image_file);
+    const image = normalizeFileRef(item.hero_image || item.hero_photo || item.image || item.hero_photo_id || item.image_file);
 
-  return {
-    id: item.id,
-    title: typograph(item.title || item.name || undefined),
-    subtitle: typograph(item.subtitle || item.description || undefined),
-    image,
-    imageAlt: item.image_alt || item.hero_image_alt || undefined,
-    backgroundImage: normalizeFileRef(item.background_image) || undefined,
-    ctaLink: item.cta_link || item.cta || undefined,
-    ctaText: typograph(item.cta_text || undefined),
-  } as HeroData;
+    return {
+      id: item.id,
+      title: typograph(item.title || item.name || undefined),
+      subtitle: typograph(item.subtitle || item.description || undefined),
+      image,
+      imageAlt: item.image_alt || item.hero_image_alt || undefined,
+      backgroundImage: normalizeFileRef(item.background_image) || undefined,
+      ctaLink: item.cta_link || item.cta || undefined,
+      ctaText: typograph(item.cta_text || undefined),
+    } as HeroData;
+  } catch (error) {
+    console.error('❌ Error loading hero data:', error);
+    return heroFallback;
+  }
 }

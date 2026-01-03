@@ -227,16 +227,23 @@
   font-size: 1rem;
   color: rgba(92, 85, 82, 0.7);
   font-style: italic;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  hyphens: auto;
 }
 
 .productDescription {
   font-size: 1rem;
   line-height: 1.5;
   margin-bottom: 0.5rem;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  hyphens: auto;
+  flex: 1;
 }
 
 .ingredients {
-  margin-top: 1rem;
+  margin-top: auto;
 }
 
 .ingredientsTitle {
@@ -425,6 +432,9 @@
   color: rgba(92, 85, 82, 0.7);
   font-style: italic;
   flex-shrink: 0;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  hyphens: auto;
 }
 
 .mobileDescription {
@@ -434,6 +444,9 @@
   overflow: visible !important;
   display: block !important;
   margin-bottom: 0.5rem;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  hyphens: auto;
 }
 
 .mobileIngredients {

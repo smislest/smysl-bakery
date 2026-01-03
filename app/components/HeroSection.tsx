@@ -4,7 +4,6 @@ import Link from "next/link";
 import Image from "next/image";
 import styles from "./HeroSection.module.css";
 import { useEffect, useState } from "react";
-import { typograph } from '../../lib/typograph';
 import type { HeroData } from '../../lib/heroData';
 
 interface HeroSectionProps {
@@ -28,13 +27,14 @@ export default function HeroSection({ initialData = null }: HeroSectionProps) {
   }, []);
 
   // Если данные ещё не загрузились, рендерим fallback-контент (чтобы элемент всегда был видим)
+  // Fallback уже типографирован в getHeroData()
   const fallback = {
     title: "Безглютеновый хлеб и десерты в Москве",
     subtitle:
       "Развиваем культуру осознанного ежедневного рациона и показываем, что полезная выпечка может быть вкусной и разнообразной.",
     image: "/img/heart.png",
     imageAlt: "Хлеб в форме сердца",
-    ctaLink: "#",
+    ctaLink: "#products",
     ctaText: "В каталог",
     backgroundImage: "",
   };
@@ -117,11 +117,11 @@ export default function HeroSection({ initialData = null }: HeroSectionProps) {
 
           <div className={styles.textContainer}>
             <h1 className={styles.title}>
-              {typograph(data.title)}
+              {data.title}
             </h1>
             
             <div className={styles.subtitle}>
-              {typograph(data.subtitle)}
+              {data.subtitle}
             </div>
             
             {(() => {
@@ -140,11 +140,11 @@ export default function HeroSection({ initialData = null }: HeroSectionProps) {
         <div className={styles.desktopLayout}>
           <div className={styles.textContainer}>
             <h1 className={styles.title}>
-              {typograph(data.title)}
+              {data.title}
             </h1>
             
             <div className={styles.subtitle}>
-              {typograph(data.subtitle)}
+              {data.subtitle}
             </div>
             
             {(() => {
