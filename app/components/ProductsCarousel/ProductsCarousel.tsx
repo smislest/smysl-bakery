@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useSpring, animated } from '@react-spring/web';
 import { useDrag } from '@use-gesture/react';
 import { createDirectus, rest, readItems } from '@directus/sdk';
+import { typograph } from '../../../lib/typograph';
 import styles from './ProductsCarousel.module.css';
 
 interface Product {
@@ -383,14 +384,14 @@ export default function ProductsCarousel({ initialProducts = [] }: ProductsCarou
                         
                         <div className={styles.cardContent}>
                           <div className={styles.productHeader}>
-                            <h3 className={styles.productTitle}>{product.title}</h3>
+                            <h3 className={styles.productTitle}>{typograph(product.title)}</h3>
                             <div className={styles.productWeight}>
                               {product.weight}г
                             </div>
                           </div>
                           
-                          <p className={styles.productSubtitle}>{product.subtitle}</p>
-                          <p className={styles.productDescription}>{product.description}</p>
+                          <p className={styles.productSubtitle}>{typograph(product.subtitle)}</p>
+                          <p className={styles.productDescription}>{typograph(product.description)}</p>
                           
                           <div className={styles.ingredients}>
                             <h4 className={styles.ingredientsTitle}>Состав:</h4>
@@ -474,11 +475,11 @@ export default function ProductsCarousel({ initialProducts = [] }: ProductsCarou
                   </div>
                   <div className={styles.mobileContent}>
                     <div className={styles.mobileHeader}>
-                      <h3 className={styles.mobileTitle}>{product.title}</h3>
+                      <h3 className={styles.mobileTitle}>{typograph(product.title)}</h3>
                       <div className={styles.mobileWeight}>{product.weight}г</div>
                     </div>
-                    <p className={styles.mobileSubtitle}>{product.subtitle}</p>
-                    <p className={styles.mobileDescription}>{product.description}</p>
+                    <p className={styles.mobileSubtitle}>{typograph(product.subtitle)}</p>
+                    <p className={styles.mobileDescription}>{typograph(product.description)}</p>
                     <div className={styles.mobileIngredients}>
                       <h4 className={styles.mobileIngredientsTitle}>Состав:</h4>
                       <p className={styles.mobileIngredientsText}>{product.ingredients}</p>

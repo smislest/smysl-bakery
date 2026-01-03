@@ -1,6 +1,7 @@
 "use client";
 
 import ProductsCarousel from "./ProductsCarousel/ProductsCarousel";
+import { typograph } from '../../lib/typograph';
 import styles from "./ProductsSection.module.css";
 
 interface Product {

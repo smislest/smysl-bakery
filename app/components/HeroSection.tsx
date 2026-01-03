@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import styles from "./HeroSection.module.css";
 import { useEffect, useState } from "react";
+import { typograph } from '../../lib/typograph';
 import type { HeroData } from '../../lib/heroData';
 
 interface HeroSectionProps {
@@ -116,11 +117,11 @@ export default function HeroSection({ initialData = null }: HeroSectionProps) {
 
           <div className={styles.textContainer}>
             <h1 className={styles.title}>
-              {data.title}
+              {typograph(data.title)}
             </h1>
             
             <div className={styles.subtitle}>
-              {data.subtitle}
+              {typograph(data.subtitle)}
             </div>
             
             {(() => {
@@ -139,11 +140,11 @@ export default function HeroSection({ initialData = null }: HeroSectionProps) {
         <div className={styles.desktopLayout}>
           <div className={styles.textContainer}>
             <h1 className={styles.title}>
-              {data.title}
+              {typograph(data.title)}
             </h1>
             
             <div className={styles.subtitle}>
-              {data.subtitle}
+              {typograph(data.subtitle)}
             </div>
             
             {(() => {
