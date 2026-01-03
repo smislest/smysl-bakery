@@ -450,7 +450,7 @@
 }
 
 .mobileIngredients {
-  margin-top: 0.5rem;
+  margin-top: auto;
   flex-shrink: 0;
 }
 
