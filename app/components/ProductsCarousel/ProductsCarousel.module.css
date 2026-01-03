@@ -311,15 +311,14 @@
   scrollbar-width: none;
 }
 
-/* ОДИНАКОВАЯ МИНИМАЛЬНАЯ ВЫСОТА ДЛЯ ВСЕХ КАРТОЧЕК */
+/* ОДИНАКОВАЯ ВЫСОТА ДЛЯ ВСЕХ КАРТОЧЕК */
 .scrollSnapCard {
   flex: 0 0 auto;
   width: calc(100vw - 60px);
   max-width: 360px;
   scroll-snap-align: center;
   scroll-snap-stop: always;
-  height: 100% !important;
-  min-height: 520px;
+  height: 680px !important;
 }
 
 /* МОБИЛЬНАЯ КАРТОЧКА - АДАПТИВНАЯ ВЫСОТА */
