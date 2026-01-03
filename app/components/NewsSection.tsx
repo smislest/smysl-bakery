@@ -4,6 +4,7 @@
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { typograph } from '../../lib/typograph';
 import type { NewsItem, NewsImage } from '../../lib/news';
 
 interface NewsSectionProps {
@@ -253,10 +254,10 @@ export default function NewsSection({ initialNews = [] }: NewsSectionProps) {
                   <div className="flex-1 p-5 flex flex-col">
                     <div className="flex-1 space-y-3">
                       <h3 className="text-lg font-bold leading-tight line-clamp-2" style={{ color: '#675b53' }}>
-                        {item.title}
+                        {typograph(item.title)}
                       </h3>
                       <p className="text-base leading-relaxed line-clamp-4" style={{ color: '#8b7f77' }}>
-                        {item.excerpt}
+                        {typograph(item.excerpt)}
                       </p>
                     </div>
                     <div className="pt-6 mt-auto">
@@ -305,10 +306,10 @@ export default function NewsSection({ initialNews = [] }: NewsSectionProps) {
                   </div>
                   <div className="p-5 md:p-6 space-y-3">
                     <h3 className="text-base md:text-lg font-bold leading-tight line-clamp-2" style={{ color: '#675b53' }}>
-                      {item.title}
+                      {typograph(item.title)}
                     </h3>
                     <p className="text-sm md:text-base leading-relaxed line-clamp-3" style={{ color: '#8b7f77' }}>
-                      {item.excerpt}
+                      {typograph(item.excerpt)}
                     </p>
                     <div className="font-medium hover:opacity-70 transition-opacity inline-flex items-center gap-1" style={{ color: '#675b53' }}>
                       Читать далее →

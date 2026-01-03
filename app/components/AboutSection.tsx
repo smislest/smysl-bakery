@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { getAboutData } from '../../lib/aboutData';
+import { typograph } from '../../lib/typograph';
 import type { AboutData } from '../../lib/aboutData';
 
 const DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'https://smysl-bakery-directus.onrender.com';
@@ -32,11 +33,11 @@ export default function AboutSection() {
     extra1: '/img/staf5.png',
   };
   const passionTitle = about?.passion_title || 'Мы...';
-  const passionText = about?.passion_text || 'Благодаря нашей страсти к инновациям и строгому контролю качества, мы создаём натуральные продукты, которые наполняют жизнь вкусом';
+  const passionText = typograph(about?.passion_text) || typograph('Благодаря нашей страсти к инновациям и строгому контролю качества, мы создаём натуральные продукты, которые наполняют жизнь вкусом');
   const prideTitle = about?.pride_title || 'гордимся';
-  const prideText = about?.pride_text || 'Мы с гордостью предлагаем широкий ассортимент вкусной и натуральной выпечки на безглютеновой основе';
+  const prideText = typograph(about?.pride_text) || typograph('Мы с гордостью предлагаем широкий ассортимент вкусной и натуральной выпечки на безглютеновой основе');
   const missionTitle = about?.mission_title || 'наша миссия';
-  const missionText = about?.mission_text || 'Мы стремимся к тому, чтобы питание стало ОСОЗНАННЫМ, понятным и по-настоящему вкусным — Без компромисса между пользой и удовольствием';
+  const missionText = typograph(about?.mission_text) || typograph('Мы стремимся к тому, чтобы питание стало ОСОЗНАННЫМ, понятным и по-настоящему вкусным — Без компромисса между пользой и удовольствием');
   
   const images = {
     main: getAssetUrl(about?.image_main, fallbackImages.main),
