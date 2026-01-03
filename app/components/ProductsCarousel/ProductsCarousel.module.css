@@ -318,7 +318,7 @@
   max-width: 360px;
   scroll-snap-align: center;
   scroll-snap-stop: always;
-  height: auto !important;
+  height: 100% !important;
   min-height: 520px;
 }
 
