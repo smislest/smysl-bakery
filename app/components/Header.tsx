@@ -1,9 +1,9 @@
-
 "use client";
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import styles from "./Header.module.css";
 import headerStatic from "../../content/header.json";
 
@@ -18,6 +18,7 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [header] = useState<HeaderData>(headerStatic);
   const logoSrc = "/svg/logo.svg";
+  const pathname = usePathname();
 
   const socials = [
     {
@@ -55,12 +56,19 @@ export default function Header() {
 
   const handleNavClick = (href: string) => {
     setIsMenuOpen(false);
-    if (href.startsWith('#')) {
-      const element = document.getElementById(href.replace('#', ''));
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
+    
+    // Если на главной странице
+    if (pathname === '/') {
+      // Извлекаем якорь (например, из "/#products" берём "products")
+      const anchor = href.startsWith('/#') ? href.slice(2) : null;
+      if (anchor) {
+        const element = document.getElementById(anchor);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
       }
     }
+    // Если на другой странице - просто переходим по ссылке (Next.js обработает)
   };
 
   if (!header) {
@@ -152,13 +160,14 @@ export default function Header() {
             <nav className={styles.menuNav}>
               {Array.isArray(header.menu) && header.menu.length > 0 ? (
                 header.menu.map((item) => (
-                  <button
+                  <Link
                     key={item.href}
-                    onClick={() => handleNavClick(item.href)}
+                    href={item.href}
                     className={styles.menuNavLink}
+                    onClick={() => handleNavClick(item.href)}
                   >
                     {item.label}
-                  </button>
+                  </Link>
                 ))
               ) : (
                 <div className={styles.menuNavEmpty}>Меню не найдено</div>
