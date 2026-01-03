@@ -158,8 +158,14 @@ export default function NewsSection({ initialNews = [] }: NewsSectionProps) {
 
   return (
     <section id="news" className="w-full py-16 md:py-20 relative overflow-hidden" style={{ backgroundColor: '#675b53' }}>
-      {/* Фоновый узор */}
-      <div className="absolute inset-0 pointer-events-none opacity-20">
+      {/* Фоновый узор с градиентом прозрачности (сверху явный, снизу 0) */}
+      <div 
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          maskImage: 'linear-gradient(to bottom, rgba(0,0,0,0.9), rgba(0,0,0,0))',
+          WebkitMaskImage: 'linear-gradient(to bottom, rgba(0,0,0,0.9), rgba(0,0,0,0))',
+        }}
+      >
         <Image
           src="/svg/uzr_bg.svg"
           alt=""

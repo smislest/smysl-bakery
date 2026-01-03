@@ -116,9 +116,11 @@ export default function Footer() {
         </div>
 
         {/* Copyright */}
-        <div className="text-center text-white opacity-70 pt-8 border-t" style={{ borderColor: 'rgba(255, 236, 198, 0.2)' }}>
-          {footer.text}
-          <div className="flex justify-center gap-4 mt-2">
+        <div className="flex items-center justify-between text-white opacity-70 pt-8 border-t" style={{ borderColor: 'rgba(255, 236, 198, 0.2)' }}>
+          <div>
+            {footer.text}
+          </div>
+          <div className="flex gap-4">
             {(footer.links || []).map((link) => (
               <a key={link.href} href={link.href} className="underline hover:opacity-80 transition-colors">{link.label}</a>
             ))}

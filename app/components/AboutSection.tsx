@@ -48,6 +48,28 @@ export default function AboutSection() {
 
   return (
     <section id="about" className="w-full relative" style={{ paddingBottom: '100px', zIndex: 10 }}>
+      {/* Фоновый узор с градиентом прозрачности (сверху 30%, к низу 90%) */}
+      <div 
+        className="absolute left-0 w-full pointer-events-none"
+        style={{
+          top: '-400px',
+          bottom: 0,
+          maskImage: 'linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.9))',
+          WebkitMaskImage: 'linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.9))',
+          zIndex: 5,
+        }}
+      >
+        <Image
+          src="/svg/uzr_bg.svg"
+          alt=""
+          width={1920}
+          height={1080}
+          className="w-full h-full"
+          style={{ objectFit: 'fill' }}
+          draggable={false}
+        />
+      </div>
+
       {/* Заголовок на зелёном фоне */}
       <div className="container mx-auto px-4 py-12 relative z-10">
         <div className="flex items-center justify-center gap-4 mb-8">
@@ -72,6 +94,20 @@ export default function AboutSection() {
         <div className="md:hidden absolute top-0 left-0 w-full" style={{ height: '35px', transform: 'translateY(-34px)' }}>
           <svg viewBox="0 0 1920 35" preserveAspectRatio="none" className="w-full h-full">
             <path d="M0,0 C0,10 429.81,35 960,35 C1490.19,35 1920,10 1920,0 L1920,35 L0,35 Z" fill="#F5E6D3" />
+          </svg>
+        </div>
+
+        {/* SVG форма для нижнего изгиба - Desktop */}
+        <div className="hidden md:block absolute bottom-0 left-0 w-full" style={{ height: '70px', transform: 'translateY(69px)' }}>
+          <svg viewBox="0 0 1920 70" preserveAspectRatio="none" className="w-full h-full">
+            <path d="M0,70 C0,50 429.81,0 960,0 C1490.19,0 1920,50 1920,70 L1920,0 L0,0 Z" fill="#F5E6D3" />
+          </svg>
+        </div>
+        
+        {/* SVG форма для нижнего изгиба - Mobile (более плавный изгиб) */}
+        <div className="md:hidden absolute bottom-0 left-0 w-full" style={{ height: '35px', transform: 'translateY(34px)' }}>
+          <svg viewBox="0 0 1920 35" preserveAspectRatio="none" className="w-full h-full">
+            <path d="M0,35 C0,25 429.81,0 960,0 C1490.19,0 1920,25 1920,35 L1920,0 L0,0 Z" fill="#F5E6D3" />
           </svg>
         </div>
 

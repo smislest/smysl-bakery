@@ -277,6 +277,7 @@
   aspect-ratio: 1;
   isolation: isolate;
   overflow: hidden;
+  transform: scale(1.1);
 }
 
 /* Десктопный лейаут */
