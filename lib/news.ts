@@ -14,6 +14,8 @@ export type NewsItem = {
   news_photo: NewsImage | null;
   content: string;
   gallery?: NewsImage[];
+  // Источник данных: directus | supabase | local
+  source?: 'directus' | 'supabase' | 'local';
 };
 
 export const newsData: NewsItem[] = [

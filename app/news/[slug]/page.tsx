@@ -29,6 +29,10 @@ export default async function NewsPage(props: PageProps) {
   const news = allNews.find(n => n.slug === slug) || null;
   
   console.log('📰 Found news:', news ? news.title : 'NOT FOUND');
+  if (news?.source) {
+    console.log('📡 News source:', news.source);
+    console.log('📄 Content preview:', (news.content || '').slice(0, 200));
+  }
   
   // Находим следующую новость
   let nextNews: NewsItem | null = null;
@@ -91,10 +95,17 @@ export default async function NewsPage(props: PageProps) {
           {news.title}
         </h1>
 
-        {/* Дата */}
-        <time className="block mb-8 text-gray-400 text-base">
-          {news.date}
-        </time>
+        {/* Дата + источник */}
+        <div className="flex items-center gap-3 mb-8 text-gray-400 text-base flex-wrap">
+          <time>
+            {news.date}
+          </time>
+          {news.source && (
+            <span className="px-3 py-1 rounded-full bg-gray-100 text-gray-600 text-sm">
+              source: {news.source}
+            </span>
+          )}
+        </div>
 
         {/* Главное изображение */}
         <div className="relative w-full max-w-4xl aspect-[16/9] mb-10 rounded-lg overflow-hidden">

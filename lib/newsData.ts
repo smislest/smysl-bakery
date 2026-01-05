@@ -6,7 +6,7 @@ import { readJsonFallback, writeJsonFallback } from './supabaseFallback';
 
 const NEWS_FALLBACK_KEY = process.env.SUPABASE_NEWS_KEY || 'news.json';
 
-const normalizeNews = (items: any[]): NewsItem[] => {
+const normalizeNews = (items: any[], source: 'directus' | 'supabase' | 'local'): NewsItem[] => {
   const filtered = (Array.isArray(items) ? items : []).filter((item) => item.slug);
 
   return filtered.map((item) => ({
@@ -20,6 +20,7 @@ const normalizeNews = (items: any[]): NewsItem[] => {
     excerpt: typograph(item.excerpt || ''),
     // Сохраняем HTML из WYSIWYG: берём content/body/text и пропускаем через typographHtml, чтобы не терять теги
     content: typographHtml(item.content || item.body || item.text || ''),
+    source,
   })) as NewsItem[];
 };
 
@@ -27,7 +28,7 @@ async function readSupabaseNews(): Promise<NewsItem[] | null> {
   const cached = await readJsonFallback<NewsItem[]>(NEWS_FALLBACK_KEY);
   if (Array.isArray(cached) && cached.length > 0) {
     console.log(`📦 Using Supabase fallback for news (${cached.length} items)`);
-    return normalizeNews(cached);
+    return normalizeNews(cached, 'supabase');
   }
   return null;
 }
@@ -39,7 +40,7 @@ export async function getNewsData(): Promise<NewsItem[]> {
     console.log('📦 Directus response:', data ? `${data.length} items` : 'null');
 
     if (Array.isArray(data) && data.length > 0) {
-      const normalized = normalizeNews(data);
+      const normalized = normalizeNews(data, 'directus');
       console.log(`✅ Filtered ${normalized.length} news items with slugs`);
 
       if (normalized.length > 0) {
@@ -56,13 +57,13 @@ export async function getNewsData(): Promise<NewsItem[]> {
     if (supabaseFallback) return supabaseFallback;
 
     console.log('📦 Using local news fallback');
-    return newsData;
+    return normalizeNews(newsData, 'local');
   } catch (error) {
     console.error('❌ Error in getNewsData:', error instanceof Error ? error.message : error);
 
     const supabaseFallback = await readSupabaseNews();
     if (supabaseFallback) return supabaseFallback;
 
-    return newsData;
+    return normalizeNews(newsData, 'local');
   }
 }
