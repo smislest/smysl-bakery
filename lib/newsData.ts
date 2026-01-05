@@ -18,8 +18,11 @@ const normalizeNews = (items: any[], source: 'directus' | 'supabase' | 'local'):
     title: typograph(item.title),
     description: typograph(item.description || item.excerpt || ''),
     excerpt: typograph(item.excerpt || ''),
-    // Сохраняем HTML из WYSIWYG: берём content/body/text и пропускаем через typographHtml, чтобы не терять теги
-    content: typographHtml(item.content || item.body || item.text || ''),
+    // Не типографируем HTML WYSIWYG, чтобы не потерять теги; сохраняем как есть
+    content: typeof (item.content ?? item.body ?? item.text) === 'string'
+      ? (item.content ?? item.body ?? item.text)
+      : String(item.content ?? item.body ?? item.text ?? ''),
+    rawContent: item.content ?? item.body ?? item.text ?? '',
     source,
   })) as NewsItem[];
 };
