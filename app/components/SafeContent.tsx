@@ -1,6 +1,7 @@
 "use client";
 
 import DOMPurify from 'isomorphic-dompurify';
+import styles from './SafeContent.module.css';
 
 interface SafeContentProps {
   content: string;
@@ -17,19 +18,22 @@ export default function SafeContent({ content, className, style }: SafeContentPr
       'ul', 'ol', 'li',
       'img', 'figure', 'figcaption',
       'table', 'thead', 'tbody', 'tr', 'td', 'th',
-      'hr', 'div', 'span'
+      'hr', 'div', 'span',
+      'video', 'source', 'iframe'
     ],
     ALLOWED_ATTR: [
       'href', 'target', 'rel',
       'src', 'alt', 'width', 'height',
       'class', 'id', 'style',
-      'data-*'
+      'data-*',
+      'controls', 'controlsList', 'poster',
+      'frameborder', 'allow', 'allowfullscreen'
     ],
   });
   
   return (
     <div
-      className={className}
+      className={`${styles.wysiwyg} ${className || ''}`}
       style={style}
       dangerouslySetInnerHTML={{ __html: cleanContent }}
     />
