@@ -1,11 +1,15 @@
 {
   "logo": { "url": "/svg/logo.svg" },
   "menu": [
-    { "label": "Наша выпечка и десерты", "href": "/#products" },
-    { "label": "О нас", "href": "/#about" },
-    { "label": "Новости", "href": "/#news" },
-    { "label": "Контакты", "href": "/#contacts" }
+    { "label": "Наша выпечка и десерты", "href": "/#products", "order": 1 },
+    { "label": "О нас", "href": "/#about", "order": 2 },
+    { "label": "Новости", "href": "/#news", "order": 3 },
+    { "label": "Контакты", "href": "/#contacts", "order": 4 }
   ],
   "phone": "+7 (999) 123-45-67",
-  "email": "info@smysl-est.ru"
+  "email": "info@smysl-est.ru",
+  "address": "111675, Россия, г. Москва, ул. Святоозёрская, дом 8",
+  "instagram": "https://instagram.com",
+  "vkontakte": "https://vk.com",
+  "telegram": "https://t.me"
 }

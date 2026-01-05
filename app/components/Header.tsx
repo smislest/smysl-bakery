@@ -5,43 +5,46 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import styles from "./Header.module.css";
-import headerStatic from "../../content/header.json";
-
-interface HeaderData {
-  logo?: string | { url: string } | null;
-  menu: { label: string; href: string }[];
-  phone: string;
-  email: string;
-}
+import { getHeaderData, type HeaderData } from "../../lib/headerData";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [header] = useState<HeaderData>(headerStatic);
+  const [header, setHeader] = useState<HeaderData | null>(null);
   const logoSrc = "/svg/logo.svg";
   const pathname = usePathname();
 
+  useEffect(() => {
+    getHeaderData().then(setHeader).catch(err => {
+      console.error('Failed to load header:', err);
+      setHeader(null);
+    });
+  }, []);
+
   const socials = [
     {
-      href: "https://instagram.com",
+      key: "instagram",
       label: "Instagram",
       viewBox: "0 0 24 24",
-      path: "M7 2C4.243 2 2 4.243 2 7v10c0 2.757 2.243 5 5 5h10c2.757 0 5-2.243 5-5V7c0-2.757-2.243-5-5-5H7zm0 2h10c1.654 0 3 1.346 3 3v10c0 1.654-1.346 3-3 3H7c-1.654 0-3-1.346-3-3V7c0-1.654 1.346-3 3-3zm11 1a1 1 0 100 2 1 1 0 000-2zm-6 2a5 5 0 100 10 5 5 0 000-10zm0 2a3 3 0 110 6 3 3 0 010-6z",
+      path: "M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2m-.2 2A3.6 3.6 0 0 0 4 7.6v8.8C4 18.39 5.61 20 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6C20 5.61 18.39 4 16.4 4H7.6m9.65 1.5a1.25 1.25 0 0 1 1.25 1.25A1.25 1.25 0 0 1 17.25 8 1.25 1.25 0 0 1 16 6.75a1.25 1.25 0 0 1 1.25-1.25M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3z",
+      stroke: false,
     },
     {
-      href: "https://vk.com",
+      key: "vkontakte",
       label: "VK",
       viewBox: "0 0 24 24",
-      path: "M20.46 6.16c.11-.36 0-.63-.52-.63H17.6c-.43 0-.63.23-.74.48 0 0-.86 2.07-2.08 3.41-.39.39-.57.51-.79.51-.11 0-.27-.13-.27-.49V6.16c0-.44-.13-.63-.49-.63H9.79c-.27 0-.44.2-.44.38 0 .42.64.52.71 1.72v2.6c0 .57-.1.67-.32.67-.57 0-1.95-2.09-2.77-4.47-.17-.48-.34-.68-.77-.68H3.34c-.5 0-.6.23-.6.48 0 .45.57 2.69 2.69 5.65 1.4 2.03 3.37 3.14 5.18 3.14 1.08 0 1.21-.24 1.21-.68v-1.57c0-.49.1-.58.45-.58.26 0 .72.13 1.79 1.1 1.22 1.22 1.42 1.77 2.1 1.77h1.78c.5 0 .75-.24.61-.71-.16-.46-.73-1.13-1.48-1.92-.39-.44-.97-.91-1.14-1.15-.24-.31-.17-.45 0-.73 0 0 2.02-2.84 2.24-3.8z",
+      path: "M12.785 16.241s.288-.032.436-.189c.136-.144.131-.415.131-.415s-.019-1.266.57-1.453c.581-.184 1.327 1.223 2.118 1.763.598.408 1.052.318 1.052.318l2.113-.029s1.105-.068.581-.936c-.043-.071-.307-.646-1.577-1.829-1.33-1.238-1.151-1.037.45-3.176.974-1.302 1.363-2.095 1.241-2.434-.116-.323-.833-.238-.833-.238l-2.379.015s-.177-.024-.308.054c-.128.077-.21.256-.21.256s-.376.999-.877 1.85c-1.057 1.793-1.48 1.889-1.653 1.776-.402-.262-.302-1.051-.302-1.612 0-1.753.265-2.484-.517-2.673-.26-.063-.452-.104-1.117-.111-.854-.009-1.577.003-1.986.203-.272.133-.482.43-.354.447.158.022.516.097.706.355.245.334.236 1.083.236 1.083s.141 2.064-.329 2.32c-.323.176-.766-.183-1.717-1.821-.487-.839-.855-1.766-.855-1.766s-.071-.174-.198-.267c-.154-.113-.37-.149-.37-.149l-2.26.014s-.34.01-.465.157c-.111.131-.009.402-.009.402s1.765 4.127 3.764 6.206c1.833 1.907 3.914 1.781 3.914 1.781h.945z",
+      stroke: false,
     },
     {
-      href: "https://t.me",
+      key: "telegram",
       label: "Telegram",
       viewBox: "0 0 24 24",
-      path: "M9.04 15.65l-.39 5.46c.56 0 .81-.24 1.1-.52l2.64-2.52 5.46 4c1 .55 1.71.26 1.98-.92l3.59-16.83c.33-1.56-.56-2.17-1.55-1.8L2.16 9.53c-1.52.6-1.5 1.46-.26 1.85l5.31 1.66 12.3-7.74c.58-.37 1.1-.17.67.25z",
+      path: "M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z",
+      stroke: false,
     },
   ];
 
-  const address = "111675, Россия, г. Москва, ул. Святоозерская, дом 8";
+  const address = header?.address || "111675, Россия, г. Москва, ул. Святоозёрская, дом 8";
 
   useEffect(() => {
     if (isMenuOpen) {
@@ -158,7 +161,7 @@ export default function Header() {
             </div>
 
             <nav className={styles.menuNav}>
-              {Array.isArray(header.menu) && header.menu.length > 0 ? (
+              {header && Array.isArray(header.menu) && header.menu.length > 0 ? (
                 header.menu.map((item) => (
                   <Link
                     key={item.href}
@@ -170,35 +173,47 @@ export default function Header() {
                   </Link>
                 ))
               ) : (
-                <div className={styles.menuNavEmpty}>Меню не найдено</div>
+                <div className={styles.menuNavEmpty}>Загрузка меню...</div>
               )}
             </nav>
 
             <div className={styles.menuFooter}>
               <div className={styles.socialIcons}>
-                {socials.map((s) => (
-                  <Link key={s.href} href={s.href} className={styles.socialIcon} aria-label={s.label} target="_blank">
-                    <svg viewBox={s.viewBox} width={36} height={36} aria-hidden="true" focusable="false">
-                      <path d={s.path} />
-                    </svg>
-                  </Link>
-                ))}
+                {socials.map((s) => {
+                  const socialUrl = header?.[s.key as keyof HeaderData] as string || '#';
+                  return (
+                    <Link key={s.key} href={socialUrl} className={styles.socialIcon} aria-label={s.label} target="_blank">
+                      <svg viewBox={s.viewBox} width={36} height={36} aria-hidden="true" focusable="false" fill="currentColor">
+                        <path d={s.path} />
+                      </svg>
+                    </Link>
+                  );
+                })}
               </div>
 
               <div className={styles.contactsRow}>
                 <div className={styles.contactLine}>
                   <span className={styles.contactIcon} aria-hidden="true">
-                    <svg viewBox="0 0 24 24" width={22} height={22}>
-                      <path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24c1.11.37 2.3.57 3.58.57a1 1 0 011 1v3.5a1 1 0 01-1 1C10.2 22.02 2 13.82 2 3.99a1 1 0 011-1H6.5a1 1 0 011 1c0 1.28.2 2.47.57 3.59a1 1 0 01-.25 1.01l-2.2 2.2z" />
+                    <svg viewBox="0 0 24 24" width={24} height={24} fill="none" stroke="currentColor" strokeWidth={1.5}>
+                      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
                     </svg>
                   </span>
-                  <a href={`tel:${header.phone}`} className={styles.phone}>{header.phone}</a>
+                  <a href={`tel:${header?.phone || ''}`} className={styles.phone}>{header?.phone || '8800200 02 22'}</a>
                 </div>
 
                 <div className={styles.contactLine}>
                   <span className={styles.contactIcon} aria-hidden="true">
-                    <svg viewBox="0 0 24 24" width={22} height={22}>
-                      <path d="M12 2C8.14 2 5 5.14 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.86-3.14-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z" />
+                    <svg viewBox="0 0 24 24" width={24} height={24} fill="none" stroke="currentColor" strokeWidth={1.5}>
+                      <path d="M3 8l7.89 5.26a2 2 0 0 0 2.22 0L21 8M5 19h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2z" />
+                    </svg>
+                  </span>
+                  <a href={`mailto:${header?.email || ''}`} className={styles.phone}>{header?.email || 'info@smysl-est.ru'}</a>
+                </div>
+
+                <div className={styles.contactLine}>
+                  <span className={styles.contactIcon} aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width={18} height={18} fill="currentColor">
+                      <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
                     </svg>
                   </span>
                   <div className={styles.addressText}>{address}</div>
