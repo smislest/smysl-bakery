@@ -24,7 +24,7 @@ export const headerFallbackData: HeaderData = {
   address: headerFallback.address || '111675, Россия, г. Москва, ул. Святоозерская, дом 8',
 };
 
-export async function getHeaderData(): Promise<HeaderData | null> {
+export async function getHeaderData(): Promise<HeaderData> {
   try {
     const data = await getCollectionFromDirectus('header');
     let item: any = null;
