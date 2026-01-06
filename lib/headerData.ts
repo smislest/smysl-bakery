@@ -19,7 +19,7 @@ export interface HeaderData {
   menu: MenuItem[];
 }
 
-const localFallback: HeaderData = {
+export const headerFallbackData: HeaderData = {
   ...(headerFallback as HeaderData),
   address: headerFallback.address || '111675, Россия, г. Москва, ул. Святоозерская, дом 8',
 };
@@ -37,7 +37,7 @@ export async function getHeaderData(): Promise<HeaderData | null> {
     
     if (!item) {
       console.log('⚠️ No header data from Directus, using fallback');
-      return localFallback;
+      return headerFallbackData; // Ensure localFallback retained; already exported alias
     }
 
     // Разворачиваем many-to-many menu: header.menu -> header_menu_items -> menu_items
@@ -59,7 +59,7 @@ export async function getHeaderData(): Promise<HeaderData | null> {
 
     // Если меню пустое, берём из фолбэка
     if (menuItems.length === 0) {
-      menuItems = localFallback.menu;
+      menuItems = headerFallbackData.menu;
     }
 
     return {
@@ -76,7 +76,7 @@ export async function getHeaderData(): Promise<HeaderData | null> {
   } catch (error) {
     console.error('❌ Error loading header data:', error instanceof Error ? error.message : error);
     console.log('📦 Using fallback header data');
-    return localFallback;
+    return headerFallbackData;
   }
 }
 

@@ -5,18 +5,18 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import styles from "./Header.module.css";
-import { getHeaderData, type HeaderData } from "../../lib/headerData";
+import { getHeaderData, headerFallbackData, type HeaderData } from "../../lib/headerData";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [header, setHeader] = useState<HeaderData | null>(null);
+  const [header, setHeader] = useState<HeaderData>(headerFallbackData);
   const logoSrc = "/svg/logo.svg";
   const pathname = usePathname();
 
   useEffect(() => {
     getHeaderData().then(setHeader).catch(err => {
       console.error('Failed to load header:', err);
-      setHeader(null);
+      setHeader(headerFallbackData);
     });
   }, []);
 
@@ -73,17 +73,6 @@ export default function Header() {
     }
     // Если на другой странице - просто переходим по ссылке (Next.js обработает)
   };
-
-  if (!header) {
-    // Пока данные загружаются — показываем логотип по умолчанию
-    return (
-      <header className={styles.header}>
-        <Link href="/">
-          <Image src="/img/logo.png" alt="СМЫСЛ есть" width={120} height={60} />
-        </Link>
-      </header>
-    );
-  }
 
   return (
     <header className={styles.header}>

@@ -15,6 +15,13 @@ export default function NewsSection({ initialNews = [] }: NewsSectionProps) {
   const [news, setNews] = useState<NewsItem[]>(initialNews);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
+  const formatDate = (value?: string) => {
+    if (!value) return '';
+    const parsed = new Date(value);
+    if (Number.isNaN(parsed.getTime())) return value;
+    return parsed.toLocaleDateString('ru-RU', { day: '2-digit', month: 'long', year: 'numeric' });
+  };
+
   // Клиентская загрузка для подстраховки (если серверная не сработала)
   useEffect(() => {
     async function fetchNews() {
@@ -91,8 +98,12 @@ export default function NewsSection({ initialNews = [] }: NewsSectionProps) {
         display: flex;
         overflow-x: auto;
         scroll-snap-type: x mandatory;
+        scroll-snap-stop: always;
+        overscroll-behavior-x: contain;
         -webkit-overflow-scrolling: touch;
-        scroll-behavior: smooth;
+        scroll-snap-padding-left: clamp(1rem, 4vw, 1.5rem);
+        scroll-snap-padding-right: clamp(1rem, 4vw, 1.5rem);
+        scrollbar-gutter: stable both-edges;
         gap: 16px;
         padding: 16px clamp(1rem, 4vw, 1.5rem) 20px;
         margin: 0;
@@ -148,12 +159,12 @@ export default function NewsSection({ initialNews = [] }: NewsSectionProps) {
       const { step, paddingLeft } = getMobileStep(container);
       const raw = (container.scrollLeft - paddingLeft) / step;
       const nextIndex = Math.max(0, Math.min(news.length - 1, Math.round(raw)));
-      if (nextIndex !== currentIndex) setCurrentIndex(nextIndex);
+      setCurrentIndex((prev) => (prev === nextIndex ? prev : nextIndex));
     };
 
     container.addEventListener('scroll', onScroll, { passive: true });
     return () => container.removeEventListener('scroll', onScroll);
-  }, [news.length, currentIndex]);
+  }, [news.length]);
 
 
   return (
@@ -247,7 +258,7 @@ export default function NewsSection({ initialNews = [] }: NewsSectionProps) {
                       loading="lazy"
                     />
                     <div className="absolute top-4 left-4 px-3 py-1.5 rounded-2xl text-sm font-medium text-white bg-[#619e5a]">
-                      {item.date}
+                      {formatDate(item.date)}
                     </div>
                   </div>
                   <div className="flex-1 p-5 flex flex-col">
@@ -289,7 +300,7 @@ export default function NewsSection({ initialNews = [] }: NewsSectionProps) {
                 >
                   <div className="relative">
                     <div className="absolute top-4 left-4 px-3 py-1.5 rounded-2xl text-sm font-medium z-10 text-white" style={{ backgroundColor: '#619e5a' }}>
-                      {item.date}
+                      {formatDate(item.date)}
                     </div>
                     <div className="relative aspect-[4/3] bg-gray-200">
                       <Image

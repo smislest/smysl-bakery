@@ -15,24 +15,11 @@ export default async function NewsPage(props: PageProps) {
   const params = await props.params;
   const slug = params.slug;
   
-  console.log('📄 Loading news page for slug:', slug);
-  
   // Загружаем все новости на сервере (Directus → Supabase → fallback)
-  const allNews = await getNewsData().catch((err) => {
-    console.error('❌ Error loading news data:', err);
-    return fallbackNews;
-  });
-  
-  console.log('📦 Total news loaded:', allNews.length);
+  const allNews = await getNewsData().catch(() => fallbackNews);
   
   // Находим текущую новость
   const news = allNews.find(n => n.slug === slug) || null;
-  
-  console.log('📰 Found news:', news ? news.title : 'NOT FOUND');
-  if (news?.source) {
-    console.log('📡 News source:', news.source);
-    console.log('📄 Content preview:', (news.content || '').slice(0, 200));
-  }
   
   // Находим следующую новость
   let nextNews: NewsItem | null = null;
@@ -61,6 +48,13 @@ export default async function NewsPage(props: PageProps) {
   const imageUrl = news.news_photo
     ? `${DIRECTUS_URL}/assets/${news.news_photo.filename_disk}`
     : '/img/placeholder.jpg';
+
+  const formatDate = (value?: string) => {
+    if (!value) return '';
+    const parsed = new Date(value);
+    if (Number.isNaN(parsed.getTime())) return value;
+    return parsed.toLocaleDateString('ru-RU', { day: '2-digit', month: 'long', year: 'numeric' });
+  };
 
   return (
     <>
@@ -98,13 +92,8 @@ export default async function NewsPage(props: PageProps) {
         {/* Дата + источник */}
         <div className="flex items-center gap-3 mb-8 text-gray-400 text-base flex-wrap">
           <time>
-            {news.date}
+            {formatDate(news.date)}
           </time>
-          {news.source && (
-            <span className="px-3 py-1 rounded-full bg-gray-100 text-gray-600 text-sm">
-              source: {news.source}
-            </span>
-          )}
         </div>
 
         {/* Главное изображение */}
@@ -128,10 +117,14 @@ export default async function NewsPage(props: PageProps) {
             prose-p:text-gray-700 prose-p:leading-relaxed prose-p:mb-5 prose-p:text-lg
             prose-a:text-[#619e5a] prose-a:no-underline hover:prose-a:underline
             prose-strong:font-semibold
+            prose-blockquote:border-l-4 prose-blockquote:border-[#619e5a] prose-blockquote:pl-6 prose-blockquote:italic prose-blockquote:text-gray-600 prose-blockquote:my-6
             prose-ul:my-5 prose-ul:text-gray-700
             prose-ol:my-5 prose-ol:text-gray-700
             prose-li:mb-2 prose-li:text-lg
-            prose-img:rounded-lg prose-img:my-8"
+            prose-img:rounded-lg prose-img:my-8 prose-img:shadow-lg
+            prose-table:border-collapse prose-table:w-full prose-table:my-8
+            prose-th:border prose-th:border-gray-300 prose-th:bg-gray-100 prose-th:p-3 prose-th:text-left
+            prose-td:border prose-td:border-gray-300 prose-td:p-3"
           style={{ color: '#675b53' }}
         />
 

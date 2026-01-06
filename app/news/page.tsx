@@ -9,6 +9,13 @@ export default async function NewsListPage() {
 
   const DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'https://smysl-bakery-directus.onrender.com';
 
+  const formatDate = (value?: string) => {
+    if (!value) return '';
+    const parsed = new Date(value);
+    if (Number.isNaN(parsed.getTime())) return value;
+    return parsed.toLocaleDateString('ru-RU', { day: '2-digit', month: 'long', year: 'numeric' });
+  };
+
   const getImageUrl = (img: NewsImage | null) => {
     if (!img || !img.filename_disk) return "/img/placeholder.jpg";
     return `${DIRECTUS_URL}/assets/${img.filename_disk}`;
@@ -50,7 +57,7 @@ export default async function NewsListPage() {
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />
                 <div className="absolute top-4 left-4 px-4 py-1.5 rounded-full text-sm font-normal z-10 text-white" style={{ backgroundColor: '#619e5a' }}>
-                  {item.date}
+                  {formatDate(item.date)}
                 </div>
               </div>
               <div className="p-6 space-y-3">
