@@ -1,32 +1,46 @@
 
 import { getCollectionFromDirectus } from './directus';
 import { NewsItem, newsData } from '../lib/news';
-import { typograph, typographHtml } from './typograph';
+import { typograph } from './typograph';
 import { readJsonFallback, writeJsonFallback } from './supabaseFallback';
 
 const NEWS_FALLBACK_KEY = process.env.SUPABASE_NEWS_KEY || 'news.json';
 
 type RawNews = Record<string, unknown>;
 
-const normalizeNews = (items: RawNews[], source: 'directus' | 'supabase' | 'local'): NewsItem[] => {
-  const filtered = (Array.isArray(items) ? items : []).filter((item) => item.slug);
+const isNewsWithSlug = (item: RawNews): item is RawNews & { slug: string } => {
+  return typeof item.slug === 'string' && item.slug.trim().length > 0;
+};
 
-  return filtered.map((item) => ({
-    ...item,
-    id: item.id || '',
-    slug: item.slug,
-    date: item.date || '',
-    news_photo: item.news_photo || null,
-    title: typograph(item.title),
-    description: typograph(item.description || item.excerpt || ''),
-    excerpt: typograph(item.excerpt || ''),
-    // Не типографируем HTML WYSIWYG, чтобы не потерять теги; сохраняем как есть
-    content: typeof (item.content ?? item.body ?? item.text) === 'string'
-      ? (item.content ?? item.body ?? item.text)
-      : String(item.content ?? item.body ?? item.text ?? ''),
-    rawContent: item.content ?? item.body ?? item.text ?? '',
-    source,
-  })) as NewsItem[];
+const normalizeNews = (items: RawNews[], source: 'directus' | 'supabase' | 'local'): NewsItem[] => {
+  const filtered = (Array.isArray(items) ? items : []).filter(isNewsWithSlug);
+
+  return filtered.map((item) => {
+    const contentRaw = item.content ?? item.body ?? item.text ?? '';
+    const rawContent = typeof contentRaw === 'string' ? contentRaw : String(contentRaw);
+    const newsPhoto = typeof item.news_photo === 'object' && item.news_photo !== null
+      ? (item.news_photo as NewsItem['news_photo'])
+      : null;
+
+    return {
+      id: typeof item.id === 'string' ? item.id : '',
+      slug: item.slug,
+      date: typeof item.date === 'string' ? item.date : '',
+      news_photo: newsPhoto,
+      title: typograph(typeof item.title === 'string' ? item.title : ''),
+      excerpt: typograph(
+        typeof item.excerpt === 'string'
+          ? item.excerpt
+          : typeof item.description === 'string'
+            ? item.description
+            : ''
+      ),
+      // Не типографируем HTML WYSIWYG, чтобы не потерять теги; сохраняем как есть
+      content: rawContent,
+      rawContent,
+      source,
+    } satisfies NewsItem;
+  });
 };
 
 async function readSupabaseNews(): Promise<NewsItem[] | null> {

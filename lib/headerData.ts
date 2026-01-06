@@ -42,10 +42,10 @@ export async function getHeaderData(): Promise<HeaderData> {
     };
 
     let item: DirectusHeader | null = null;
-    
+
     if (Array.isArray(data) && data.length > 0) {
       item = data[0] as DirectusHeader;
-    } else if (data) {
+    } else if (data && typeof data === 'object' && !Array.isArray(data)) {
       item = data as DirectusHeader;
     }
     
@@ -57,18 +57,19 @@ export async function getHeaderData(): Promise<HeaderData> {
     // Разворачиваем many-to-many menu: header.menu -> header_menu_items -> menu_items
     let menuItems: MenuItem[] = [];
     if (Array.isArray(item.menu)) {
-      menuItems = item.menu
-        .map((junction: DirectusMenuJunction) => {
-          const menuItem = junction.menu_items_id;
-          if (!menuItem || !menuItem.visible) return null;
-          return {
-            label: typograph(menuItem.label),
-            href: menuItem.slug || '#',
-            order: menuItem.order || 0,
-          };
-        })
-        .filter(Boolean)
-        .sort((a, b) => (a?.order || 0) - (b?.order || 0));
+      const mapped: Array<MenuItem | null> = item.menu.map((junction: DirectusMenuJunction) => {
+        const menuItem = junction.menu_items_id;
+        if (!menuItem || !menuItem.visible) return null;
+        return {
+          label: typograph(menuItem.label),
+          href: menuItem.slug || '#',
+          order: menuItem.order || 0,
+        };
+      });
+
+      menuItems = mapped
+        .filter((value): value is MenuItem => value !== null)
+        .sort((a, b) => (a.order || 0) - (b.order || 0));
     }
 
     // Если меню пустое, берём из фолбэка

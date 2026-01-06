@@ -19,16 +19,24 @@ const PRODUCTS_FALLBACK_KEY = process.env.SUPABASE_PRODUCTS_KEY || 'products.jso
 
 type RawProduct = Record<string, unknown>;
 
-const normalizeProducts = (items: RawProduct[]): Product[] => {
+const toText = (value: unknown): string => {
+  if (typeof value === 'string') return value;
+  if (value === null || value === undefined) return '';
+  return String(value);
+};
+
+const normalizeProducts = (items: Array<RawProduct | Product>): Product[] => {
   const list = Array.isArray(items) ? items : [];
 
   return list.map((item) => ({
     ...item,
-    id: item.id || '',
-    title: typograph(item.title),
-    subtitle: typograph(item.subtitle),
-    description: typograph(item.description),
-    ingredients: typograph(item.ingredients),
+    id: toText(item.id),
+    title: typograph(toText(item.title)),
+    subtitle: typograph(toText(item.subtitle)),
+    description: typograph(toText(item.description)),
+    ingredients: typograph(toText(item.ingredients)),
+    weight: item.weight as Product['weight'],
+    product_photo: item.product_photo as Product['product_photo'],
   })) as Product[];
 };
 

@@ -30,11 +30,23 @@ const getClient = () => {
   return cachedClient;
 };
 
+const isWebStream = (value: unknown): value is ReadableStream<Uint8Array> => {
+  return typeof value === 'object' && value !== null && 'getReader' in value;
+};
+
+const isBlob = (value: unknown): value is Blob => {
+  return typeof value === 'object' && value !== null && typeof (value as Blob).arrayBuffer === 'function';
+};
+
+const isNodeReadable = (value: unknown): value is Readable => {
+  return value instanceof Readable || (typeof value === 'object' && value !== null && typeof (value as Readable).on === 'function');
+};
+
 const streamToString = async (body: Readable | Blob | ReadableStream<Uint8Array> | null | undefined): Promise<string> => {
   if (!body) return '';
 
   // Web stream case (node 18 fetch response)
-  if (typeof body?.getReader === 'function') {
+  if (isWebStream(body)) {
     const reader = body.getReader();
     const chunks: Uint8Array[] = [];
     while (true) {
@@ -46,13 +58,13 @@ const streamToString = async (body: Readable | Blob | ReadableStream<Uint8Array>
   }
 
   // Blob case (edge/runtime)
-  if (typeof body?.arrayBuffer === 'function') {
+  if (isBlob(body)) {
     const buffer = await body.arrayBuffer();
     return Buffer.from(buffer).toString('utf-8');
   }
 
   // Node Readable stream
-  if (body instanceof Readable || typeof body.on === 'function') {
+  if (isNodeReadable(body)) {
     const chunks: Uint8Array[] = [];
     return await new Promise((resolve, reject) => {
       body.on('data', (chunk: Uint8Array) => chunks.push(chunk));
