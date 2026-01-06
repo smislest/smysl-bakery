@@ -74,10 +74,10 @@ export default function FAQSection() {
       <div className="relative z-10 max-w-5xl mx-auto px-4">
           {/* Заголовок */}
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-[#2D5F3F] mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-[#c1dedc] mb-4">
               Частые вопросы
             </h2>
-            <p className="text-lg text-gray-600">
+            <p className="text-lg text-[#ffecc6]">
               Отвечаем на самые популярные вопросы о безглютеновой выпечке
             </p>
           </div>
@@ -87,18 +87,18 @@ export default function FAQSection() {
             {faqData.map((item, index) => (
               <div
                 key={index}
-                className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/60 overflow-hidden transition-all duration-300 hover:shadow-xl"
+                className="bg-white/10 backdrop-blur-sm rounded-2xl shadow-lg border border-white/10 overflow-hidden transition-all duration-300 hover:shadow-xl"
               >
                 <button
                   onClick={() => toggleFAQ(index)}
-                  className="w-full px-6 py-5 text-left flex items-center justify-between gap-4 hover:bg-gray-50 transition-colors"
+                  className="w-full px-6 py-5 text-left flex items-center justify-between gap-4 hover:bg-white/20 transition-colors"
                   aria-expanded={openIndex === index}
                 >
-                  <span className="font-semibold text-lg text-[#2D5F3F] pr-4">
+                  <span className="font-semibold text-lg text-[#c1dedc] pr-4">
                     {item.question}
                   </span>
                   <svg
-                    className={`w-6 h-6 flex-shrink-0 text-[#2D5F3F] transition-transform duration-300 ${
+                    className={`w-6 h-6 flex-shrink-0 text-[#ffecc6] transition-transform duration-300 ${
                       openIndex === index ? 'rotate-180' : ''
                     }`}
                     fill="none"
@@ -118,7 +118,7 @@ export default function FAQSection() {
                     openIndex === index ? 'max-h-96' : 'max-h-0'
                   }`}
                 >
-                  <div className="px-6 pb-5 pt-2 text-gray-700 leading-relaxed">
+                  <div className="px-6 pb-5 pt-2 text-[#ffecc6] leading-relaxed">
                     {item.answer}
                   </div>
                 </div>
@@ -128,12 +128,12 @@ export default function FAQSection() {
 
           {/* Дополнительный CTA */}
           <div className="mt-12 text-center">
-            <p className="text-gray-600 mb-4">
+            <p className="text-[#ffecc6] mb-4">
               Не нашли ответ на свой вопрос?
             </p>
             <a
               href="/contacts"
-              className="inline-block px-8 py-3 bg-[#2D5F3F] text-white font-semibold rounded-full hover:bg-[#234d32] transition-colors"
+              className="inline-block px-8 py-3 bg-[#ffecc6] text-[#544a44] font-semibold rounded-full hover:opacity-90 transition-colors shadow-lg"
             >
               Свяжитесь с нами
             </a>

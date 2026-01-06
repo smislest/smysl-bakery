@@ -11,11 +11,12 @@ export default function LayoutContainer({ children }: { children: React.ReactNod
   const isContactsPage = pathname?.startsWith('/contacts');
   const isWhyGlutenFreePage = pathname?.startsWith('/why-gluten-free');
   const isBlogPage = pathname?.startsWith('/blog');
+  const isFAQPage = pathname?.startsWith('/faq');
   const hasWhiteBackground = isNewsPage || isPrivacyPage;
 
   const backgroundClass = hasWhiteBackground
     ? 'bg-white'
-    : (isContactsPage || isWhyGlutenFreePage || isBlogPage)
+    : (isContactsPage || isWhyGlutenFreePage || isBlogPage || isFAQPage)
       ? ''
       : 'bg-gradient-to-b from-[#9BC381] via-[#7BA862] to-[#5F8A48]';
 
@@ -39,7 +40,7 @@ export default function LayoutContainer({ children }: { children: React.ReactNod
   return (
     <div
       className={`min-h-screen overflow-x-hidden ${backgroundClass}`}
-      style={(isContactsPage || isWhyGlutenFreePage || isBlogPage) ? { backgroundColor: '#544a44' } : undefined}
+      style={(isContactsPage || isWhyGlutenFreePage || isBlogPage || isFAQPage) ? { backgroundColor: '#544a44' } : undefined}
     >
       <Header />
       <main
