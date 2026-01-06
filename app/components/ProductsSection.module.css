@@ -29,7 +29,7 @@
 }
 
 .titleContainer {
-  margin-bottom: 2rem; /* Уменьшили отступ от заголовка до карусели */
+  margin-bottom: 1rem; /* Ближе к карусели */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -38,7 +38,7 @@
 
 @media (min-width: 768px) {
   .titleContainer {
-    margin-bottom: 2.5rem; /* Еще меньше на десктопе */
+    margin-bottom: 1.25rem; /* Ближе на десктопе */
   }
 }
 
@@ -50,13 +50,13 @@
   text-align: center;
   line-height: 1.2;
   letter-spacing: 0.05em;
-  margin-top: 1rem; /* Дополнительный верхний отступ */
+  margin-top: 0.5rem;
 }
 
 @media (min-width: 768px) {
   .title {
     font-size: 3.5rem; /* Больше на десктопе */
-    margin-top: 2rem;
+    margin-top: 1rem;
   }
 }
 

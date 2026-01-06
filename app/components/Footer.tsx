@@ -84,18 +84,26 @@ export default function Footer() {
             <ul className="space-y-2 text-white">
               <li>
                 <a
-                  href="#"
+                  href="/why-gluten-free"
                   className="hover:opacity-80 transition-colors"
                 >
-                  Стандарты качества
+                  Почему без глютена
                 </a>
               </li>
               <li>
                 <a
-                  href="#"
+                  href="/faq"
                   className="hover:opacity-80 transition-colors"
                 >
                   FAQ
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/blog"
+                  className="hover:opacity-80 transition-colors"
+                >
+                  Статьи
                 </a>
               </li>
             </ul>

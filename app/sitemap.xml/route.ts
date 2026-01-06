@@ -50,6 +50,26 @@ export async function GET() {
       priority: '0.7',
     },
     {
+      loc: absoluteUrl('/contacts'),
+      changefreq: 'monthly',
+      priority: '0.8',
+        {
+          loc: absoluteUrl('/faq'),
+          changefreq: 'monthly',
+          priority: '0.7',
+        },
+        {
+          loc: absoluteUrl('/why-gluten-free'),
+          changefreq: 'monthly',
+          priority: '0.7',
+        },
+        {
+          loc: absoluteUrl('/blog'),
+          changefreq: 'weekly',
+          priority: '0.6',
+        },
+    },
+    {
       loc: absoluteUrl('/privacy'),
       changefreq: 'yearly',
       priority: '0.4',

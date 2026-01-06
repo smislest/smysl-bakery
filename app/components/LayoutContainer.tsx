@@ -8,7 +8,16 @@ export default function LayoutContainer({ children }: { children: React.ReactNod
   const pathname = usePathname();
   const isNewsPage = pathname?.startsWith('/news');
   const isPrivacyPage = pathname?.startsWith('/privacy');
+  const isContactsPage = pathname?.startsWith('/contacts');
+  const isWhyGlutenFreePage = pathname?.startsWith('/why-gluten-free');
+  const isBlogPage = pathname?.startsWith('/blog');
   const hasWhiteBackground = isNewsPage || isPrivacyPage;
+
+  const backgroundClass = hasWhiteBackground
+    ? 'bg-white'
+    : (isContactsPage || isWhyGlutenFreePage || isBlogPage)
+      ? ''
+      : 'bg-gradient-to-b from-[#9BC381] via-[#7BA862] to-[#5F8A48]';
 
   // Обработка якоря при загрузке страницы
   useEffect(() => {
@@ -28,7 +37,10 @@ export default function LayoutContainer({ children }: { children: React.ReactNod
   }, [pathname]);
 
   return (
-    <div className={`min-h-screen overflow-x-hidden ${!hasWhiteBackground ? 'bg-gradient-to-b from-[#9BC381] via-[#7BA862] to-[#5F8A48]' : 'bg-white'}`}>
+    <div
+      className={`min-h-screen overflow-x-hidden ${backgroundClass}`}
+      style={(isContactsPage || isWhyGlutenFreePage || isBlogPage) ? { backgroundColor: '#544a44' } : undefined}
+    >
       <Header />
       <main
         className="w-full mx-auto"

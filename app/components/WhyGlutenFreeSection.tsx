@@ -1,0 +1,155 @@
+"use client";
+
+export default function WhyGlutenFreeSection() {
+  const benefits = [
+    {
+      icon: (
+        <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+        </svg>
+      ),
+      title: "Для здоровья",
+      description: "Безглютеновое питание помогает улучшить пищеварение, снизить воспаление и повысить уровень энергии"
+    },
+    {
+      icon: (
+        <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      ),
+      title: "100% натурально",
+      description: "Используем только качественные натуральные ингредиенты без искусственных добавок и консервантов"
+    },
+    {
+      icon: (
+        <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      ),
+      title: "Вкусно",
+      description: "Доказываем, что безглютеновая выпечка может быть не только полезной, но и невероятно вкусной"
+    },
+    {
+      icon: (
+        <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+        </svg>
+      ),
+      title: "Для всех",
+      description: "Наша выпечка подходит людям с целиакией, непереносимостью глютена и тем, кто выбирает осознанное питание"
+    }
+  ];
+
+  const reasons = [
+    "Облегчает пищеварение и снижает вздутие живота",
+    "Помогает при целиакии и непереносимости глютена",
+    "Повышает уровень энергии и улучшает самочувствие",
+    "Снижает воспалительные процессы в организме",
+    "Способствует более осознанному отношению к питанию",
+    "Подходит для разнообразного и сбалансированного рациона"
+  ];
+
+  return (
+    <section id="why-gluten-free" className="w-full py-16 md:py-24 relative overflow-hidden">
+      <div className="container mx-auto px-4 relative z-10 max-w-6xl">
+        {/* Заголовок */}
+        <div className="text-center mb-16">
+          <h2 className="text-3xl md:text-5xl font-bold text-[#c1dedc] mb-6">
+            Почему безглютеновая выпечка?
+          </h2>
+          <p className="text-xl text-[#ffecc6] max-w-3xl mx-auto">
+            Мы создаём полезную и вкусную выпечку для тех, кто заботится о своём здоровье и выбирает осознанное питание
+          </p>
+        </div>
+
+        {/* Преимущества - карточки */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+          {benefits.map((benefit, index) => (
+            <div
+              key={index}
+              className="bg-white/10 backdrop-blur-sm rounded-3xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border border-white/10"
+            >
+              <div className="text-[#ffecc6] mb-4">
+                {benefit.icon}
+              </div>
+              <h3 className="text-xl font-bold text-[#c1dedc] mb-3">
+                {benefit.title}
+              </h3>
+              <p className="text-[#ffecc6] leading-relaxed">
+                {benefit.description}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        {/* Причины - список */}
+        <div className="max-w-4xl mx-auto bg-white/10 backdrop-blur-sm rounded-3xl p-8 md:p-12 shadow-lg border border-white/10">
+          <h3 className="text-2xl md:text-3xl font-bold text-[#c1dedc] mb-8 text-center">
+            Польза безглютенового питания
+          </h3>
+          <div className="grid md:grid-cols-2 gap-6">
+            {reasons.map((reason, index) => (
+              <div key={index} className="flex items-start gap-4">
+                <div className="flex-shrink-0 w-6 h-6 bg-[#ffecc6] rounded-full flex items-center justify-center mt-1">
+                  <svg className="w-4 h-4 text-[#544a44]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <p className="text-[#ffecc6] leading-relaxed flex-1">
+                  {reason}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Дополнительная информация */}
+        <div className="mt-16 max-w-3xl mx-auto text-center">
+          <div className="bg-white/10 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-white/10">
+            <h3 className="text-2xl font-bold text-[#c1dedc] mb-4">
+              Качество и контроль
+            </h3>
+            <p className="text-[#ffecc6] leading-relaxed mb-6">
+              Мы тщательно контролируем качество на всех этапах производства. Используем только 
+              сертифицированное безглютеновое сырьё и следим за тем, чтобы наша выпечка была 
+              безопасной для людей с целиакией и непереносимостью глютена.
+            </p>
+            <div className="flex flex-wrap justify-center gap-4 text-sm text-[#ffecc6]">
+              <div className="flex items-center gap-2">
+                <svg className="w-5 h-5 text-[#c1dedc]" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+                <span>Без глютена</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <svg className="w-5 h-5 text-[#c1dedc]" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+                <span>Без консервантов</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <svg className="w-5 h-5 text-[#c1dedc]" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+                <span>Натуральные ингредиенты</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* CTA */}
+        <div className="mt-12 flex justify-center">
+          <a
+            href="/#products"
+            className="inline-flex items-center gap-2 px-8 py-3 rounded-full bg-[#ffecc6] text-[#544a44] font-semibold shadow-lg hover:opacity-90 transition-colors"
+          >
+            В каталог
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </a>
+        </div>
+      </div>
+    </section>
+  );
+}

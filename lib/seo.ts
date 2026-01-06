@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 
 const FALLBACK_SITE_URL = 'https://smysl-bakery-8e13.vercel.app';
-const DEFAULT_TITLE = 'СМЫСЛ есть — Безглютеновая пекарня в Москве';
-const DEFAULT_DESCRIPTION = 'Создаём счастливый и добрый мир, наполненный тёплыми моментами и любимыми вкусами';
+const DEFAULT_TITLE = 'Безглютеновая пекарня в Москве — свежая выпечка и десерты';
+const DEFAULT_DESCRIPTION = 'Свежая безглютеновая выпечка в Москве: хлеб, пироги, десерты. Натуральные ингредиенты, собственное производство. Доставка и самовывоз.';
 const SITE_NAME = 'СМЫСЛ есть';
 
 function normalizeSiteUrl(raw?: string): string {

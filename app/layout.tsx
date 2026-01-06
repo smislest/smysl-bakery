@@ -4,6 +4,7 @@ import "./fonts.css";
 import LayoutContainer from "./components/LayoutContainer";
 import './styles/swiper.css';
 import { buildOpenGraph, buildRobots, buildTwitter, defaultDescription, defaultTitle, siteName, siteUrl } from "../lib/seo";
+import StructuredData from "./components/StructuredData";
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -49,6 +50,7 @@ export default function RootLayout({
         />
       </head>
       <body className="antialiased overflow-x-hidden font-montserrat">
+        <StructuredData />
         <LayoutContainer>
           {children}
         </LayoutContainer>
