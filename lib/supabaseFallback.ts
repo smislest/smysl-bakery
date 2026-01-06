@@ -30,7 +30,7 @@ const getClient = () => {
   return cachedClient;
 };
 
-const streamToString = async (body: Readable | Blob | any): Promise<string> => {
+const streamToString = async (body: Readable | Blob | ReadableStream<Uint8Array> | null | undefined): Promise<string> => {
   if (!body) return '';
 
   // Web stream case (node 18 fetch response)

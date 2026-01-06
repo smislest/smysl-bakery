@@ -17,7 +17,9 @@ export interface Product {
 
 const PRODUCTS_FALLBACK_KEY = process.env.SUPABASE_PRODUCTS_KEY || 'products.json';
 
-const normalizeProducts = (items: any[]): Product[] => {
+type RawProduct = Record<string, unknown>;
+
+const normalizeProducts = (items: RawProduct[]): Product[] => {
   const list = Array.isArray(items) ? items : [];
 
   return list.map((item) => ({

@@ -3,6 +3,7 @@ import "./globals.css";
 import "./fonts.css";
 import LayoutContainer from "./components/LayoutContainer";
 import './styles/swiper.css';
+import { buildOpenGraph, buildRobots, buildTwitter, defaultDescription, defaultTitle, siteName, siteUrl } from "../lib/seo";
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -12,8 +13,24 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "СМЫСЛ есть — Безглютеновая пекарня в Москве",
-  description: "Создаём счастливый и добрый мир, наполненный тёплыми моментами и любимыми вкусами",
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: defaultTitle,
+    template: `%s | ${siteName}`,
+  },
+  description: defaultDescription,
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: buildOpenGraph({
+    title: defaultTitle,
+    description: defaultDescription,
+  }),
+  twitter: buildTwitter({
+    title: defaultTitle,
+    description: defaultDescription,
+  }),
+  robots: buildRobots(),
 };
 
 export default function RootLayout({

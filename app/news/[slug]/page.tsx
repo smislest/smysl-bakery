@@ -1,4 +1,5 @@
 // app/news/[slug]/page.tsx
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import type { NewsItem } from '../../../lib/news';
@@ -6,17 +7,70 @@ import { getNewsData } from '../../../lib/newsData';
 import { newsData as fallbackNews } from '../../../lib/news';
 import FooterClient from "../../components/FooterClient";
 import SafeContent from "../../components/SafeContent";
+import { absoluteUrl, buildOpenGraph, buildRobots, buildTwitter, siteName } from "../../../lib/seo";
 
 interface PageProps {
-  params: Promise<{ slug: string }>;
+  params: { slug: string };
 }
 
-export default async function NewsPage(props: PageProps) {
-  const params = await props.params;
-  const slug = params.slug;
-  
+const DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'https://smysl-bakery-directus.onrender.com';
+
+async function loadNews(): Promise<NewsItem[]> {
+  try {
+    const data = await getNewsData();
+    return Array.isArray(data) && data.length > 0 ? data : fallbackNews;
+  } catch {
+    return fallbackNews;
+  }
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = params;
+  const allNews = await loadNews();
+  const current = allNews.find((n) => n.slug === slug) || null;
+
+  const title = current
+    ? `${current.title} | Новости — ${siteName}`
+    : `Новость не найдена | ${siteName}`;
+  const description = current?.excerpt || current?.content || 'Новости пекарни «СМЫСЛ есть»';
+  const imageUrl = current?.news_photo?.filename_disk
+    ? `${DIRECTUS_URL}/assets/${current.news_photo.filename_disk}`
+    : absoluteUrl('/img/placeholder.jpg');
+  const pageUrl = absoluteUrl(`/news/${slug}`);
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: `/news/${slug}`,
+    },
+    openGraph: buildOpenGraph({
+      title,
+      description,
+      url: pageUrl,
+      images: [
+        {
+          url: imageUrl,
+          width: 1200,
+          height: 630,
+          alt: current?.title || 'Новость «СМЫСЛ есть»',
+        },
+      ],
+    }),
+    twitter: buildTwitter({
+      title,
+      description,
+      images: [imageUrl],
+    }),
+    robots: buildRobots(),
+  };
+}
+
+export default async function NewsPage({ params }: PageProps) {
+  const { slug } = params;
+
   // Загружаем все новости на сервере (Directus → Supabase → fallback)
-  const allNews = await getNewsData().catch(() => fallbackNews);
+  const allNews = await loadNews();
   
   // Находим текущую новость
   const news = allNews.find(n => n.slug === slug) || null;
@@ -44,7 +98,6 @@ export default async function NewsPage(props: PageProps) {
     );
   }
 
-  const DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'https://smysl-bakery-directus.onrender.com';
   const imageUrl = news.news_photo
     ? `${DIRECTUS_URL}/assets/${news.news_photo.filename_disk}`
     : '/img/placeholder.jpg';

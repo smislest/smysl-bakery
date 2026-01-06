@@ -6,7 +6,9 @@ import { readJsonFallback, writeJsonFallback } from './supabaseFallback';
 
 const NEWS_FALLBACK_KEY = process.env.SUPABASE_NEWS_KEY || 'news.json';
 
-const normalizeNews = (items: any[], source: 'directus' | 'supabase' | 'local'): NewsItem[] => {
+type RawNews = Record<string, unknown>;
+
+const normalizeNews = (items: RawNews[], source: 'directus' | 'supabase' | 'local'): NewsItem[] => {
   const filtered = (Array.isArray(items) ? items : []).filter((item) => item.slug);
 
   return filtered.map((item) => ({

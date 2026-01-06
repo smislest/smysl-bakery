@@ -49,17 +49,27 @@ function withImageDefaults(item: AboutData): AboutData {
   };
 }
 
-function normalizeImages(raw: AboutData | Record<string, any>): AboutData {
-  const anyRaw = raw as Record<string, any>;
+type ImageField = string | { id: string };
+
+function pickImage(value: unknown): ImageField | undefined {
+  if (typeof value === 'string') return value;
+  if (value && typeof value === 'object') return value as { id: string };
+  return undefined;
+}
+
+function normalizeImages(raw: AboutData | Record<string, unknown>): AboutData {
+  const record = raw as Record<string, unknown>;
+  const base = raw as AboutData;
+
   return {
     ...raw,
-    image_main: (raw as AboutData).image_main || anyRaw.main_image,
-    image_top_right: (raw as AboutData).image_top_right || anyRaw.top_right_image || anyRaw.right_top_image,
-    image_bottom_left: (raw as AboutData).image_bottom_left || anyRaw.bottom_left_image || anyRaw.right_bottom_image,
-    image_bottom_right: (raw as AboutData).image_bottom_right || anyRaw.bottom_right_image || anyRaw.right_bottom_image2 || anyRaw.right_bottom_image,
-    image_extra1: (raw as AboutData).image_extra1 || anyRaw.extra1_image || anyRaw.lab_image,
-    image_extra2: (raw as AboutData).image_extra2 || anyRaw.extra2_image,
-    svg_title: (raw as AboutData).svg_title || anyRaw.svg_logo,
+    image_main: base.image_main || pickImage(record.main_image),
+    image_top_right: base.image_top_right || pickImage(record.top_right_image) || pickImage(record.right_top_image),
+    image_bottom_left: base.image_bottom_left || pickImage(record.bottom_left_image) || pickImage(record.right_bottom_image),
+    image_bottom_right: base.image_bottom_right || pickImage(record.bottom_right_image) || pickImage(record.right_bottom_image2) || pickImage(record.right_bottom_image),
+    image_extra1: base.image_extra1 || pickImage(record.extra1_image) || pickImage(record.lab_image),
+    image_extra2: base.image_extra2 || pickImage(record.extra2_image),
+    svg_title: base.svg_title || pickImage(record.svg_logo),
   } as AboutData;
 }
 

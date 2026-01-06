@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 /*
  * Fetch news/products from Directus and store last-good snapshots to Supabase S3.
  * Usage (from repo root):

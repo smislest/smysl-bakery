@@ -1,8 +1,31 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import type { NewsItem, NewsImage } from '../../lib/news';
+import type { NewsImage } from '../../lib/news';
 import { getNewsData } from '../../lib/newsData';
 import FooterClient from "../components/FooterClient";
+import { absoluteUrl, buildOpenGraph, buildRobots, buildTwitter, siteName } from "../../lib/seo";
+
+const pageTitle = `Новости | ${siteName}`;
+const pageDescription = "Последние новости безглютеновой пекарни «СМЫСЛ есть»: анонсы, события, новинки меню.";
+
+export const metadata: Metadata = {
+  title: pageTitle,
+  description: pageDescription,
+  alternates: {
+    canonical: '/news',
+  },
+  openGraph: buildOpenGraph({
+    title: pageTitle,
+    description: pageDescription,
+    url: absoluteUrl('/news'),
+  }),
+  twitter: buildTwitter({
+    title: pageTitle,
+    description: pageDescription,
+  }),
+  robots: buildRobots(),
+};
 
 export default async function NewsListPage() {
   const news = await getNewsData();

@@ -27,12 +27,26 @@ export const headerFallbackData: HeaderData = {
 export async function getHeaderData(): Promise<HeaderData> {
   try {
     const data = await getCollectionFromDirectus('header');
-    let item: any = null;
+    type DirectusMenuJunction = {
+      menu_items_id?: {
+        label?: string;
+        slug?: string;
+        order?: number;
+        visible?: boolean;
+      };
+    };
+
+    type DirectusHeader = HeaderData & {
+      adress?: string;
+      menu?: DirectusMenuJunction[];
+    };
+
+    let item: DirectusHeader | null = null;
     
     if (Array.isArray(data) && data.length > 0) {
-      item = data[0];
+      item = data[0] as DirectusHeader;
     } else if (data) {
-      item = data;
+      item = data as DirectusHeader;
     }
     
     if (!item) {
@@ -44,7 +58,7 @@ export async function getHeaderData(): Promise<HeaderData> {
     let menuItems: MenuItem[] = [];
     if (Array.isArray(item.menu)) {
       menuItems = item.menu
-        .map((junction: any) => {
+        .map((junction: DirectusMenuJunction) => {
           const menuItem = junction.menu_items_id;
           if (!menuItem || !menuItem.visible) return null;
           return {
@@ -54,7 +68,7 @@ export async function getHeaderData(): Promise<HeaderData> {
           };
         })
         .filter(Boolean)
-        .sort((a: any, b: any) => a.order - b.order);
+        .sort((a, b) => (a?.order || 0) - (b?.order || 0));
     }
 
     // Если меню пустое, берём из фолбэка

@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* eslint-disable @typescript-eslint/no-require-imports */
 /**
  * Manually upload fallback data to Supabase S3
  * Usage: node scripts/upload-fallback-manual.js
