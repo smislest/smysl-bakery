@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { buildOpenGraph, buildTwitter } from '../../lib/seo';
 import Link from 'next/link';
+import { getAllArticles } from '../../lib/blogData';
 
 export const metadata: Metadata = {
   title: 'Статьи о безглютеновом питании и здоровье',
@@ -20,44 +21,7 @@ export const metadata: Metadata = {
 };
 
 export default function BlogPage() {
-  const articles = [
-    {
-      title: 'Что такое глютен и кому он вреден?',
-      excerpt: 'Разбираемся, чем глютен отличается от других белков, почему он вызывает целиакию и кому важно исключить его из рациона.',
-      category: 'Здоровье',
-      readTime: '6 мин',
-      date: '2025-12-10',
-      href: '#',
-      tags: ['глютен', 'здоровье', 'целиакия'],
-    },
-    {
-      title: 'Безглютеновый хлеб: как выбрать и хранить',
-      excerpt: 'На что смотреть на упаковке, какие виды муки лучше, как хранить, чтобы хлеб оставался мягким и ароматным.',
-      category: 'Рецепты и лайфхаки',
-      readTime: '7 мин',
-      date: '2025-12-15',
-      href: '#',
-      tags: ['хлеб', 'лайфхаки', 'питание'],
-    },
-    {
-      title: 'Почему безглютеновая выпечка дороже?',
-      excerpt: 'Объясняем стоимость: сырьё, контроль производства, отдельные линии и сертификация.',
-      category: 'Экспертно',
-      readTime: '5 мин',
-      date: '2025-12-20',
-      href: '#',
-      tags: ['экономика', 'производство'],
-    },
-    {
-      title: '5 простых десертов без глютена',
-      excerpt: 'Подборка быстрых рецептов: миндальное печенье, брауни на рисовой муке, чизкейк без глютена и ещё два бонуса.',
-      category: 'Рецепты',
-      readTime: '8 мин',
-      date: '2025-12-28',
-      href: '#',
-      tags: ['десерты', 'рецепты'],
-    },
-  ];
+  const articles = getAllArticles();
 
   return (
     <div className="min-h-screen relative" style={{ backgroundColor: '#544a44' }}>
@@ -116,12 +80,11 @@ export default function BlogPage() {
           <div className="grid gap-6 md:gap-8 md:grid-cols-2">
             {articles.map((article) => (
               <article
-                key={article.title}
+                key={article.slug}
                 className="bg-white/10 backdrop-blur-sm rounded-3xl p-6 shadow-lg border border-white/10 hover:-translate-y-1 transition-transform duration-200"
               >
-                <div className="flex items-center justify-between text-sm text-[#ffecc6]/80 mb-3">
-                  <span className="font-semibold">{article.category}</span>
-                  <span>{article.readTime}</span>
+                <div className="mb-3">
+                  <span className="text-xs font-semibold text-[#ffecc6]/80 uppercase tracking-wide">{article.category}</span>
                 </div>
                 <h2 className="text-2xl font-bold text-[#c1dedc] mb-3 leading-snug">
                   {article.title}
@@ -139,7 +102,7 @@ export default function BlogPage() {
                 <div className="flex items-center justify-between text-sm text-[#ffecc6]/80">
                   <span>{article.date}</span>
                   <Link
-                    href={article.href}
+                    href={`/blog/${article.slug}`}
                     className="inline-flex items-center gap-2 text-[#ffecc6] hover:text-[#c1dedc] font-semibold"
                   >
                     Читать

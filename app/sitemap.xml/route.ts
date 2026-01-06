@@ -69,11 +69,6 @@ export async function GET() {
       changefreq: 'weekly',
       priority: '0.6',
     },
-    {
-      loc: absoluteUrl('/privacy'),
-      changefreq: 'yearly',
-      priority: '0.4',
-    },
   ];
 
   const newsUrls: UrlEntry[] = news.map((item) => {

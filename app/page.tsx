@@ -49,7 +49,7 @@ export default async function Home() {
         <NewsSection initialNews={newsData} />
         <HeartSection />
       </main>
-      <FooterClient />
+      <FooterClient showMapOnMobile={true} />
     </>
   );
 }

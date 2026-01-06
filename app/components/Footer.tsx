@@ -5,7 +5,11 @@ import footerStatic from "../../content/footer.json";
 type FooterLink = { label: string; href: string };
 type FooterData = { text: string; links?: FooterLink[] };
 
-export default function Footer() {
+interface FooterProps {
+  showMapOnMobile?: boolean;
+}
+
+export default function Footer({ showMapOnMobile = false }: FooterProps) {
   const footer: FooterData = footerStatic;
   return (
     <footer id="contacts" className="w-full py-16" style={{ backgroundColor: '#544a44' }}>
@@ -111,20 +115,21 @@ export default function Footer() {
         </div>
 
         {/* Карта Яндекса */}
-        <div className="rounded-2xl overflow-hidden mt-8" style={{ height: '400px' }}>
+        <div className={`rounded-2xl overflow-hidden mt-8 ${showMapOnMobile ? '' : 'hidden md:block'}`} style={{ height: '400px', pointerEvents: showMapOnMobile ? 'auto' : 'none' }}>
           <iframe
             src="https://yandex.ru/map-widget/v1/?um=constructor%3Aa1b0899bfd294471a0bb5d91ac1e5b3c1c68111a48c26b2d2cdad140c84908ff&amp;source=constructor"
             width="100%"
             height="400"
             frameBorder="0"
-            style={{ border: 0, width: '100%', height: '400px' }}
+            style={{ border: 0, width: '100%', height: '400px', pointerEvents: 'auto' }}
+            className="md:pointer-events-auto pointer-events-none"
             allowFullScreen={true}
             title="Карта Яндекса"
           ></iframe>
         </div>
 
         {/* Copyright */}
-        <div className="flex items-center justify-between text-white opacity-70 pt-8 border-t" style={{ borderColor: 'rgba(255, 236, 198, 0.2)' }}>
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 text-white opacity-70 pt-8 border-t text-xs md:text-sm" style={{ borderColor: 'rgba(255, 236, 198, 0.2)' }}>
           <div>
             {footer.text}
           </div>

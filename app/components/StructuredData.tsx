@@ -4,19 +4,20 @@ export default function StructuredData() {
     "@type": "Bakery",
     "name": "СМЫСЛ есть",
     "description": "Безглютеновая пекарня в Москве. Свежая выпечка, хлеб и десерты из натуральных ингредиентов.",
-    "url": "https://smislest.ru",
-    "telephone": "+7-495-123-45-67",
-    "email": "info@smislest.ru",
+    "url": "https://smysl-bakery-8e13.vercel.app",
+    "telephone": "+7-999-123-45-67",
+    "email": "info@smysl-est.ru",
     "address": {
       "@type": "PostalAddress",
-      "streetAddress": "ул. Примерная, д. 1, стр. 1",
+      "streetAddress": "111675, Россия, г. Москва, ул. Святоозерская, дом 8",
       "addressLocality": "Москва",
+      "postalCode": "111675",
       "addressCountry": "RU"
     },
     "geo": {
       "@type": "GeoCoordinates",
-      "latitude": "55.751244",
-      "longitude": "37.618423"
+      "latitude": "55.735878",
+      "longitude": "37.838814"
     },
     "openingHoursSpecification": [
       {
@@ -34,9 +35,9 @@ export default function StructuredData() {
     ],
     "priceRange": "₽₽",
     "servesCuisine": "Безглютеновая выпечка",
-    "menu": "https://smislest.ru/#products",
-    "image": "https://smislest.ru/img/logo.png",
-    "logo": "https://smislest.ru/img/logo.png",
+    "menu": "https://smysl-bakery-8e13.vercel.app/#products",
+    "image": "https://smysl-bakery-8e13.vercel.app/img/logo.png",
+    "logo": "https://smysl-bakery-8e13.vercel.app/img/logo.png",
     "sameAs": [
       "https://t.me/smyslest",
       "https://instagram.com/smyslest"
@@ -47,21 +48,22 @@ export default function StructuredData() {
     "@context": "https://schema.org",
     "@type": "Organization",
     "name": "СМЫСЛ есть",
-    "legalName": "ИП Иванов Иван Иванович",
-    "url": "https://smislest.ru",
-    "logo": "https://smislest.ru/img/logo.png",
+    "legalName": "СМЫСЛ есть",
+    "url": "https://smysl-bakery-8e13.vercel.app",
+    "logo": "https://smysl-bakery-8e13.vercel.app/img/logo.png",
     "description": "Безглютеновая пекарня в Москве",
     "address": {
       "@type": "PostalAddress",
-      "streetAddress": "ул. Примерная, д. 1, стр. 1",
+      "streetAddress": "111675, Россия, г. Москва, ул. Святоозерская, дом 8",
       "addressLocality": "Москва",
+      "postalCode": "111675",
       "addressCountry": "RU"
     },
     "contactPoint": {
       "@type": "ContactPoint",
-      "telephone": "+7-495-123-45-67",
+      "telephone": "+7-999-123-45-67",
       "contactType": "customer service",
-      "email": "info@smislest.ru",
+      "email": "info@smysl-est.ru",
       "availableLanguage": "Russian"
     },
     "sameAs": [
@@ -78,7 +80,7 @@ export default function StructuredData() {
         "@type": "ListItem",
         "position": 1,
         "name": "Главная",
-        "item": "https://smislest.ru"
+        "item": "https://smysl-bakery-8e13.vercel.app"
       }
     ]
   };

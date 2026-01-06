@@ -1,6 +1,10 @@
 "use client";
 import Footer from "./Footer";
 
-export default function FooterClient() {
-  return <Footer />;
+interface FooterClientProps {
+  showMapOnMobile?: boolean;
+}
+
+export default function FooterClient({ showMapOnMobile = false }: FooterClientProps) {
+  return <Footer showMapOnMobile={showMapOnMobile} />;
 }
