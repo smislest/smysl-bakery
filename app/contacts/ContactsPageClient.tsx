@@ -220,9 +220,6 @@ export default function ContactsPageClient() {
                 title="Карта местоположения пекарни СМЫСЛ есть"
               ></iframe>
             </div>
-            <p className="text-white/80 text-sm mt-4 text-center">
-              * Точный адрес производства уточняется. Карта показана для демонстрации.
-            </p>
           </div>
           </div>
         </div>
