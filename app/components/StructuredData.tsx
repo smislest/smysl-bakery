@@ -1,6 +1,6 @@
 
 // Принимает проп seo (SiteSettings)
-export default function StructuredData({ seo }) {
+export default function StructuredData({ seo }: { seo: any }) {
   const localBusinessSchema = {
     "@context": "https://schema.org",
     "@type": "Bakery",

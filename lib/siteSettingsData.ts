@@ -13,6 +13,7 @@ export interface SiteSettings {
     id: string;
     filename_download: string;
   };
+  og_image_url?: string;
   og_image_width?: number;
   og_image_height?: number;
   
