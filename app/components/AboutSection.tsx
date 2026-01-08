@@ -187,7 +187,7 @@ export default function AboutSection() {
               
               {/* Text block without background - on beige section background */}
               <div className="space-y-2 lg:space-y-1 mt-auto mb-4 lg:mb-3">
-                <h4 className="great-vibes text-5xl lg:text-4xl xl:text-5xl" style={{ color: '#611717' }}>горим своим делом</h4>
+                <h3 className="great-vibes text-5xl lg:text-4xl xl:text-5xl" style={{ color: '#611717' }}>горим своим делом</h3>
                 <p className="text-gray-800 text-base lg:text-sm xl:text-base lg:leading-snug xl:leading-relaxed leading-relaxed">{passionText}</p>
               </div>
 

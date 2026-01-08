@@ -1,4 +1,5 @@
 import { getCollectionFromDirectus } from './directus';
+import { getSiteSettings } from './siteSettingsData';
 import { typograph } from './typograph';
 import { cache } from 'react';
 import headerFallback from '../content/header.json';
@@ -27,7 +28,11 @@ export const headerFallbackData: HeaderData = {
 
 export const getHeaderData = cache(async (): Promise<HeaderData> => {
   try {
-    const data = await getCollectionFromDirectus('header');
+    // Загружаем меню из header коллекции
+    const headerMenuData = await getCollectionFromDirectus('header');
+    // Загружаем контакты из site_settings
+    const siteSettings = await getSiteSettings();
+
     type DirectusMenuJunction = {
       menu_items_id?: {
         label?: string;
@@ -42,29 +47,38 @@ export const getHeaderData = cache(async (): Promise<HeaderData> => {
       menu?: DirectusMenuJunction[];
     };
 
-    let item: DirectusHeader | null = null;
+    let menuItem: DirectusHeader | null = null;
 
-    if (Array.isArray(data) && data.length > 0) {
-      item = data[0] as DirectusHeader;
-    } else if (data && typeof data === 'object' && !Array.isArray(data)) {
-      item = data as DirectusHeader;
+    if (Array.isArray(headerMenuData) && headerMenuData.length > 0) {
+      menuItem = headerMenuData[0] as DirectusHeader;
+    } else if (headerMenuData && typeof headerMenuData === 'object' && !Array.isArray(headerMenuData)) {
+      menuItem = headerMenuData as DirectusHeader;
     }
     
-    if (!item) {
-      console.log('⚠️ No header data from Directus, using fallback');
-      return headerFallbackData; // Ensure localFallback retained; already exported alias
+    if (!menuItem) {
+      console.log('⚠️ No header menu data from Directus, using fallback');
+      // Используем контакты из site_settings, но меню из fallback
+      return {
+        ...headerFallbackData,
+        phone: siteSettings.business_phone,
+        email: siteSettings.business_email,
+        address: siteSettings.business_address,
+        telegram: siteSettings.social_telegram,
+        instagram: siteSettings.social_instagram,
+        vkontakte: siteSettings.social_vk,
+      };
     }
 
     // Разворачиваем many-to-many menu: header.menu -> header_menu_items -> menu_items
     let menuItems: MenuItem[] = [];
-    if (Array.isArray(item.menu)) {
-      const mapped: Array<MenuItem | null> = item.menu.map((junction: DirectusMenuJunction) => {
-        const menuItem = junction.menu_items_id;
-        if (!menuItem || !menuItem.visible) return null;
+    if (Array.isArray(menuItem.menu)) {
+      const mapped: Array<MenuItem | null> = menuItem.menu.map((junction: DirectusMenuJunction) => {
+        const menuItemData = junction.menu_items_id;
+        if (!menuItemData || !menuItemData.visible) return null;
         return {
-          label: typograph(menuItem.label),
-          href: menuItem.slug || '#',
-          order: menuItem.order || 0,
+          label: typograph(menuItemData.label),
+          href: menuItemData.slug || '#',
+          order: menuItemData.order || 0,
         };
       });
 
@@ -79,14 +93,13 @@ export const getHeaderData = cache(async (): Promise<HeaderData> => {
     }
 
     return {
-      id: item.id,
-      phone: typograph(item.phone),
-      email: typograph(item.email),
-      // Directus имеет опечатку "adress", поддерживаем оба варианта
-      address: typograph(item.address || item.adress),
-      instagram: item.instagram,
-      vkontakte: item.vkontakte,
-      telegram: item.telegram,
+      id: menuItem.id,
+      phone: siteSettings.business_phone,
+      email: siteSettings.business_email,
+      address: siteSettings.business_address,
+      instagram: siteSettings.social_instagram,
+      vkontakte: siteSettings.social_vk,
+      telegram: siteSettings.social_telegram,
       menu: menuItems,
     };
   } catch (error) {

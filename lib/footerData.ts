@@ -1,53 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-
-import { getCollectionFromDirectus } from './directus';
-import { typograph } from './typograph';
+import { getSiteSettings, type SiteSettings } from './siteSettingsData';
 import { cache } from 'react';
 
-export interface FooterData {
-  id: string;
-  social_links?: any;
-  phone?: string;
-  email?: string;
-  address?: string;
-  address_details?: string;
-  buyers_links?: any;
-  copyright?: string;
-}
+export type FooterData = SiteSettings;
 
-const footerFallback: FooterData = {
-  id: '0',
-  phone: typograph('+7 (903) 169-68-88'),
-  email: typograph('hello@smysl.ru'),
-  address: typograph('Москва'),
-  address_details: typograph(''),
-  copyright: typograph('© 2024 Смысл. Все права защищены.'),
-};
-
-export const getFooterData = cache(async (): Promise<FooterData | null> => {
+// Используем напрямую SiteSettings так как там уже есть все контакты и соцсети
+export const getFooterData = cache(async (): Promise<FooterData> => {
   try {
-    const data = await getCollectionFromDirectus('footer');
-    let item: FooterData | null = null;
-    
-    if (Array.isArray(data) && data.length > 0) {
-      item = data[0] as FooterData;
-    } else if (data) {
-      item = data as unknown as FooterData;
-    }
-    
-    if (!item) return footerFallback;
-    
-    return {
-      ...item,
-      phone: typograph(item.phone),
-      email: typograph(item.email),
-      address: typograph(item.address),
-      address_details: typograph(item.address_details),
-      copyright: typograph(item.copyright),
-    };
+    const siteSettings = await getSiteSettings();
+    return siteSettings;
   } catch (error) {
-    console.error('❌ Error loading footer data:', error);
-    return footerFallback;
+    console.error('❌ Error loading footer data:', error instanceof Error ? error.message : error);
+    // Возвращаем fallback из getSiteSettings (там уже есть fallback)
+    return await getSiteSettings();
   }
 });

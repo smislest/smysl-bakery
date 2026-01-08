@@ -74,7 +74,7 @@ export default function Footer({ showMapOnMobile = false, seoData }: FooterProps
 
           {/* Контакты */}
           <div>
-            <h3 className="text-lg font-bold mb-4" style={{ color: '#c1dedc' }}>Контакты</h3>
+            <h3 className="text-lg font-bold mb-4" style={{ color: '#c1dedc' }}>Телефон и почта</h3>
             <div className="space-y-3 text-white">
               {seo.business_phone && (
                 <a
