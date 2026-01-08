@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createDirectus, rest, readItems, staticToken } from '@directus/sdk';
+import { cache } from 'react';
 
 // Переменные окружения для Directus (с безопасным запасным URL)
 export const DIRECTUS_URL =
@@ -36,10 +37,15 @@ const directusClient = (() => {
   return client.with(rest());
 })();
 
-// Универсальная функция для получения коллекции из Directus
-export async function getCollectionFromDirectus(collection: string) {
+// Счетчик вызовов для отладки
+const callCounts: Record<string, number> = {};
+
+// Универсальная функция для получения коллекции из Directus с кэшированием
+export const getCollectionFromDirectus = cache(async (collection: string) => {
   try {
-    console.log(`📡 Fetching ${collection} from Directus at ${DIRECTUS_URL} (token: ${DIRECTUS_TOKEN ? 'yes' : 'no'})...`);
+    callCounts[collection] = (callCounts[collection] || 0) + 1;
+    
+    console.log(`📡 [Call #${callCounts[collection]}] Fetching ${collection} from Directus...`);
     
     const response = await directusClient.request(
       readItems(collection as any, {
@@ -47,17 +53,17 @@ export async function getCollectionFromDirectus(collection: string) {
       })
     );
     
-    console.log(`✅ Got ${Array.isArray(response) ? response.length : 1} items from ${collection}`);
+    console.log(`✅ [Call #${callCounts[collection]}] Got ${Array.isArray(response) ? response.length : 1} items from ${collection}`);
     return response;
   } catch (error) {
     const errorMsg = error instanceof Error ? error.message : String(error);
-    console.error(`❌ Error fetching collection ${collection}: ${errorMsg}`);
-    if (error instanceof Error && error.stack) {
-      console.error(`Stack: ${error.stack.split('\n').slice(0, 3).join(' ')}`);
+    // Тихое логирование - только при первом вызове
+    if (callCounts[collection] === 1) {
+      console.warn(`⚠️ ${collection}: ${errorMsg} (using fallback)`);
     }
     return null;
   }
-}
+});
 
 // ...existing code...
 

@@ -1,0 +1,38 @@
+﻿{
+    "data":  {
+                 "id":  1,
+                 "default_title":  "Безглютеновая пекарня в Москве - всегда свежая выпечка и десерты!",
+                 "default_descriptio":  "Свежий безглютеновый хлеб собственного производства с поставками в кафе и магазины Москвы. Готовим ежедневно. В розницу можно приобрести продукцию прямо в пекарне.",
+                 "site_name":  "Смысл Есть",
+                 "site_url":  "https://smislest.ru",
+                 "og_image_width":  1200,
+                 "og_image_height":  630,
+                 "business_name":  "СМЫСЛ есть",
+                 "business_phone":  "+79000000000",
+                 "business_email":  "info@smislest.ru",
+                 "business_address":  "111675, Россия, г. Москва, ул. Святоозерская, дом 8",
+                 "business_city":  "Москва",
+                 "business_postal_code":  "111675",
+                 "geo_latitude":  "55.735878",
+                 "geo_longitude":  "37.838814",
+                 "opening_hours":  {
+                                       "time":  1767792213504,
+                                       "blocks":  [
+                                                      {
+                                                          "id":  "GHeUxL8rzZ",
+                                                          "type":  "code",
+                                                          "data":  {
+                                                                       "code":  "[\n  {\n    \"days\": [\"Monday\", \"Tuesday\", \"Wednesday\", \"Thursday\", \"Friday\"],\n    \"opens\": \"08:00\",\n    \"closes\": \"20:00\"\n  },\n  {\n    \"days\": [\"Saturday\", \"Sunday\"],\n    \"opens\": \"10:00\",\n    \"closes\": \"18:00\"\n  }\n]"
+                                                                   }
+                                                      }
+                                                  ],
+                                       "version":  "2.31.0"
+                                   },
+                 "social_telegram":  "https://t.me/smyslest",
+                 "social_instagram":  "https://instagram.com/smyslest",
+                 "social_vk":  "https://vk.com/smislest",
+                 "price_range":  "300-1500₽",
+                 "serves_cuisine":  "Безглютеновая выпечка",
+                 "og_image":  null
+             }
+}

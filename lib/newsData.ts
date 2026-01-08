@@ -3,6 +3,7 @@ import { getCollectionFromDirectus } from './directus';
 import { NewsItem, newsData } from '../lib/news';
 import { typograph } from './typograph';
 import { readJsonFallback, writeJsonFallback } from './supabaseFallback';
+import { cache } from 'react';
 
 const NEWS_FALLBACK_KEY = process.env.SUPABASE_NEWS_KEY || 'news.json';
 
@@ -52,7 +53,7 @@ async function readSupabaseNews(): Promise<NewsItem[] | null> {
   return null;
 }
 
-export async function getNewsData(): Promise<NewsItem[]> {
+export const getNewsData = cache(async (): Promise<NewsItem[]> => {
   try {
     console.log('🔍 Fetching news from Directus...');
     const data = await getCollectionFromDirectus('news');
@@ -85,4 +86,4 @@ export async function getNewsData(): Promise<NewsItem[]> {
 
     return normalizeNews(newsData, 'local');
   }
-}
+});

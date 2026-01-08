@@ -82,7 +82,10 @@ export default function AboutSection() {
       </div>
 
       {/* Бежевый фон с изгибами - абсолютное позиционирование */}
-      <div className="absolute left-0 w-full z-0 md:top-[300px] top-[500px]" style={{ backgroundColor: '#F5E6D3', bottom: 0 }}>
+      <div 
+        className="absolute left-0 w-full z-0 md:top-[280px] top-[480px] 2xl:top-[320px] lg:pt-16 xl:pt-28" 
+        style={{ backgroundColor: '#F5E6D3', bottom: 0 }}
+      >
         {/* SVG форма для верхнего изгиба - Desktop */}
         <div className="hidden md:block absolute top-0 left-0 w-full" style={{ height: '70px', transform: 'translateY(-69px)' }}>
           <svg viewBox="0 0 1920 70" preserveAspectRatio="none" className="w-full h-full">
@@ -118,9 +121,9 @@ export default function AboutSection() {
 
         {/* Desktop Layout */}
         <div className="hidden lg:block max-w-[1400px] mx-auto">
-          <div className="grid grid-cols-12 gap-6 items-end">
+          <div className="grid grid-cols-12 gap-6 items-stretch">
             {/* Left Column - 2 images */}
-            <div className="col-span-4 space-y-6">
+            <div className="col-span-4 flex flex-col gap-6 lg:gap-5 h-full justify-between">
               {/* Top: horizontal image (старый пекарь) */}
               <div className="rounded-3xl overflow-hidden">
                 <Image 
@@ -145,7 +148,7 @@ export default function AboutSection() {
             </div>
 
             {/* Center Column - Main image + pride text + lab image */}
-            <div className="col-span-4 flex flex-col gap-8">
+            <div className="col-span-4 flex flex-col gap-8 lg:gap-5 h-full justify-between">
               {/* Main image */}
               <div className="rounded-3xl overflow-hidden">
                 <Image 
@@ -158,9 +161,9 @@ export default function AboutSection() {
               </div>
               
               {/* Pride text */}
-              <div className="space-y-2">
-                <h3 className="great-vibes text-5xl" style={{ color: '#611717' }}>{prideTitle}</h3>
-                <p className="text-gray-800 text-base leading-relaxed">{prideText}</p>
+              <div className="space-y-2 lg:space-y-1">
+                <h3 className="great-vibes text-5xl lg:text-4xl xl:text-5xl" style={{ color: '#611717' }}>{prideTitle}</h3>
+                <p className="text-gray-800 text-base lg:text-sm xl:text-base lg:leading-snug xl:leading-relaxed leading-relaxed">{prideText}</p>
               </div>
 
               {/* Lab image */}
@@ -176,21 +179,20 @@ export default function AboutSection() {
             </div>
 
             {/* Right Column - Beige text block + large image + mission text */}
-            <div className="col-span-4 flex flex-col gap-6">
-              {/* Top: Text block without background */}
-              <div className="relative pt-0">
-                {/* Отдельный слой для SVG - не влияет на контент */}
-                <div className="absolute left-0 right-0 top-0 pointer-events-none hidden lg:block">
-                  <img src="/svg/we_are.svg" alt="Мы" style={{ width: 'auto', height: '96px', transform: 'translateY(-150px)' }} />
-                </div>
-                <div className="p-8 pt-0 pb-0">
-                  <h4 className="great-vibes text-5xl mb-4" style={{ color: '#611717' }}>Горим своим делом</h4>
-                  <p className="text-gray-800 text-base leading-relaxed">{passionText}</p>
-                </div>
+            <div className="col-span-4 flex flex-col h-full self-stretch">
+              {/* "Мы..." text - large white text on green background */}
+              <div className="great-vibes text-7xl lg:text-6xl xl:text-7xl 2xl:text-9xl text-white mb-6 lg:mb-5" style={{ color: '#ffffff' }}>
+                Мы...
+              </div>
+              
+              {/* Text block without background - on beige section background */}
+              <div className="space-y-2 lg:space-y-1 mt-auto mb-4 lg:mb-3">
+                <h4 className="great-vibes text-5xl lg:text-4xl xl:text-5xl" style={{ color: '#611717' }}>горим своим делом</h4>
+                <p className="text-gray-800 text-base lg:text-sm xl:text-base lg:leading-snug xl:leading-relaxed leading-relaxed">{passionText}</p>
               </div>
 
               {/* Large image */}
-              <div className="rounded-3xl overflow-hidden">
+              <div className="rounded-3xl overflow-hidden mb-4 lg:mb-3">
                 <Image 
                   src={images.bottomLeft} 
                   alt="Работа с тестом" 
@@ -201,9 +203,9 @@ export default function AboutSection() {
               </div>
               
               {/* Mission text */}
-              <div className="space-y-2 px-8">
-                <h3 className="great-vibes text-5xl" style={{ color: '#611717' }}>{missionTitle}</h3>
-                <p className="text-gray-800 text-base leading-relaxed">{missionText}</p>
+              <div className="space-y-2 lg:space-y-1 px-8 lg:px-6">
+                <h3 className="great-vibes text-5xl lg:text-4xl xl:text-5xl" style={{ color: '#611717' }}>{missionTitle}</h3>
+                <p className="text-gray-800 text-base lg:text-sm xl:text-base lg:leading-snug xl:leading-relaxed leading-relaxed">{missionText}</p>
               </div>
             </div>
           </div>

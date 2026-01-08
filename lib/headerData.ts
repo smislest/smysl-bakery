@@ -1,5 +1,6 @@
 import { getCollectionFromDirectus } from './directus';
 import { typograph } from './typograph';
+import { cache } from 'react';
 import headerFallback from '../content/header.json';
 
 export interface MenuItem {
@@ -24,7 +25,7 @@ export const headerFallbackData: HeaderData = {
   address: headerFallback.address || '111675, Россия, г. Москва, ул. Святоозерская, дом 8',
 };
 
-export async function getHeaderData(): Promise<HeaderData> {
+export const getHeaderData = cache(async (): Promise<HeaderData> => {
   try {
     const data = await getCollectionFromDirectus('header');
     type DirectusMenuJunction = {
@@ -93,5 +94,5 @@ export async function getHeaderData(): Promise<HeaderData> {
     console.log('📦 Using fallback header data');
     return headerFallbackData;
   }
-}
+});
 

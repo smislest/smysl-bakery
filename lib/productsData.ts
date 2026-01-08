@@ -3,6 +3,7 @@
 import { getCollectionFromDirectus } from './directus';
 import { typograph } from './typograph';
 import { readJsonFallback, writeJsonFallback } from './supabaseFallback';
+import { cache } from 'react';
 
 export interface Product {
   id: string;
@@ -49,7 +50,7 @@ async function readSupabaseProducts(): Promise<Product[] | null> {
   return null;
 }
 
-export async function getProductsData(): Promise<Product[]> {
+export const getProductsData = cache(async (): Promise<Product[]> => {
   try {
     const data = await getCollectionFromDirectus('products');
 
@@ -75,4 +76,4 @@ export async function getProductsData(): Promise<Product[]> {
 
     return [];
   }
-}
+});

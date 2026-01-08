@@ -5,6 +5,7 @@ import FooterClient from "./components/FooterClient";
 import { getNewsData } from "../lib/newsData";
 import { getProductsData } from "../lib/productsData";
 import { getHeroData } from "../lib/heroData";
+import { getSeoSettings } from "../lib/seo";
 
 // Динамический импорт для тяжелых компонентов с SSR
 const ProductsSection = dynamic(() => import("./components/ProductsSection").then(m => m.default), {
@@ -33,10 +34,11 @@ export const revalidate = 60;
 
 export default async function Home() {
   // SSR/ISR: Загружаем данные на сервере
-  const [newsData, productsData, heroData] = await Promise.all([
+  const [newsData, productsData, heroData, seoData] = await Promise.all([
     getNewsData().catch(() => []),
     getProductsData().catch(() => []),
     getHeroData().catch(() => null),
+    getSeoSettings(),
   ]);
 
   return (
@@ -49,7 +51,7 @@ export default async function Home() {
         <NewsSection initialNews={newsData} />
         <HeartSection />
       </main>
-      <FooterClient showMapOnMobile={true} />
+      <FooterClient showMapOnMobile={true} seoData={seoData} />
     </>
   );
 }

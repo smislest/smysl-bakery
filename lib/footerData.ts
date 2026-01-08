@@ -3,6 +3,7 @@
 
 import { getCollectionFromDirectus } from './directus';
 import { typograph } from './typograph';
+import { cache } from 'react';
 
 export interface FooterData {
   id: string;
@@ -24,7 +25,7 @@ const footerFallback: FooterData = {
   copyright: typograph('© 2024 Смысл. Все права защищены.'),
 };
 
-export async function getFooterData(): Promise<FooterData | null> {
+export const getFooterData = cache(async (): Promise<FooterData | null> => {
   try {
     const data = await getCollectionFromDirectus('footer');
     let item: FooterData | null = null;
@@ -49,4 +50,4 @@ export async function getFooterData(): Promise<FooterData | null> {
     console.error('❌ Error loading footer data:', error);
     return footerFallback;
   }
-}
+});

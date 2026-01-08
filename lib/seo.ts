@@ -1,9 +1,16 @@
 import type { Metadata } from 'next';
+import { getSiteSettings, type SiteSettings } from './siteSettingsData';
+import { cache } from 'react';
 
 const FALLBACK_SITE_URL = 'https://smysl-bakery-8e13.vercel.app';
 const DEFAULT_TITLE = 'Безглютеновая пекарня в Москве — свежая выпечка и десерты';
 const DEFAULT_DESCRIPTION = 'Свежая безглютеновая выпечка в Москве: хлеб, пироги, десерты. Натуральные ингредиенты, собственное производство. Доставка и самовывоз.';
 const SITE_NAME = 'СМЫСЛ есть';
+
+// Кэшированные настройки сайта с React.cache для дедупликации в рамках одного рендера
+export const getSeoSettings = cache(async (): Promise<SiteSettings> => {
+  return await getSiteSettings();
+});
 
 function normalizeSiteUrl(raw?: string): string {
   if (!raw) return FALLBACK_SITE_URL;

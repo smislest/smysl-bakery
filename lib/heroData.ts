@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { getCollectionFromDirectus, DIRECTUS_URL } from './directus';
 import { typograph } from './typograph';
+import { cache } from 'react';
 
 export interface HeroData {
   id?: string;
@@ -42,7 +43,7 @@ function normalizeFileRef(fileRef: any): string | undefined {
   return undefined;
 }
 
-export async function getHeroData(): Promise<HeroData | null> {
+export const getHeroData = cache(async (): Promise<HeroData | null> => {
   try {
     const data: any = await getCollectionFromDirectus('hero');
     const item = Array.isArray(data) && data.length > 0 ? data[0] : data;
@@ -64,4 +65,4 @@ export async function getHeroData(): Promise<HeroData | null> {
     console.error('❌ Error loading hero data:', error);
     return heroFallback;
   }
-}
+});

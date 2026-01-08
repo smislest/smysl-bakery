@@ -1,16 +1,28 @@
 import { FaInstagram, FaVk, FaTelegramPlane, FaPhoneAlt, FaEnvelope, FaMapMarkerAlt } from "react-icons/fa";
 import Image from "./Image";
-import footerStatic from "../../content/footer.json";
+import type { SiteSettings } from "../../lib/siteSettingsData";
+import footerData from "../../content/footer.json";
 
 type FooterLink = { label: string; href: string };
 type FooterData = { text: string; links?: FooterLink[] };
 
 interface FooterProps {
   showMapOnMobile?: boolean;
+  seoData?: SiteSettings;
 }
 
-export default function Footer({ showMapOnMobile = false }: FooterProps) {
-  const footer: FooterData = footerStatic;
+export default function Footer({ showMapOnMobile = false, seoData }: FooterProps) {
+  const footer: FooterData = footerData as FooterData;
+  
+  // Если SEO данные не переданы, используем fallback (не вызываем getSeoSettings повторно)
+  const seo = seoData || {
+    social_instagram: 'https://instagram.com/smyslest',
+    social_telegram: 'https://t.me/smyslest',
+    social_vk: 'https://vk.com/smislest',
+    business_phone: '+7-999-123-45-67',
+    business_email: 'info@smysl-est.ru',
+    business_address: '111675, Россия, г. Москва, ул. Святоозерская, дом 8',
+  } as SiteSettings;
   return (
     <footer id="contacts" className="w-full py-16" style={{ backgroundColor: '#544a44' }}>
       <div className="max-w-7xl mx-auto px-4">
@@ -21,36 +33,42 @@ export default function Footer({ showMapOnMobile = false }: FooterProps) {
               <Image src="/svg/logo_white.svg" alt="СМЫСЛ есть" style={{ height: '64px', width: 'auto' }} width={80} height={32} />
             </div>
             <div className="flex gap-4">
-              <a
-                href="https://instagram.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full border-2 flex items-center justify-center hover:bg-opacity-80 transition-all text-2xl"
-                style={{ borderColor: '#ffecc6', color: '#ffecc6' }}
-                aria-label="Instagram"
-              >
-                <FaInstagram />
-              </a>
-              <a
-                href="https://vk.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full border-2 flex items-center justify-center hover:bg-opacity-80 transition-all text-2xl"
-                style={{ borderColor: '#ffecc6', color: '#ffecc6' }}
-                aria-label="VK"
-              >
-                <FaVk />
-              </a>
-              <a
-                href="https://t.me"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full border-2 flex items-center justify-center hover:bg-opacity-80 transition-all text-2xl"
-                style={{ borderColor: '#ffecc6', color: '#ffecc6' }}
-                aria-label="Telegram"
-              >
-                <FaTelegramPlane />
-              </a>
+              {seo.social_instagram && (
+                <a
+                  href={seo.social_instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-10 h-10 rounded-full border-2 flex items-center justify-center hover:bg-opacity-80 transition-all text-2xl"
+                  style={{ borderColor: '#ffecc6', color: '#ffecc6' }}
+                  aria-label="Instagram"
+                >
+                  <FaInstagram />
+                </a>
+              )}
+              {seo.social_vk && (
+                <a
+                  href={seo.social_vk}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-10 h-10 rounded-full border-2 flex items-center justify-center hover:bg-opacity-80 transition-all text-2xl"
+                  style={{ borderColor: '#ffecc6', color: '#ffecc6' }}
+                  aria-label="VK"
+                >
+                  <FaVk />
+                </a>
+              )}
+              {seo.social_telegram && (
+                <a
+                  href={seo.social_telegram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-10 h-10 rounded-full border-2 flex items-center justify-center hover:bg-opacity-80 transition-all text-2xl"
+                  style={{ borderColor: '#ffecc6', color: '#ffecc6' }}
+                  aria-label="Telegram"
+                >
+                  <FaTelegramPlane />
+                </a>
+              )}
             </div>
           </div>
 
@@ -58,18 +76,22 @@ export default function Footer({ showMapOnMobile = false }: FooterProps) {
           <div>
             <h3 className="text-lg font-bold mb-4" style={{ color: '#c1dedc' }}>Контакты</h3>
             <div className="space-y-3 text-white">
-              <a
-                href="tel:+78002002022"
-                className="flex items-center gap-2 hover:opacity-80 transition-colors"
-              >
-                <FaPhoneAlt className="text-lg" /> 8 800 200 20 22
-              </a>
-              <a
-                href="mailto:info@smysl-est.ru"
-                className="flex items-center gap-2 hover:opacity-80 transition-colors"
-              >
-                <FaEnvelope className="text-lg" /> info@smysl-est.ru
-              </a>
+              {seo.business_phone && (
+                <a
+                  href={`tel:${seo.business_phone.replace(/[^\d+]/g, "")}`}
+                  className="flex items-center gap-2 hover:opacity-80 transition-colors"
+                >
+                  <FaPhoneAlt className="text-lg" /> {seo.business_phone}
+                </a>
+              )}
+              {seo.business_email && (
+                <a
+                  href={`mailto:${seo.business_email}`}
+                  className="flex items-center gap-2 hover:opacity-80 transition-colors"
+                >
+                  <FaEnvelope className="text-lg" /> {seo.business_email}
+                </a>
+              )}
             </div>
           </div>
 
@@ -77,8 +99,7 @@ export default function Footer({ showMapOnMobile = false }: FooterProps) {
           <div>
             <h3 className="text-lg font-bold mb-4" style={{ color: '#c1dedc' }}>Адрес</h3>
             <address className="not-italic space-y-2 text-white">
-              <p className="flex items-center gap-2"><FaMapMarkerAlt className="text-lg" /> RU 1675, Россия,</p>
-              <p>г. Москва, ул. Святоозёрская, дом 8</p>
+              <p className="flex items-center gap-2"><FaMapMarkerAlt className="text-lg" /> {seo.business_address}</p>
             </address>
           </div>
 

@@ -35,6 +35,8 @@ const nextConfig = {
 	experimental: {
 		optimizePackageImports: ['@react-spring/web'],
 	},
+	// Отключаем reactStrictMode в development для избежания двойного рендера
+	reactStrictMode: process.env.NODE_ENV !== 'development',
 };
 
 module.exports = nextConfig;

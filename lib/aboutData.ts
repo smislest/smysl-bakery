@@ -2,6 +2,7 @@
 
 import { getCollectionFromDirectus } from './directus';
 import { typograph } from './typograph';
+import { cache } from 'react';
 import aboutFallback from '../content/about-fallback.json';
 
 export interface AboutData {
@@ -73,7 +74,7 @@ function normalizeImages(raw: AboutData | Record<string, unknown>): AboutData {
   } as AboutData;
 }
 
-export async function getAboutData(): Promise<AboutData | null> {
+export const getAboutData = cache(async (): Promise<AboutData | null> => {
   try {
     const data = await getCollectionFromDirectus('about');
     let item: AboutData | null = null;
@@ -131,4 +132,4 @@ export async function getAboutData(): Promise<AboutData | null> {
       mission_text: typograph(localFallback.mission_text),
     };
   }
-}
+});

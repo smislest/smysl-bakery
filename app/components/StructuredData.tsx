@@ -1,75 +1,58 @@
-export default function StructuredData() {
+
+// Принимает проп seo (SiteSettings)
+export default function StructuredData({ seo }) {
   const localBusinessSchema = {
     "@context": "https://schema.org",
     "@type": "Bakery",
-    "name": "СМЫСЛ есть",
-    "description": "Безглютеновая пекарня в Москве. Свежая выпечка, хлеб и десерты из натуральных ингредиентов.",
-    "url": "https://smysl-bakery-8e13.vercel.app",
-    "telephone": "+7-999-123-45-67",
-    "email": "info@smysl-est.ru",
+    "name": seo.business_name,
+    "description": seo.default_description,
+    "url": seo.site_url,
+    "telephone": seo.business_phone,
+    "email": seo.business_email,
     "address": {
       "@type": "PostalAddress",
-      "streetAddress": "111675, Россия, г. Москва, ул. Святоозерская, дом 8",
-      "addressLocality": "Москва",
-      "postalCode": "111675",
+      "streetAddress": seo.business_address,
+      "addressLocality": seo.business_city,
+      "postalCode": seo.business_postal_code,
       "addressCountry": "RU"
     },
     "geo": {
       "@type": "GeoCoordinates",
-      "latitude": "55.735878",
-      "longitude": "37.838814"
+      "latitude": seo.geo_latitude,
+      "longitude": seo.geo_longitude
     },
-    "openingHoursSpecification": [
-      {
-        "@type": "OpeningHoursSpecification",
-        "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-        "opens": "08:00",
-        "closes": "20:00"
-      },
-      {
-        "@type": "OpeningHoursSpecification",
-        "dayOfWeek": ["Saturday", "Sunday"],
-        "opens": "10:00",
-        "closes": "18:00"
-      }
-    ],
-    "priceRange": "₽₽",
-    "servesCuisine": "Безглютеновая выпечка",
-    "menu": "https://smysl-bakery-8e13.vercel.app/#products",
-    "image": "https://smysl-bakery-8e13.vercel.app/img/logo.png",
-    "logo": "https://smysl-bakery-8e13.vercel.app/img/logo.png",
-    "sameAs": [
-      "https://t.me/smyslest",
-      "https://instagram.com/smyslest"
-    ]
+    "openingHoursSpecification": seo.opening_hours,
+    "priceRange": seo.price_range,
+    "servesCuisine": seo.serves_cuisine,
+    "menu": `${seo.site_url}/#products`,
+    "image": seo.og_image_url,
+    "logo": seo.og_image_url,
+    "sameAs": [seo.social_telegram, seo.social_instagram, seo.social_vk].filter(Boolean)
   };
 
   const organizationSchema = {
     "@context": "https://schema.org",
     "@type": "Organization",
-    "name": "СМЫСЛ есть",
-    "legalName": "СМЫСЛ есть",
-    "url": "https://smysl-bakery-8e13.vercel.app",
-    "logo": "https://smysl-bakery-8e13.vercel.app/img/logo.png",
-    "description": "Безглютеновая пекарня в Москве",
+    "name": seo.business_name,
+    "legalName": seo.business_name,
+    "url": seo.site_url,
+    "logo": seo.og_image_url,
+    "description": seo.default_description,
     "address": {
       "@type": "PostalAddress",
-      "streetAddress": "111675, Россия, г. Москва, ул. Святоозерская, дом 8",
-      "addressLocality": "Москва",
-      "postalCode": "111675",
+      "streetAddress": seo.business_address,
+      "addressLocality": seo.business_city,
+      "postalCode": seo.business_postal_code,
       "addressCountry": "RU"
     },
     "contactPoint": {
       "@type": "ContactPoint",
-      "telephone": "+7-999-123-45-67",
+      "telephone": seo.business_phone,
       "contactType": "customer service",
-      "email": "info@smysl-est.ru",
+      "email": seo.business_email,
       "availableLanguage": "Russian"
     },
-    "sameAs": [
-      "https://t.me/smyslest",
-      "https://instagram.com/smyslest"
-    ]
+    "sameAs": [seo.social_telegram, seo.social_instagram, seo.social_vk].filter(Boolean)
   };
 
   const breadcrumbSchema = {
@@ -80,7 +63,7 @@ export default function StructuredData() {
         "@type": "ListItem",
         "position": 1,
         "name": "Главная",
-        "item": "https://smysl-bakery-8e13.vercel.app"
+        "item": seo.site_url
       }
     ]
   };
