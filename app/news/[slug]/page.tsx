@@ -180,21 +180,7 @@ export default async function NewsPage({ params }: PageProps) {
         {/* Контент статьи */}
         <SafeContent
           content={news.content || ''}
-          className="prose prose-lg max-w-4xl
-            prose-headings:font-bold prose-headings:mt-10 prose-headings:mb-5
-            prose-h2:text-3xl prose-h3:text-2xl
-            prose-p:text-gray-700 prose-p:leading-relaxed prose-p:mb-5 prose-p:text-lg
-            prose-a:text-[#619e5a] prose-a:no-underline hover:prose-a:underline
-            prose-strong:font-semibold
-            prose-blockquote:border-l-4 prose-blockquote:border-[#619e5a] prose-blockquote:pl-6 prose-blockquote:italic prose-blockquote:text-gray-600 prose-blockquote:my-6
-            prose-ul:my-5 prose-ul:text-gray-700
-            prose-ol:my-5 prose-ol:text-gray-700
-            prose-li:mb-2 prose-li:text-lg
-            prose-img:rounded-lg prose-img:my-8 prose-img:shadow-lg
-            prose-table:border-collapse prose-table:w-full prose-table:my-8
-            prose-th:border prose-th:border-gray-300 prose-th:bg-gray-100 prose-th:p-3 prose-th:text-left
-            prose-td:border prose-td:border-gray-300 prose-td:p-3"
-          style={{ color: '#675b53' }}
+          className="max-w-4xl"
         />
 
         {/* Разделитель */}
