@@ -12,11 +12,12 @@ export default function LayoutContainer({ children }: { children: React.ReactNod
   const isWhyGlutenFreePage = pathname?.startsWith('/why-gluten-free');
   const isBlogPage = pathname?.startsWith('/blog');
   const isFAQPage = pathname?.startsWith('/faq');
-  const hasWhiteBackground = isNewsPage;
+  // Новости теперь используют тёмный фон, как FAQ/Contacts
+  const hasWhiteBackground = false;
 
   const backgroundClass = hasWhiteBackground
     ? 'bg-white'
-    : (isContactsPage || isWhyGlutenFreePage || isBlogPage || isFAQPage || isPrivacyPage)
+    : (isContactsPage || isWhyGlutenFreePage || isBlogPage || isFAQPage || isPrivacyPage || isNewsPage)
       ? ''
       : 'bg-gradient-to-b from-[#9BC381] via-[#7BA862] to-[#5F8A48]';
 
@@ -40,7 +41,7 @@ export default function LayoutContainer({ children }: { children: React.ReactNod
   return (
     <div
       className={`min-h-screen overflow-x-hidden ${backgroundClass}`}
-      style={(isContactsPage || isWhyGlutenFreePage || isBlogPage || isFAQPage || isPrivacyPage) ? { backgroundColor: '#544a44' } : undefined}
+      style={(isContactsPage || isWhyGlutenFreePage || isBlogPage || isFAQPage || isPrivacyPage || isNewsPage) ? { backgroundColor: '#544a44' } : undefined}
     >
       <Header />
       <main
