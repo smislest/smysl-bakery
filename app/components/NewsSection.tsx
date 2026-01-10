@@ -37,7 +37,7 @@ export default function NewsSection({ initialNews = [] }: NewsSectionProps) {
           }
         }
       } catch (err) {
-        console.warn('News cache read error:', err);
+        // Cache read error handled silently
       }
     }
     if (news.length === 0) {
@@ -46,7 +46,7 @@ export default function NewsSection({ initialNews = [] }: NewsSectionProps) {
   }, [news.length]);
 
   // Получение URL изображения через filename_disk
-  const DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || "https://smysl-bakery-directus.onrender.com";
+  const DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'https://admin.smislest.ru';
   const getImageUrl = (img: NewsImage | null) => {
     if (!img || !img.filename_disk) return "/img/placeholder.jpg";
     return `${DIRECTUS_URL}/assets/${img.filename_disk}`;
@@ -256,6 +256,7 @@ export default function NewsSection({ initialNews = [] }: NewsSectionProps) {
                       height={300}
                       className="w-full h-full object-cover"
                       loading="lazy"
+                      decoding="async"
                     />
                     <div className="absolute top-4 left-4 px-3 py-1.5 rounded-2xl text-sm font-medium text-white bg-[#619e5a]">
                       {formatDate(item.date)}

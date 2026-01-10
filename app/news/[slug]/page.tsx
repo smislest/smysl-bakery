@@ -14,19 +14,27 @@ interface PageProps {
   params: { slug: string };
 }
 
-const DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'https://smysl-bakery-directus.onrender.com';
+const DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'https://admin.smislest.ru';
 
 async function loadNews(): Promise<NewsItem[]> {
   try {
+    console.log('🔍 [loadNews] Вызов getNewsData()...');
     const data = await getNewsData();
-    return Array.isArray(data) && data.length > 0 ? data : fallbackNews;
-  } catch {
+    console.log('📦 [loadNews] getNewsData вернула:', data?.length || 0, 'новостей');
+    if (Array.isArray(data) && data.length > 0) {
+      console.log('✅ [loadNews] Возвращаю данные из getNewsData:', data.map(n => n.slug).join(', '));
+      return data;
+    }
+    console.log('⚠️ [loadNews] getNewsData вернула пустой массив, используюПерейти на fallback');
+    return fallbackNews;
+  } catch (error) {
+    console.log('❌ [loadNews] Ошибка при загрузке:', error instanceof Error ? error.message : error);
     return fallbackNews;
   }
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { slug } = params;
+  const { slug } = await params;
   const allNews = await loadNews();
   const current = allNews.find((n) => n.slug === slug) || null;
 
@@ -68,16 +76,20 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function NewsPage({ params }: PageProps) {
-  const { slug } = params;
+  const { slug } = await params;
+  console.log('📄 [NewsPage] Параметр slug:', slug);
 
   // Загружаем все новости на сервере (Directus → Supabase → fallback)
   const allNews = await loadNews();
+  console.log('📋 [NewsPage] Всего новостей загружено:', allNews.length);
+  console.log('📋 [NewsPage] Доступные slugs:', allNews.map(n => n.slug).join(', '));
   
   // Загружаем SEO данные для Footer
   const seoData = await getSiteSettings();
   
   // Находим текущую новость
   const news = allNews.find(n => n.slug === slug) || null;
+  console.log('🔎 [NewsPage] Поиск по slug:', slug, '-> результат:', news ? '✅ найдена' : '❌ не найдена');
   
   // Находим следующую новость
   let nextNews: NewsItem | null = null;

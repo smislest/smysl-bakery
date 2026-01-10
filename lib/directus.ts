@@ -6,7 +6,7 @@ import { cache } from 'react';
 export const DIRECTUS_URL =
   process.env.NEXT_PUBLIC_DIRECTUS_URL ||
   process.env.DIRECTUS_URL ||
-  '';
+  'https://admin.smislest.ru';
 
 export const DIRECTUS_TOKEN = process.env.NEXT_PUBLIC_DIRECTUS_TOKEN || process.env.DIRECTUS_TOKEN || '';
 
@@ -19,7 +19,16 @@ const directusClient = (() => {
   if (DIRECTUS_TOKEN) {
     client = client.with(staticToken(DIRECTUS_TOKEN));
   }
-  return client.with(rest());
+  // Добавляем REST с явной кодировкой
+  return client.with(rest({
+    onRequest: (options) => {
+      options.headers = {
+        ...options.headers,
+        'Accept-Charset': 'utf-8',
+      };
+      return options;
+    }
+  }));
 })();
 
 // Универсальная функция для получения коллекции из Directus с кэшированием
@@ -27,16 +36,12 @@ export const getCollectionFromDirectus = cache(async (collection: string) => {
   try {
     callCounts[collection] = (callCounts[collection] || 0) + 1;
     
-    console.log(`📡 [Call #${callCounts[collection]}] Fetching ${collection} from Directus...`);
-    
     const response = await directusClient.request(
       readItems(collection as any, {
         fields: ['*.*'] as any
       })
     );
     
-    console.log(`✅ [Call #${callCounts[collection]}] Got ${Array.isArray(response) ? response.length : 1} items from ${collection}`);
-    console.log(`📦 Response for ${collection}:`, JSON.stringify(response, null, 2));
     return response;
   } catch (error) {
     const errorMsg = error instanceof Error ? error.message : String(error);

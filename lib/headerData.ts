@@ -50,7 +50,6 @@ export const getHeaderData = cache(async (): Promise<HeaderData | null> => {
     }
     
     if (!menuItem || !siteSettings) {
-      console.log('⚠️ No header menu data or site settings from Directus');
       return null;
     }
 
@@ -74,7 +73,6 @@ export const getHeaderData = cache(async (): Promise<HeaderData | null> => {
 
     // Если меню пустое, возвращаем null
     if (menuItems.length === 0) {
-      console.log('⚠️ No menu items found in header');
       return null;
     }
 

@@ -7,32 +7,34 @@ import FooterClient from "../components/FooterClient";
 import { absoluteUrl, buildOpenGraph, buildRobots, buildTwitter, siteName } from "../../lib/seo";
 import { getSiteSettings } from "../../lib/siteSettingsData";
 
-const pageTitle = `Новости | ${siteName}`;
-const pageDescription = "Последние новости безглютеновой пекарни «СМЫСЛ есть»: анонсы, события, новинки меню.";
-
-export const metadata: Metadata = {
-  title: pageTitle,
-  description: pageDescription,
-  alternates: {
-    canonical: '/news',
-  },
-  openGraph: buildOpenGraph({
+export async function generateMetadata(): Promise<Metadata> {
+  const pageTitle = `Новости | ${siteName}`;
+  const pageDescription = "Последние новости безглютеновой пекарни «СМЫСЛ есть»: анонсы, события, новинки меню.";
+  
+  return {
     title: pageTitle,
     description: pageDescription,
-    url: absoluteUrl('/news'),
-  }),
-  twitter: buildTwitter({
-    title: pageTitle,
-    description: pageDescription,
-  }),
-  robots: buildRobots(),
-};
+    alternates: {
+      canonical: '/news',
+    },
+    openGraph: buildOpenGraph({
+      title: pageTitle,
+      description: pageDescription,
+      url: absoluteUrl('/news'),
+    }),
+    twitter: buildTwitter({
+      title: pageTitle,
+      description: pageDescription,
+    }),
+    robots: buildRobots(),
+  };
+}
 
 export default async function NewsListPage() {
   const news = await getNewsData();
   const seoData = await getSiteSettings();
 
-  const DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'https://smysl-bakery-directus.onrender.com';
+  const DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'https://admin.smislest.ru';
 
   const formatDate = (value?: string) => {
     if (!value) return '';

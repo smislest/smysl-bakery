@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { getAboutData } from '../../lib/aboutData';
 import type { AboutData } from '../../lib/aboutData';
 
-const DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'https://smysl-bakery-directus.onrender.com';
+const DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'https://admin.smislest.ru';
 
 function getAssetUrl(file: string | { id: string } | undefined, fallback: string): string {
   if (!file) return fallback;

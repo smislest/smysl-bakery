@@ -39,7 +39,7 @@ export async function GET(req: NextRequest, { params }: { params: { collection: 
 
     return NextResponse.json(json.data);
   } catch (e) {
-    console.error(`Directus fetch failed for ${collection}`, e);
+    // Direct fetch failed, trying fallback
 
     // fallback
     try {
@@ -58,7 +58,7 @@ export async function GET(req: NextRequest, { params }: { params: { collection: 
 
       return NextResponse.json(JSON.parse(file));
     } catch (fallbackError) {
-      console.error(`Fallback failed for ${collection}`, fallbackError);
+      // All sources failed
       return NextResponse.json({ error: 'Failed to load' }, { status: 500 });
     }
   }

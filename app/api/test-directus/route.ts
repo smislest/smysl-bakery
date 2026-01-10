@@ -1,6 +1,6 @@
 export async function GET() {
   const res = await fetch(
-    "https://smysl-bakery-directus.onrender.com/items/products",
+    "https://admin.smislest.ru/items/products",
     {
       method: "GET",
       credentials: "include",

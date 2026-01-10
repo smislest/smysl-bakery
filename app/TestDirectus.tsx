@@ -6,7 +6,7 @@ export default function TestDirectus() {
     const test = async () => {
       try {
         const res = await fetch(
-          "https://smysl-bakery-directus.onrender.com/items/products",
+          "https://admin.smislest.ru/items/products",
           {
             method: "GET",
             credentials: "include",
@@ -17,7 +17,7 @@ export default function TestDirectus() {
         const data = await res.json();
         console.log("DATA:", data);
       } catch (e) {
-        console.error("ERROR:", e);
+        // Error handled
       }
     };
 

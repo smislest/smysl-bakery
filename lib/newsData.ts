@@ -1,7 +1,6 @@
 
 import { getCollectionFromDirectus } from './directus';
 import { NewsItem, newsData } from '../lib/news';
-import { typograph } from './typograph';
 import { cache } from 'react';
 
 type RawNews = Record<string, unknown>;
@@ -25,14 +24,12 @@ const normalizeNews = (items: RawNews[], source: 'directus' | 'supabase' | 'loca
       slug: item.slug,
       date: typeof item.date === 'string' ? item.date : '',
       news_photo: newsPhoto,
-      title: typograph(typeof item.title === 'string' ? item.title : ''),
-      excerpt: typograph(
-        typeof item.excerpt === 'string'
-          ? item.excerpt
-          : typeof item.description === 'string'
-            ? item.description
-            : ''
-      ),
+      title: typeof item.title === 'string' ? item.title : '',
+      excerpt: typeof item.excerpt === 'string'
+        ? item.excerpt
+        : typeof item.description === 'string'
+          ? item.description
+          : '',
       // Не типографируем HTML WYSIWYG, чтобы не потерять теги; сохраняем как есть
       content: rawContent,
       rawContent,
@@ -43,17 +40,13 @@ const normalizeNews = (items: RawNews[], source: 'directus' | 'supabase' | 'loca
 
 export const getNewsData = cache(async (): Promise<NewsItem[]> => {
   try {
-    console.log('🔍 Fetching news from Directus...');
     const data = await getCollectionFromDirectus('news');
-    console.log('📦 Directus response:', data ? `${data.length} items` : 'null');
 
     if (Array.isArray(data) && data.length > 0) {
       const normalized = normalizeNews(data, 'directus');
-      console.log(`✅ Filtered ${normalized.length} news items with slugs`);
       return normalized;
     }
 
-    console.log('⚠️ No news found in Directus');
     return [];
   } catch (error) {
     console.error('❌ Error in getNewsData:', error instanceof Error ? error.message : error);

@@ -74,7 +74,6 @@ export const getAboutData = cache(async (): Promise<AboutData | null> => {
     }
     
     if (!item) {
-      console.log('⚠️ No about data from Directus');
       return null;
     }
     

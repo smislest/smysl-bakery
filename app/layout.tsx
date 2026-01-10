@@ -2,7 +2,6 @@
 import "./globals.css";
 import "./fonts.css";
 import LayoutContainer from "./components/LayoutContainer";
-import './styles/swiper.css';
 import StructuredData from "./components/StructuredData";
 import { getSeoSettings, defaultOgImage } from "../lib/seo";
 
@@ -10,13 +9,17 @@ import { getSeoSettings, defaultOgImage } from "../lib/seo";
 export const viewport = {
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
 };
 
 // Динамические SEO-мета-теги через generateMetadata (данные из Directus)
 export async function generateMetadata() {
   const seo = await getSeoSettings();
+  if (!seo) {
+    return {
+      title: 'СМЫСЛ есть',
+      description: 'Безглютеновая пекарня в Москве',
+    };
+  }
   return {
     title: seo.default_title,
     description: seo.default_description,
@@ -54,6 +57,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://admin.smislest.ru" />
+        <link rel="dns-prefetch" href="https://admin.smislest.ru" />
         <link
           href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Great+Vibes&display=swap&subset=cyrillic"
           rel="stylesheet"

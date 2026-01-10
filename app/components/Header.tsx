@@ -7,24 +7,24 @@ import { usePathname } from "next/navigation";
 import styles from "./Header.module.css";
 import { getHeaderData, type HeaderData } from "../../lib/headerData";
 
-const defaultMenu: HeaderData['menu'] = [
-  { label: 'Продукты', href: '/#products' },
-  { label: 'О нас', href: '/about' },
-  { label: 'Новости', href: '/news' },
-  { label: 'Блог', href: '/blog' },
-  { label: 'FAQ', href: '/faq' },
-  { label: 'Контакты', href: '/contacts' },
-];
-
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [header, setHeader] = useState<HeaderData | null>(null);
   const logoSrc = "/svg/logo.svg";
   const pathname = usePathname();
 
+  const defaultMenu: HeaderData['menu'] = [
+    { label: 'Продукты', href: '/#products' },
+    { label: 'О нас', href: '/about' },
+    { label: 'Новости', href: '/news' },
+    { label: 'Блог', href: '/blog' },
+    { label: 'FAQ', href: '/faq' },
+    { label: 'Контакты', href: '/contacts' },
+  ];
+
   useEffect(() => {
-    getHeaderData().then(setHeader).catch(err => {
-      console.error('Failed to load header:', err);
+    getHeaderData().then(setHeader).catch(() => {
+      // Error handled silently
     });
   }, []);
 
@@ -121,7 +121,7 @@ export default function Header() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               ) : (
-                <img src="/svg/symbol.svg" alt="Меню" />
+                <img src="/svg/symbol.svg" alt="Меню" width={56} height={56} />
               )}
             </div>
             <div>

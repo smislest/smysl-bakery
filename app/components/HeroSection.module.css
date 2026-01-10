@@ -13,12 +13,14 @@
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  min-height: 100vh;
 }
 
 @media (min-width: 768px) {
   .hero {
     padding-top: 0 !important;
-    min-height: auto;
+    min-height: 90vh;
+    max-height: 90vh;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -289,12 +291,13 @@
 @media (min-width: 768px) {
   .desktopLayout {
     display: grid;
-    grid-template-columns: 0.618fr 1fr;
-    gap: var(--spacing-xl);
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(2rem, 6vw, 4rem);
     align-items: center;
     width: 100%;
-    max-width: 1600px;
+    max-width: 1400px;
     margin: 0 auto;
+    padding: 0 clamp(1.5rem, 4vw, 3rem);
   }
 }
 

@@ -29,11 +29,6 @@ export default function HeroSection({ initialData = null }: HeroSectionProps) {
   // Если данные не загрузились, рендерим пустую секцию
   // или можно добавить error state
   const data = hero;
-  console.log('🎨 Rendering with:', {
-    isFromDirectus: !!hero,
-    imageUrl: data?.image,
-    title: data?.title
-  });
   
   if (!data) {
     return null;
@@ -66,30 +61,52 @@ export default function HeroSection({ initialData = null }: HeroSectionProps) {
 
       {/* Декоративные хлеба */}
       <div className={styles.breadsBg} aria-hidden="true">
-        <img src="/img/bread_.png" alt="" className={`${styles.bread} ${styles.breadMain}`} loading="lazy" />
-        <img src="/img/bread_1.png" alt="" className={`${styles.bread} ${styles.bread1}`} loading="lazy" />
-        <img src="/img/bread_min.png" alt="" className={`${styles.bread} ${styles.breadMin}`} loading="lazy" />
-        <img src="/img/bread_micro.png" alt="" className={`${styles.bread} ${styles.breadMicro}`} loading="lazy" />
+        <picture>
+          <source srcSet="/img/bread_.avif" type="image/avif" />
+          <img src="/img/bread_.png" alt="" className={`${styles.bread} ${styles.breadMain}`} loading="lazy" width={520} height={480} />
+        </picture>
+        <picture>
+          <source srcSet="/img/bread_1.avif" type="image/avif" />
+          <img src="/img/bread_1.png" alt="" className={`${styles.bread} ${styles.bread1}`} loading="lazy" width={260} height={240} />
+        </picture>
+        <picture>
+          <source srcSet="/img/bread_min.avif" type="image/avif" />
+          <img src="/img/bread_min.png" alt="" className={`${styles.bread} ${styles.breadMin}`} loading="lazy" width={180} height={165} />
+        </picture>
+        <picture>
+          <source srcSet="/img/bread_micro.avif" type="image/avif" />
+          <img src="/img/bread_micro.png" alt="" className={`${styles.bread} ${styles.breadMicro}`} loading="lazy" width={120} height={110} />
+        </picture>
       </div>
 
       {/* Декоративные колосья */}
       <div className={`${styles.wheatDecor} ${styles.wheatLeft}`}>
-        <img
-          src="/img/l_wheat.png"
-          alt="Декоративные колосья"
-          className="w-full h-auto select-none"
-          draggable={false}
-          loading="lazy"
-        />
+        <picture>
+          <source srcSet="/img/l_wheat.avif" type="image/avif" />
+          <img
+            src="/img/l_wheat.png"
+            alt=""
+            className="w-full h-auto select-none"
+            draggable={false}
+            loading="lazy"
+            width={250}
+            height={400}
+          />
+        </picture>
       </div>
       <div className={`${styles.wheatDecor} ${styles.wheatRight}`}>
-        <img
-          src="/img/r_wheat.png"
-          alt="Декоративные колосья"
-          className="w-full h-auto select-none"
-          draggable={false}
-          loading="lazy"
-        />
+        <picture>
+          <source srcSet="/img/r_wheat.avif" type="image/avif" />
+          <img
+            src="/img/r_wheat.png"
+            alt=""
+            className="w-full h-auto select-none"
+            draggable={false}
+            loading="lazy"
+            width={250}
+            height={400}
+          />
+        </picture>
       </div>
 
       {/* Основной контент */}

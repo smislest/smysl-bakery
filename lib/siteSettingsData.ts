@@ -61,8 +61,6 @@ export const getSiteSettings = cache(async (): Promise<SiteSettings | null> => {
     }
     
     if (settings) {
-      console.log('✨ Using site settings from Directus');
-      
       // Преобразуем og_image в полный URL если есть
       if (settings.og_image) {
         settings.og_image_url = `${DIRECTUS_URL}/assets/${

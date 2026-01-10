@@ -26,7 +26,7 @@ interface ProductsCarouselProps {
 export default function ProductsCarousel({ initialProducts = [] }: ProductsCarouselProps) {
   const [products, setProducts] = useState<Product[]>(initialProducts);
   const [loading, setLoading] = useState(false);
-  const DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || "https://smysl-bakery-directus.onrender.com";
+  const DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'https://admin.smislest.ru';
 
   // Клиентская загрузка для подстраховки (если серверная не сработала)
   useEffect(() => {
@@ -52,12 +52,11 @@ export default function ProductsCarousel({ initialProducts = [] }: ProductsCarou
           })
         ) as Product[];
         
-        console.log('🍞 Загружено продуктов (client refresh):', data?.length || 0);
         if (data && data.length > 0) {
           setProducts(data);
         }
       } catch (e) {
-        console.error("Ошибка загрузки продуктов:", e);
+        // Error handled silently
       } finally {
         if (shouldShowLoader) {
           setLoading(false);

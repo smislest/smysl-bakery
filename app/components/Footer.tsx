@@ -8,7 +8,7 @@ type FooterData = { text: string; links?: FooterLink[] };
 
 interface FooterProps {
   showMapOnMobile?: boolean;
-  seoData?: SiteSettings;
+  seoData?: SiteSettings | null;
 }
 
 export default function Footer({ showMapOnMobile = false, seoData }: FooterProps) {
