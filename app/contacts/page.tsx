@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { buildOpenGraph, buildTwitter } from '../../lib/seo';
+import { getSeoSettings } from '../../lib/seo';
 import ContactsPageClient from './ContactsPageClient';
 
 export const metadata: Metadata = {
@@ -19,6 +20,7 @@ export const metadata: Metadata = {
   }),
 };
 
-export default function ContactsPage() {
-  return <ContactsPageClient />;
+export default async function ContactsPage() {
+  const seoData = await getSeoSettings();
+  return <ContactsPageClient seoData={seoData} />;
 }

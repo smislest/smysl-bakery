@@ -5,6 +5,7 @@ import type { NewsImage } from '../../lib/news';
 import { getNewsData } from '../../lib/newsData';
 import FooterClient from "../components/FooterClient";
 import { absoluteUrl, buildOpenGraph, buildRobots, buildTwitter, siteName } from "../../lib/seo";
+import { getSiteSettings } from "../../lib/siteSettingsData";
 
 const pageTitle = `Новости | ${siteName}`;
 const pageDescription = "Последние новости безглютеновой пекарни «СМЫСЛ есть»: анонсы, события, новинки меню.";
@@ -29,6 +30,7 @@ export const metadata: Metadata = {
 
 export default async function NewsListPage() {
   const news = await getNewsData();
+  const seoData = await getSiteSettings();
 
   const DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'https://smysl-bakery-directus.onrender.com';
 
@@ -99,7 +101,7 @@ export default async function NewsListPage() {
         </div>
       )}
       </section>
-      <FooterClient />
+      <FooterClient seoData={seoData} />
     </>
   );
 }

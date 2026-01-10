@@ -16,16 +16,6 @@ export interface HeroData {
   ctaText?: string;
 }
 
-const heroFallback: HeroData = {
-  title: typograph("Безглютеновый хлеб и десерты в Москве"),
-  subtitle: typograph("Развиваем культуру осознанного ежедневного рациона и показываем, что полезная выпечка может быть вкусной и разнообразной."),
-  image: "/img/heart.png",
-  imageAlt: "Хлеб в форме сердца",
-  ctaLink: "#products",
-  ctaText: "В каталог",
-  backgroundImage: "",
-};
-
 function normalizeFileRef(fileRef: any): string | undefined {
   if (!fileRef) return undefined;
   // If Directus returned an object with id or filename_disk
@@ -47,7 +37,7 @@ export const getHeroData = cache(async (): Promise<HeroData | null> => {
   try {
     const data: any = await getCollectionFromDirectus('hero');
     const item = Array.isArray(data) && data.length > 0 ? data[0] : data;
-    if (!item) return heroFallback;
+    if (!item) return null;
 
     const image = normalizeFileRef(item.hero_image || item.hero_photo || item.image || item.hero_photo_id || item.image_file);
 
@@ -63,6 +53,6 @@ export const getHeroData = cache(async (): Promise<HeroData | null> => {
     } as HeroData;
   } catch (error) {
     console.error('❌ Error loading hero data:', error);
-    return heroFallback;
+    return null;
   }
 });

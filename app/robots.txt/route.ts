@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 export function GET() {
   const noindex = process.env.NEXT_PUBLIC_NOINDEX === '1';
 

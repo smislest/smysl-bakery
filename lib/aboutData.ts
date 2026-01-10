@@ -3,7 +3,6 @@
 import { getCollectionFromDirectus } from './directus';
 import { typograph } from './typograph';
 import { cache } from 'react';
-import aboutFallback from '../content/about-fallback.json';
 
 export interface AboutData {
   id: string;
@@ -26,17 +25,6 @@ export interface AboutData {
   image_extra1?: string | { id: string };
   image_extra2?: string | { id: string };
 }
-
-const localFallback: AboutData = {
-  ...(aboutFallback as AboutData),
-  svg_title: '/svg/logo_white.svg',
-  image_main: '/img/staf1.png',
-  image_top_right: '/img/staf2.png',
-  image_bottom_left: '/img/staf3.png',
-  image_bottom_right: '/img/staf4.png',
-  image_extra1: '/img/staf5.png',
-  isFallback: true,
-};
 
 function withImageDefaults(item: AboutData): AboutData {
   return {
@@ -86,20 +74,8 @@ export const getAboutData = cache(async (): Promise<AboutData | null> => {
     }
     
     if (!item) {
-      console.log('⚠️ No about data from Directus, using fallback');
-      // Типографируем fallback данные
-      return {
-        ...localFallback,
-        text_r: typograph(localFallback.text_r),
-        text_c: typograph(localFallback.text_c),
-        text_r2: typograph(localFallback.text_r2),
-        passion_title: typograph(localFallback.passion_title),
-        passion_text: typograph(localFallback.passion_text),
-        pride_title: typograph(localFallback.pride_title),
-        pride_text: typograph(localFallback.pride_text),
-        mission_title: typograph(localFallback.mission_title),
-        mission_text: typograph(localFallback.mission_text),
-      };
+      console.log('⚠️ No about data from Directus');
+      return null;
     }
     
     // Типографирование текстовых полей + нормализация и дефолты картинок
@@ -117,19 +93,6 @@ export const getAboutData = cache(async (): Promise<AboutData | null> => {
     }));
   } catch (error) {
     console.error('❌ Error loading about data:', error);
-    console.log('📦 Using fallback about data');
-    // Типографируем fallback данные
-    return {
-      ...localFallback,
-      text_r: typograph(localFallback.text_r),
-      text_c: typograph(localFallback.text_c),
-      text_r2: typograph(localFallback.text_r2),
-      passion_title: typograph(localFallback.passion_title),
-      passion_text: typograph(localFallback.passion_text),
-      pride_title: typograph(localFallback.pride_title),
-      pride_text: typograph(localFallback.pride_text),
-      mission_title: typograph(localFallback.mission_title),
-      mission_text: typograph(localFallback.mission_text),
-    };
+    return null;
   }
 });

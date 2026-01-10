@@ -8,6 +8,7 @@ import { newsData as fallbackNews } from '../../../lib/news';
 import FooterClient from "../../components/FooterClient";
 import SafeContent from "../../components/SafeContent";
 import { absoluteUrl, buildOpenGraph, buildRobots, buildTwitter, siteName } from "../../../lib/seo";
+import { getSiteSettings } from '../../../lib/siteSettingsData';
 
 interface PageProps {
   params: { slug: string };
@@ -72,6 +73,9 @@ export default async function NewsPage({ params }: PageProps) {
   // Загружаем все новости на сервере (Directus → Supabase → fallback)
   const allNews = await loadNews();
   
+  // Загружаем SEO данные для Footer
+  const seoData = await getSiteSettings();
+  
   // Находим текущую новость
   const news = allNews.find(n => n.slug === slug) || null;
   
@@ -93,7 +97,7 @@ export default async function NewsPage({ params }: PageProps) {
             </Link>
           </div>
         </div>
-        <FooterClient />
+        <FooterClient seoData={seoData} />
       </>
     );
   }
@@ -214,7 +218,7 @@ export default async function NewsPage({ params }: PageProps) {
 
       </article>
       </div>
-      <FooterClient />
+      <FooterClient seoData={seoData} />
     </>
   );
 }

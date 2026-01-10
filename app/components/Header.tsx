@@ -5,18 +5,26 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import styles from "./Header.module.css";
-import { getHeaderData, headerFallbackData, type HeaderData } from "../../lib/headerData";
+import { getHeaderData, type HeaderData } from "../../lib/headerData";
+
+const defaultMenu: HeaderData['menu'] = [
+  { label: 'Продукты', href: '/#products' },
+  { label: 'О нас', href: '/about' },
+  { label: 'Новости', href: '/news' },
+  { label: 'Блог', href: '/blog' },
+  { label: 'FAQ', href: '/faq' },
+  { label: 'Контакты', href: '/contacts' },
+];
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [header, setHeader] = useState<HeaderData>(headerFallbackData);
+  const [header, setHeader] = useState<HeaderData | null>(null);
   const logoSrc = "/svg/logo.svg";
   const pathname = usePathname();
 
   useEffect(() => {
     getHeaderData().then(setHeader).catch(err => {
       console.error('Failed to load header:', err);
-      setHeader(headerFallbackData);
     });
   }, []);
 
@@ -150,7 +158,7 @@ export default function Header() {
             </div>
 
             <nav className={styles.menuNav}>
-              {header && Array.isArray(header.menu) && header.menu.length > 0 ? (
+              {header?.menu && header.menu.length > 0 ? (
                 header.menu.map((item) => (
                   <Link
                     key={item.href}
@@ -162,14 +170,25 @@ export default function Header() {
                   </Link>
                 ))
               ) : (
-                <div className={styles.menuNavEmpty}>Загрузка меню...</div>
+                <div className={styles.menuNavEmpty}>
+                  {defaultMenu.map((item) => (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className={styles.menuNavLink}
+                      onClick={() => handleNavClick(item.href)}
+                    >
+                      {item.label}
+                    </Link>
+                  ))}
+                </div>
               )}
             </nav>
 
             <div className={styles.menuFooter}>
               <div className={styles.socialIcons}>
                 {socials.map((s) => {
-                  const socialUrl = header?.[s.key as keyof HeaderData] as string || '#';
+                  const socialUrl = header?.[s.key as keyof typeof header] as string || '#';
                   return (
                     <Link key={s.key} href={socialUrl} className={styles.socialIcon} aria-label={s.label} target="_blank">
                       <svg viewBox={s.viewBox} width={36} height={36} aria-hidden="true" focusable="false" fill="currentColor">

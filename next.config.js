@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+	// Для Docker deployment нужен standalone режим
+	output: process.env.DOCKER_BUILD === 'true' ? 'standalone' : undefined,
+	
 	images: {
 		// Отключаем оптимизацию для development (локальный SSL проблемы)
 		// На Vercel (production) будет включена (unoptimized: false)
@@ -7,7 +10,7 @@ const nextConfig = {
 		remotePatterns: [
 			{
 				protocol: 'https',
-				hostname: 'smysl-bakery-directus.onrender.com',
+				hostname: 'admin.smislest.ru',
 				pathname: '/assets/**',
 			},
 			// Для development: поддерживаем локальные адреса

@@ -1,8 +1,13 @@
 "use client";
 
 import Link from 'next/link';
+import type { SiteSettings } from '../../lib/siteSettingsData';
 
-export default function ContactsPageClient() {
+interface ContactsPageClientProps {
+  seoData: SiteSettings;
+}
+
+export default function ContactsPageClient({ seoData }: ContactsPageClientProps) {
   return (
     <div className="min-h-screen relative" style={{ backgroundColor: '#544a44' }}>
       {/* Декор: радиальный градиент и колосья как на главной */}
@@ -76,10 +81,7 @@ export default function ContactsPageClient() {
                 <div>
                   <h3 className="text-xl font-semibold text-[#c1dedc] mb-2">Адрес производства</h3>
                   <p className="text-[#ffecc6]">
-                    г. Москва, ул. Примерная, д. 1, стр. 1
-                  </p>
-                  <p className="text-white/80 text-sm mt-2">
-                    (точный адрес уточняется)
+                    {seoData.business_address}
                   </p>
                 </div>
               </div>
@@ -93,8 +95,8 @@ export default function ContactsPageClient() {
                 </div>
                 <div>
                   <h3 className="text-xl font-semibold text-[#c1dedc] mb-2">Телефон</h3>
-                  <a href="tel:+74951234567" className="text-[#ffecc6] hover:opacity-80 transition-colors text-lg">
-                    +7 (495) 123-45-67
+                  <a href={`tel:${seoData.business_phone?.replace(/[^0-9+]/g, '')}`} className="text-[#ffecc6] hover:opacity-80 transition-colors text-lg">
+                    {seoData.business_phone}
                   </a>
                   <p className="text-white/80 text-sm mt-2">
                     Звонки принимаются ежедневно с 9:00 до 21:00
@@ -111,8 +113,8 @@ export default function ContactsPageClient() {
                 </div>
                 <div>
                   <h3 className="text-xl font-semibold text-[#c1dedc] mb-2">Email</h3>
-                  <a href="mailto:info@smislest.ru" className="text-[#ffecc6] hover:opacity-80 transition-colors">
-                    info@smislest.ru
+                  <a href={`mailto:${seoData.business_email}`} className="text-[#ffecc6] hover:opacity-80 transition-colors">
+                    {seoData.business_email}
                   </a>
                 </div>
               </div>
@@ -142,8 +144,9 @@ export default function ContactsPageClient() {
               <div className="bg-white/10 backdrop-blur-sm rounded-3xl p-8 border border-white/10">
                 <h3 className="text-2xl font-semibold text-[#c1dedc] mb-6">Мы в социальных сетях</h3>
                 <div className="space-y-4">
+                  {seoData.social_telegram && (
                   <a 
-                    href="https://t.me/smyslest" 
+                    href={seoData.social_telegram} 
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="flex items-center gap-4 p-4 bg-white/10 rounded-2xl hover:bg-white/20 transition-all text-[#ffecc6]"
@@ -155,12 +158,14 @@ export default function ContactsPageClient() {
                     </div>
                     <div>
                       <div className="text-[#ffecc6] font-semibold">Telegram</div>
-                      <div className="text-white/80 text-sm">@smyslest</div>
+                      <div className="text-white/80 text-sm">{seoData.social_telegram?.split('/').pop()}</div>
                     </div>
                   </a>
+                  )}
 
+                  {seoData.social_instagram && (
                   <a 
-                    href="https://instagram.com/smyslest" 
+                    href={seoData.social_instagram} 
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="flex items-center gap-4 p-4 bg-white/10 rounded-2xl hover:bg-white/20 transition-all text-[#ffecc6]"
@@ -172,9 +177,10 @@ export default function ContactsPageClient() {
                     </div>
                     <div>
                       <div className="text-[#ffecc6] font-semibold">Instagram</div>
-                      <div className="text-white/80 text-sm">@smyslest</div>
+                      <div className="text-white/80 text-sm">{seoData.social_instagram?.split('/').pop()}</div>
                     </div>
                   </a>
+                  )}
                 </div>
               </div>
 

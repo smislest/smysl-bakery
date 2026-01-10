@@ -2,31 +2,16 @@
 import { createDirectus, rest, readItems, staticToken } from '@directus/sdk';
 import { cache } from 'react';
 
-// Переменные окружения для Directus (с безопасным запасным URL)
+// Переменные окружения для Directus
 export const DIRECTUS_URL =
   process.env.NEXT_PUBLIC_DIRECTUS_URL ||
   process.env.DIRECTUS_URL ||
-  'https://smysl-bakery-directus.onrender.com';
+  '';
 
 export const DIRECTUS_TOKEN = process.env.NEXT_PUBLIC_DIRECTUS_TOKEN || process.env.DIRECTUS_TOKEN || '';
 
-// На сервере отключаем кэш TLS сессий (ошибка ERR_SSL_INVALID_SESSION_ID на некоторых хостингах)
-const initializeUndiciAgent = async () => {
-  if (typeof window === 'undefined') {
-    try {
-      // Динамический импорт undici только на сервере
-      const { Agent, setGlobalDispatcher } = await import('undici');
-      setGlobalDispatcher(new Agent({ connect: { maxCachedSessions: 0 } }));
-    } catch (err) {
-      console.warn('Failed to configure undici agent for Directus:', err instanceof Error ? err.message : err);
-    }
-  }
-};
-
-// Инициализируем при импорте (только на сервере)
-initializeUndiciAgent().catch(err => {
-  console.warn('Error initializing undici:', err instanceof Error ? err.message : err);
-});
+// Счетчик вызовов для отладки
+const callCounts: Record<string, number> = {};
 
 // Создаём Directus клиент с REST (если есть токен, используем его)
 const directusClient = (() => {
@@ -36,9 +21,6 @@ const directusClient = (() => {
   }
   return client.with(rest());
 })();
-
-// Счетчик вызовов для отладки
-const callCounts: Record<string, number> = {};
 
 // Универсальная функция для получения коллекции из Directus с кэшированием
 export const getCollectionFromDirectus = cache(async (collection: string) => {
@@ -54,13 +36,11 @@ export const getCollectionFromDirectus = cache(async (collection: string) => {
     );
     
     console.log(`✅ [Call #${callCounts[collection]}] Got ${Array.isArray(response) ? response.length : 1} items from ${collection}`);
+    console.log(`📦 Response for ${collection}:`, JSON.stringify(response, null, 2));
     return response;
   } catch (error) {
     const errorMsg = error instanceof Error ? error.message : String(error);
-    // Тихое логирование - только при первом вызове
-    if (callCounts[collection] === 1) {
-      console.warn(`⚠️ ${collection}: ${errorMsg} (using fallback)`);
-    }
+    console.error(`❌ ${collection} error:`, errorMsg);
     return null;
   }
 });

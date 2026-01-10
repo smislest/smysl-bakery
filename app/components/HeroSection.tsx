@@ -26,24 +26,19 @@ export default function HeroSection({ initialData = null }: HeroSectionProps) {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Если данные ещё не загрузились, рендерим fallback-контент (чтобы элемент всегда был видим)
-  // Fallback уже типографирован в getHeroData()
-  const fallback = {
-    title: "Безглютеновая пекарня в Москве — свежая выпечка и десерты",
-    subtitle:
-      "Развиваем культуру осознанного ежедневного рациона и показываем, что полезная выпечка может быть вкусной и разнообразной. Натуральные ингредиенты, собственное производство.",
-    image: "/img/heart.png",
-    imageAlt: "Хлеб в форме сердца",
-    ctaLink: "#products",
-    ctaText: "В каталог",
-    backgroundImage: "",
-  };
-  const data = hero || fallback;
+  // Если данные не загрузились, рендерим пустую секцию
+  // или можно добавить error state
+  const data = hero;
   console.log('🎨 Rendering with:', {
     isFromDirectus: !!hero,
-    imageUrl: data.image,
-    title: data.title
+    imageUrl: data?.image,
+    title: data?.title
   });
+  
+  if (!data) {
+    return null;
+  }
+  
   return (
     <section
       className={styles.hero}

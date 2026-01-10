@@ -44,42 +44,8 @@ export interface SiteSettings {
   serves_cuisine?: string;
 }
 
-// Fallback данные если Directus недоступен
-const fallbackSettings: SiteSettings = {
-  default_title: 'Безглютеновая пекарня в Москве — свежая выпечка и десерты',
-  default_description: 'Свежая безглютеновая выпечка в Москве: хлеб, пироги, десерты. Натуральные ингредиенты, собственное производство. Доставка и самовывоз.',
-  site_name: 'СМЫСЛ есть',
-  site_url: 'https://smysl-bakery-8e13.vercel.app',
-  og_image_width: 1200,
-  og_image_height: 630,
-  business_name: 'СМЫСЛ есть',
-  business_phone: '+7-999-123-45-67',
-  business_email: 'info@smysl-est.ru',
-  business_address: '111675, Россия, г. Москва, ул. Святоозерская, дом 8',
-  business_city: 'Москва',
-  business_postal_code: '111675',
-  geo_latitude: '55.735878',
-  geo_longitude: '37.838814',
-  opening_hours: [
-    {
-      days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
-      opens: '08:00',
-      closes: '20:00'
-    },
-    {
-      days: ['Saturday', 'Sunday'],
-      opens: '10:00',
-      closes: '18:00'
-    }
-  ],
-  social_telegram: 'https://t.me/smyslest',
-  social_instagram: 'https://instagram.com/smyslest',
-  price_range: '₽₽',
-  serves_cuisine: 'Безглютеновая выпечка'
-};
-
 // Кэшируем результат с помощью React cache для дедупликации запросов в рамках одного рендера
-export const getSiteSettings = cache(async (): Promise<SiteSettings> => {
+export const getSiteSettings = cache(async (): Promise<SiteSettings | null> => {
   try {
     const data = await getCollectionFromDirectus('site_settings');
     
@@ -106,16 +72,13 @@ export const getSiteSettings = cache(async (): Promise<SiteSettings> => {
         }`;
       }
       
-      return {
-        ...fallbackSettings,
-        ...settings,
-      };
+      return settings;
     }
     
-    console.warn('⚠️ Site settings not found, using fallback');
-    return fallbackSettings;
+    console.warn('⚠️ Site settings not found in Directus');
+    return null;
   } catch (error) {
     console.error('❌ Error loading site settings:', error instanceof Error ? error.message : error);
-    return fallbackSettings;
+    return null;
   }
 });

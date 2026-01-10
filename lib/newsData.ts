@@ -2,10 +2,7 @@
 import { getCollectionFromDirectus } from './directus';
 import { NewsItem, newsData } from '../lib/news';
 import { typograph } from './typograph';
-import { readJsonFallback, writeJsonFallback } from './supabaseFallback';
 import { cache } from 'react';
-
-const NEWS_FALLBACK_KEY = process.env.SUPABASE_NEWS_KEY || 'news.json';
 
 type RawNews = Record<string, unknown>;
 
@@ -44,15 +41,6 @@ const normalizeNews = (items: RawNews[], source: 'directus' | 'supabase' | 'loca
   });
 };
 
-async function readSupabaseNews(): Promise<NewsItem[] | null> {
-  const cached = await readJsonFallback<NewsItem[]>(NEWS_FALLBACK_KEY);
-  if (Array.isArray(cached) && cached.length > 0) {
-    console.log(`📦 Using Supabase fallback for news (${cached.length} items)`);
-    return normalizeNews(cached, 'supabase');
-  }
-  return null;
-}
-
 export const getNewsData = cache(async (): Promise<NewsItem[]> => {
   try {
     console.log('🔍 Fetching news from Directus...');
@@ -62,28 +50,13 @@ export const getNewsData = cache(async (): Promise<NewsItem[]> => {
     if (Array.isArray(data) && data.length > 0) {
       const normalized = normalizeNews(data, 'directus');
       console.log(`✅ Filtered ${normalized.length} news items with slugs`);
-
-      if (normalized.length > 0) {
-        console.log(`[Supabase] Attempting to save news...`);
-        writeJsonFallback(NEWS_FALLBACK_KEY, normalized).catch((err) => {
-          console.warn('⚠️ Failed to persist news fallback to Supabase:', err instanceof Error ? err.message : err);
-        });
-        return normalized;
-      }
+      return normalized;
     }
 
-    console.log('⚠️ No news data from Directus, trying Supabase fallback...');
-    const supabaseFallback = await readSupabaseNews();
-    if (supabaseFallback) return supabaseFallback;
-
-    console.log('📦 Using local news fallback');
-    return normalizeNews(newsData, 'local');
+    console.log('⚠️ No news found in Directus');
+    return [];
   } catch (error) {
     console.error('❌ Error in getNewsData:', error instanceof Error ? error.message : error);
-
-    const supabaseFallback = await readSupabaseNews();
-    if (supabaseFallback) return supabaseFallback;
-
-    return normalizeNews(newsData, 'local');
+    return [];
   }
 });

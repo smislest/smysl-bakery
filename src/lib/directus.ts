@@ -3,7 +3,7 @@ import { createDirectus, rest } from '@directus/sdk';
 export const DIRECTUS_URL =
 	process.env.NEXT_PUBLIC_DIRECTUS_URL ||
 	process.env.DIRECTUS_URL ||
-	'https://smysl-bakery-directus.onrender.com';
+	'https://admin.smislest.ru';
 
 export const DIRECTUS_TOKEN = process.env.NEXT_PUBLIC_DIRECTUS_TOKEN || process.env.DIRECTUS_TOKEN || '';
 

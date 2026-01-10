@@ -2,7 +2,6 @@ import { getCollectionFromDirectus } from './directus';
 import { getSiteSettings } from './siteSettingsData';
 import { typograph } from './typograph';
 import { cache } from 'react';
-import headerFallback from '../content/header.json';
 
 export interface MenuItem {
   label: string;
@@ -21,12 +20,7 @@ export interface HeaderData {
   menu: MenuItem[];
 }
 
-export const headerFallbackData: HeaderData = {
-  ...(headerFallback as HeaderData),
-  address: headerFallback.address || '111675, Россия, г. Москва, ул. Святоозерская, дом 8',
-};
-
-export const getHeaderData = cache(async (): Promise<HeaderData> => {
+export const getHeaderData = cache(async (): Promise<HeaderData | null> => {
   try {
     // Загружаем меню из header коллекции
     const headerMenuData = await getCollectionFromDirectus('header');
@@ -55,18 +49,9 @@ export const getHeaderData = cache(async (): Promise<HeaderData> => {
       menuItem = headerMenuData as DirectusHeader;
     }
     
-    if (!menuItem) {
-      console.log('⚠️ No header menu data from Directus, using fallback');
-      // Используем контакты из site_settings, но меню из fallback
-      return {
-        ...headerFallbackData,
-        phone: siteSettings.business_phone,
-        email: siteSettings.business_email,
-        address: siteSettings.business_address,
-        telegram: siteSettings.social_telegram,
-        instagram: siteSettings.social_instagram,
-        vkontakte: siteSettings.social_vk,
-      };
+    if (!menuItem || !siteSettings) {
+      console.log('⚠️ No header menu data or site settings from Directus');
+      return null;
     }
 
     // Разворачиваем many-to-many menu: header.menu -> header_menu_items -> menu_items
@@ -87,9 +72,10 @@ export const getHeaderData = cache(async (): Promise<HeaderData> => {
         .sort((a, b) => (a.order || 0) - (b.order || 0));
     }
 
-    // Если меню пустое, берём из фолбэка
+    // Если меню пустое, возвращаем null
     if (menuItems.length === 0) {
-      menuItems = headerFallbackData.menu;
+      console.log('⚠️ No menu items found in header');
+      return null;
     }
 
     return {
@@ -104,8 +90,7 @@ export const getHeaderData = cache(async (): Promise<HeaderData> => {
     };
   } catch (error) {
     console.error('❌ Error loading header data:', error instanceof Error ? error.message : error);
-    console.log('📦 Using fallback header data');
-    return headerFallbackData;
+    return null;
   }
 });
 

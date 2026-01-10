@@ -1,53 +1,176 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Smysl Bakery - Безглютеновая пекарня "СМЫСЛ есть"
 
-## Getting Started
-
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-=======
-# smysl-bakery
-SE site
->>>>>>> 7cd1cb675e046bd539e724f4efbf873c741fd5a4
-=======
-echo "# Smysl Bakery - Лендинг пекарни \"СМЫСЛ есть\"
-
-Современный лендинг на Next.js 14 + Tailwind CSS.
+Современный веб-сайт на Next.js 16 с интеграцией Directus CMS.
 
 ## 🚀 Технологии
-- Next.js 14 (App Router)
+- Next.js 16.1.1 (App Router)
 - TypeScript
+- Tailwind CSS
+- Directus CMS (headless CMS)
+- Docker (для развертывания)
+
+## 📦 Быстрый старт
+
+### Development (локальная разработка)
+
+```bash
+npm install
+npm run dev
+```
+
+Сайт доступен на http://localhost:3000
+
+### Production (локальный тест)
+
+```bash
+npm run build
+npm start
+```
+
+### Docker (развертывание на сервере)
+
+См. [DOCKER-QUICKSTART.md](DOCKER-QUICKSTART.md)
+
+## 📚 Документация
+
+### Для разработчиков
+- [DEPLOYMENT.md](DEPLOYMENT.md) - Полная инструкция по развертыванию
+- [DOCKER-OVERVIEW.md](DOCKER-OVERVIEW.md) - Обзор Docker конфигурации
+- [MONITORING.md](MONITORING.md) - Мониторинг и логирование
+
+### Для развертывания
+- [DOCKER-QUICKSTART.md](DOCKER-QUICKSTART.md) - Быстрое развертывание на сервере reg.ru
+- [UPLOAD-TO-SERVER.md](UPLOAD-TO-SERVER.md) - Как загрузить файлы на сервер
+
+## 🐳 Развертывание через Docker
+
+### На сервере reg.ru
+
+```bash
+# 1. Клонируйте или загрузите проект
+cd ~/smysl-bakery
+
+# 2. Настройте переменные окружения
+cp .env.production.example .env.production
+nano .env.production  # Замените значения на реальные
+
+# 3. Запустите
+chmod +x deploy.sh
+./deploy.sh
+```
+
+Подробнее: [DOCKER-QUICKSTART.md](DOCKER-QUICKSTART.md)
+
+## 🔧 Управление
+
+```bash
+# Просмотр логов
+docker compose logs -f web
+
+# Перезапуск
+docker compose restart
+
+# Остановка
+docker compose down
+
+# Обновление
+git pull && ./deploy.sh
+```
+
+## 🏗️ Архитектура
+
+```
+┌─────────────────────────────────────┐
+│         Пользователи                │
+└──────────────┬──────────────────────┘
+               │ HTTPS
+               ▼
+┌─────────────────────────────────────┐
+│  Nginx (SSL + Reverse Proxy)        │
+│  - Let's Encrypt SSL                │
+│  - Domain: your-domain.ru           │
+└──────────────┬──────────────────────┘
+               │ HTTP :3000
+               ▼
+┌─────────────────────────────────────┐
+│  Docker Container                   │
+│  ┌───────────────────────────────┐  │
+│  │  Next.js 16 App               │  │
+│  │  - Standalone build           │  │
+│  │  - Node.js 20 Alpine          │  │
+│  │  - Auto-restart               │  │
+│  └───────────────────────────────┘  │
+└──────────────┬──────────────────────┘
+               │ API Calls
+               ▼
+┌─────────────────────────────────────┐
+│  Directus CMS (Render.com)          │
+│  - Контент управление               │
+│  - REST API                         │
+└─────────────────────────────────────┘
+```
+
+## 📁 Структура проекта
+
+```
+smysl-bakery/
+├── app/                    # Next.js App Router
+│   ├── components/         # React компоненты
+│   ├── lib/               # Утилиты и хелперы
+│   └── page.tsx           # Главная страница
+├── public/                # Статические файлы
+├── content/               # Fallback контент
+├── Dockerfile             # Docker образ
+├── docker-compose.yml     # Docker Compose конфигурация
+├── deploy.sh              # Скрипт развертывания
+└── .env.production        # Production переменные (не в Git!)
+```
+
+## 🚀 Начало работы
+
+**Выберите ваш сценарий:**
+
+### Я хочу развернуть на сервере reg.ru
+👉 Читайте [START-HERE.md](START-HERE.md)
+
+### Я хочу разрабатывать локально
+```bash
+npm install
+npm run dev
+```
+
+### Я хочу протестировать Docker локально
+```bash
+test-docker.bat  # Windows
+# или
+./deploy.sh      # Linux/Mac
+```
+
+## 🌟 Особенности
+
+- ⚡ **Next.js 16** - Последняя версия с App Router
+- 🎨 **Tailwind CSS** - Современные стили
+- 📱 **Responsive** - Адаптивный дизайн
+- 🔄 **Directus CMS** - Удобное управление контентом
+- 🐳 **Docker** - Простое развертывание
+- 🔒 **SSL Ready** - Готово к HTTPS
+- 📊 **SEO Optimized** - Оптимизация для поисковиков
+
+## 💡 Полезные ссылки
+
+- 📖 [Полная документация по развертыванию](DEPLOYMENT.md)
+- 🐳 [Docker быстрый старт](DOCKER-QUICKSTART.md)
+- 📊 [Мониторинг и логирование](MONITORING.md)
+- 📤 [Загрузка файлов на сервер](UPLOAD-TO-SERVER.md)
+- 🔍 [Обзор Docker конфигурации](DOCKER-OVERVIEW.md)
+
+## 📝 Лицензия
+
+MIT
+
+## 👥 Авторы
+
+СМЫСЛ есть - Безглютеновая пекарня в Москве
 - Tailwind CSS
 
 ## 📦 Установка

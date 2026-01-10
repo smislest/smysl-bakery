@@ -4,6 +4,7 @@ import { getAllArticles, getArticleBySlug } from '../../../lib/blogData';
 import FooterClient from "../../components/FooterClient";
 import BlogContent from "../../components/BlogContent";
 import { absoluteUrl, buildOpenGraph, buildRobots, buildTwitter, siteName } from "../../../lib/seo";
+import { getSiteSettings } from "../../../lib/siteSettingsData";
 
 interface PageProps {
   params: { slug: string };
@@ -58,6 +59,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function BlogArticlePage({ params }: PageProps) {
   const { slug } = await params;
   const article = getArticleBySlug(slug);
+  const seoData = await getSiteSettings();
 
   // Получаем все статьи для навигации
   const allArticles = getAllArticles();
@@ -92,7 +94,7 @@ export default async function BlogArticlePage({ params }: PageProps) {
             </Link>
           </div>
         </div>
-        <FooterClient />
+        <FooterClient seoData={seoData} />
       </>
     );
   }
@@ -210,7 +212,7 @@ export default async function BlogArticlePage({ params }: PageProps) {
           )}
         </div>
       </div>
-      <FooterClient />
+      <FooterClient seoData={seoData} />
     </>
   );
 }

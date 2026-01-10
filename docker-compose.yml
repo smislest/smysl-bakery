@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: smysl-bakery-web
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_DIRECTUS_URL=${NEXT_PUBLIC_DIRECTUS_URL}
+      - NEXT_PUBLIC_DIRECTUS_TOKEN=${NEXT_PUBLIC_DIRECTUS_TOKEN}
+      - DIRECTUS_URL=${DIRECTUS_URL}
+      - DIRECTUS_TOKEN=${DIRECTUS_TOKEN}
+    env_file:
+      - .env.production
+    networks:
+      - app-network
+
+  directus:
+    image: directus/directus:latest
+    container_name: smysl-bakery-directus
+    env_file:
+      - .env.directus
+    ports:
+      - "10000:8055"
+    volumes:
+      - directus_uploads:/directus/uploads
+    restart: unless-stopped
+    networks:
+      - app-network
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
+    extra_hosts:
+      - "db.mzwhxjfpjfmpkdznuelq.supabase.co:54.247.26.119"
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: smysl-bakery-postgres
+    environment:
+      POSTGRES_DB: smysl_bakery
+      POSTGRES_USER: directus
+      POSTGRES_PASSWORD: directus_pass_123
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=en_US.UTF-8"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - app-network
+    ports:
+      - "5432:5432"
+
+networks:
+  app-network:
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.enable_ip_masquerade: "true"
+      com.docker.network.bridge.enable_icc: "true"
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+volumes:
+  directus_uploads:
+  postgres_data:

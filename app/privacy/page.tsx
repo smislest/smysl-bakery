@@ -1,6 +1,7 @@
 import Link from "next/link";
 import FooterClient from "../components/FooterClient";
 import type { Metadata } from "next";
+import { getSiteSettings } from "../../lib/siteSettingsData";
 
 export const metadata: Metadata = {
   robots: {
@@ -9,7 +10,8 @@ export const metadata: Metadata = {
   },
 };
 
-export default function PrivacyPage() {
+export default async function PrivacyPage() {
+  const seoData = await getSiteSettings();
   return (
     <>
       <div className="min-h-screen relative" style={{ backgroundColor: '#544a44' }}>
@@ -180,7 +182,7 @@ export default function PrivacyPage() {
         </div>
       </div>
 
-      <FooterClient />
+      <FooterClient seoData={seoData} />
     </>
   );
 }
