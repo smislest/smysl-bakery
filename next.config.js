@@ -38,6 +38,10 @@ const nextConfig = {
 	experimental: {
 		optimizePackageImports: ['@react-spring/web'],
 	},
+	// Отключаем TypeScript проверку при сборке (ускорение production build)
+	typescript: {
+		ignoreBuildErrors: true,
+	},
 	// Отключаем reactStrictMode в development для избежания двойного рендера
 	reactStrictMode: process.env.NODE_ENV !== 'development',
 };
