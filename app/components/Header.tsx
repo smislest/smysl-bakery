@@ -170,18 +170,16 @@ export default function Header() {
                   </Link>
                 ))
               ) : (
-                <div className={styles.menuNavEmpty}>
-                  {defaultMenu.map((item) => (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      className={styles.menuNavLink}
-                      onClick={() => handleNavClick(item.href)}
-                    >
-                      {item.label}
-                    </Link>
-                  ))}
-                </div>
+                defaultMenu.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={styles.menuNavLink}
+                    onClick={() => handleNavClick(item.href)}
+                  >
+                    {item.label}
+                  </Link>
+                ))
               )}
             </nav>
 

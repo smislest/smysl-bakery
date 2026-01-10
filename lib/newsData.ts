@@ -44,9 +44,12 @@ export const getNewsData = cache(async (): Promise<NewsItem[]> => {
 
     if (Array.isArray(data) && data.length > 0) {
       const normalized = normalizeNews(data, 'directus');
+      console.log('✅ getNewsData: загружено', normalized.length, 'новостей из Directus');
+      console.log('📋 Slugs:', normalized.map(n => n.slug).join(', '));
       return normalized;
     }
 
+    console.log('⚠️ getNewsData: Directus вернул пустой массив или null');
     return [];
   } catch (error) {
     console.error('❌ Error in getNewsData:', error instanceof Error ? error.message : error);

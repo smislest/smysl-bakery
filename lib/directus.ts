@@ -36,12 +36,24 @@ export const getCollectionFromDirectus = cache(async (collection: string) => {
   try {
     callCounts[collection] = (callCounts[collection] || 0) + 1;
     
+    // Для новостей фильтруем: только опубликованные + есть slug
+    const filter = collection === 'news' 
+      ? { 
+          _and: [
+            { status: { _eq: 'published' } },
+            { slug: { _nnull: true } }
+          ]
+        }
+      : undefined;
+    
     const response = await directusClient.request(
       readItems(collection as any, {
-        fields: ['*.*'] as any
+        fields: ['*.*'] as any,
+        ...(filter ? { filter } : {})
       })
     );
     
+    console.log(`✅ [Call #${callCounts[collection]}] Got ${Array.isArray(response) ? response.length : 1} items from ${collection}`);
     return response;
   } catch (error) {
     const errorMsg = error instanceof Error ? error.message : String(error);
