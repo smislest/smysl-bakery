@@ -1,5 +1,5 @@
-import { getCollectionFromDirectus } from './directus';
 import { getSiteSettings } from './siteSettingsData';
+import { getBaseUrl } from './baseUrl';
 import { typograph } from './typograph';
 import { cache } from 'react';
 
@@ -22,54 +22,26 @@ export interface HeaderData {
 
 export const getHeaderData = cache(async (): Promise<HeaderData | null> => {
   try {
-    // Загружаем меню из header коллекции
-    const headerMenuData = await getCollectionFromDirectus('header');
+    // Загружаем меню и контакты через внутренний API (без CORS)
+    const apiRes = await fetch(`${getBaseUrl()}/api/header`, { next: { revalidate: 3600 } });
+    if (!apiRes.ok) {
+      console.warn('⚠️ getHeaderData: API header returned', apiRes.status);
+      return null;
+    }
+    const apiHeader = await apiRes.json();
     // Загружаем контакты из site_settings
     const siteSettings = await getSiteSettings();
 
-    type DirectusMenuJunction = {
-      menu_items_id?: {
-        label?: string;
-        slug?: string;
-        order?: number;
-        visible?: boolean;
-      };
-    };
-
-    type DirectusHeader = HeaderData & {
-      adress?: string;
-      menu?: DirectusMenuJunction[];
-    };
-
-    let menuItem: DirectusHeader | null = null;
-
-    if (Array.isArray(headerMenuData) && headerMenuData.length > 0) {
-      menuItem = headerMenuData[0] as DirectusHeader;
-    } else if (headerMenuData && typeof headerMenuData === 'object' && !Array.isArray(headerMenuData)) {
-      menuItem = headerMenuData as DirectusHeader;
-    }
-    
-    if (!menuItem || !siteSettings) {
+    if (!apiHeader || !siteSettings) {
       return null;
     }
-
-    // Разворачиваем many-to-many menu: header.menu -> header_menu_items -> menu_items
-    let menuItems: MenuItem[] = [];
-    if (Array.isArray(menuItem.menu)) {
-      const mapped: Array<MenuItem | null> = menuItem.menu.map((junction: DirectusMenuJunction) => {
-        const menuItemData = junction.menu_items_id;
-        if (!menuItemData || !menuItemData.visible) return null;
-        return {
-          label: typograph(menuItemData.label),
-          href: menuItemData.slug || '#',
-          order: menuItemData.order || 0,
-        };
-      });
-
-      menuItems = mapped
-        .filter((value): value is MenuItem => value !== null)
-        .sort((a, b) => (a.order || 0) - (b.order || 0));
-    }
+    const menuItems: MenuItem[] = Array.isArray(apiHeader.menu)
+      ? apiHeader.menu.map((m: any) => ({
+          label: typograph(m.label),
+          href: m.href || '#',
+          order: m.order || 0,
+        }))
+      : [];
 
     // Если меню пустое, возвращаем null
     if (menuItems.length === 0) {
@@ -77,9 +49,9 @@ export const getHeaderData = cache(async (): Promise<HeaderData | null> => {
     }
 
     return {
-      id: menuItem.id,
-      phone: siteSettings.business_phone,
-      email: siteSettings.business_email,
+      id: apiHeader.id,
+      phone: siteSettings.business_phone || apiHeader.phone,
+      email: siteSettings.business_email || apiHeader.email,
       address: siteSettings.business_address,
       instagram: siteSettings.social_instagram,
       vkontakte: siteSettings.social_vk,

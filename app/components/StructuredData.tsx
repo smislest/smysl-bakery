@@ -1,6 +1,11 @@
 
 // Принимает проп seo (SiteSettings)
 export default function StructuredData({ seo }: { seo: any }) {
+  // Если seo не загружена, не рендерим schema.org скрипты
+  if (!seo) {
+    return null;
+  }
+
   const localBusinessSchema = {
     "@context": "https://schema.org",
     "@type": "Bakery",

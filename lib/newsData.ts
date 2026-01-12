@@ -2,6 +2,7 @@
 import { getCollectionFromDirectus } from './directus';
 import { NewsItem, newsData } from '../lib/news';
 import { cache } from 'react';
+import { getBaseUrl } from './baseUrl';
 
 type RawNews = Record<string, unknown>;
 
@@ -40,16 +41,30 @@ const normalizeNews = (items: RawNews[], source: 'directus' | 'supabase' | 'loca
 
 export const getNewsData = cache(async (): Promise<NewsItem[]> => {
   try {
-    const data = await getCollectionFromDirectus('news');
+    // Получаем данные через безопасный API route вместо прямого подключения к Directus
+    // На локалке: localhost:3000/api/news
+    // На production: http://localhost:3000/api/news (внутри Docker контейнера)
+    const apiUrl = `${getBaseUrl()}/api/news`;
+    
+    const response = await fetch(apiUrl, {
+      next: { revalidate: 60 }, // ISR: кэшировать на 1 минуту
+    });
+
+    if (!response.ok) {
+      console.log('⚠️ getNewsData: API вернул', response.status);
+      return [];
+    }
+
+    const data = await response.json();
 
     if (Array.isArray(data) && data.length > 0) {
       const normalized = normalizeNews(data, 'directus');
-      console.log('✅ getNewsData: загружено', normalized.length, 'новостей из Directus');
+      console.log('✅ getNewsData: загружено', normalized.length, 'новостей из API');
       console.log('📋 Slugs:', normalized.map(n => n.slug).join(', '));
       return normalized;
     }
 
-    console.log('⚠️ getNewsData: Directus вернул пустой массив или null');
+    console.log('⚠️ getNewsData: API вернул пустой массив');
     return [];
   } catch (error) {
     console.error('❌ Error in getNewsData:', error instanceof Error ? error.message : error);

@@ -27,7 +27,6 @@ export default function HeroSection({ initialData = null }: HeroSectionProps) {
   }, []);
 
   // Если данные не загрузились, рендерим пустую секцию
-  // или можно добавить error state
   const data = hero;
   
   if (!data) {

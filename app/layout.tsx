@@ -59,6 +59,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://admin.smislest.ru" />
         <link rel="dns-prefetch" href="https://admin.smislest.ru" />
+        <link rel="icon" href="/img/favicon.png" type="image/png" />
         <link
           href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Great+Vibes&display=swap&subset=cyrillic"
           rel="stylesheet"

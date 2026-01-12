@@ -5,15 +5,20 @@
 import https from 'https';
 
 
-const url = 'https://smysl-bakery-directus.onrender.com/items/header';
+const url = 'https://admin.smislest.ru/api/schema/collections';
 
 
 (async () => {
   try {
     const agent = new https.Agent({ minVersion: 'TLSv1.2', rejectUnauthorized: false });
-    const res = await fetch(url, { agent });
+    const res = await fetch(url, { 
+      agent,
+      headers: {
+        'Authorization': 'Bearer Ysoj__Fjk6I8vddYHp_ZH7EbGxcf4pG8'
+      }
+    });
     const json = await res.json();
-    console.log('Успех! Ответ:', json);
+    console.log('Успех! Ответ:', JSON.stringify(json, null, 2));
   } catch (err) {
     console.error('Ошибка fetch:', err);
   }

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Directus Schema Analyzer</title>
+    <style>
+        body { font-family: monospace; background: #1e1e1e; color: #d4d4d4; padding: 20px; }
+        pre { background: #252526; padding: 15px; border-radius: 5px; overflow-x: auto; }
+        button { background: #0e639c; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 14px; margin-bottom: 15px; }
+        button:hover { background: #1177bb; }
+    </style>
+</head>
+<body>
+    <h1>Directus Schema</h1>
+    <div id="output">Загрузка...</div>
+    
+    <script>
+        async function getSchema() {
+            try {
+                const output = document.getElementById('output');
+                output.innerHTML = 'Загрузка схемы Directus...';
+
+                // Получаем схему через наш API маршрут
+                const res = await fetch('/api/directus-schema');
+                
+                if (!res.ok) {
+                    throw new Error(`HTTP ${res.status}`);
+                }
+                
+                const data = await res.json();
+                
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                
+                // Строим результат
+                let html = '<pre>';
+                html += '=== DIRECTUS SCHEMA ===\n\n';
+                html += `✓ Всего коллекций: ${data.total_collections}\n`;
+                html += `✓ Всего полей: ${data.total_fields}\n\n`;
+                
+                Object.keys(data.fields).sort().forEach(collectionName => {
+                    const fields = data.fields[collectionName];
+                    html += `📋 ${collectionName.toUpperCase()}\n`;
+                    html += `   Полей: ${fields.length}\n`;
+                    fields.forEach(field => {
+                        let extra = '';
+                        if (field.required) extra += ' [REQUIRED]';
+                        if (field.readonly) extra += ' [READONLY]';
+                        html += `     • ${field.field} [${field.type}]${extra}\n`;
+                    });
+                    html += '\n';
+                });
+                
+                html += '</pre>';
+                output.innerHTML = html;
+                
+            } catch (error) {
+                document.getElementById('output').innerHTML = `<pre>❌ Ошибка: ${error.message}\n\nПопробуйте еще раз через несколько секунд.</pre>`;
+                console.error('Schema error:', error);
+            }
+        }
+
+        // Загружаем сразу при открытии страницы
+        getSchema();
+        
+        // Также добавим кнопку для перезагрузки
+        window.reloadSchema = function() {
+            document.getElementById('output').innerHTML = 'Перезагрузка...';
+            getSchema();
+        };
+    </script>
+</body>
+</html>

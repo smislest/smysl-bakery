@@ -1,6 +1,7 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { getCollectionFromDirectus, DIRECTUS_URL } from './directus';
+import { getBaseUrl } from './baseUrl';
 import { typograph } from './typograph';
 import { cache } from 'react';
 
@@ -35,22 +36,35 @@ function normalizeFileRef(fileRef: any): string | undefined {
 
 export const getHeroData = cache(async (): Promise<HeroData | null> => {
   try {
-    const data: any = await getCollectionFromDirectus('hero');
-    const item = Array.isArray(data) && data.length > 0 ? data[0] : data;
-    if (!item) return null;
+    // Получаем данные через безопасный API route
+    const response = await fetch(`${getBaseUrl()}/api/hero`, {
+      next: { revalidate: 3600 }, // ISR: кэшировать на 1 час
+    });
 
-    const image = normalizeFileRef(item.hero_image || item.hero_photo || item.image || item.hero_photo_id || item.image_file);
+    if (!response.ok) {
+      console.log('⚠️ getHeroData: API вернул', response.status);
+      return null;
+    }
 
-    return {
+    const item = await response.json();
+    if (!item || item.error) {
+      return null;
+    }
+
+    const image = normalizeFileRef(item.hero_photo || item.hero_image || item.image);
+
+    const result = {
       id: item.id,
       title: typograph(item.title || item.name || undefined),
       subtitle: typograph(item.subtitle || item.description || undefined),
       image,
       imageAlt: item.image_alt || item.hero_image_alt || undefined,
       backgroundImage: normalizeFileRef(item.background_image) || undefined,
-      ctaLink: item.cta_link || item.cta || undefined,
-      ctaText: typograph(item.cta_text || undefined),
+      ctaLink: item.cta_link || item.cta || item.button_link || undefined,
+      ctaText: typograph(item.cta_text || item.button_text || undefined),
     } as HeroData;
+    
+    return result;
   } catch (error) {
     console.error('❌ Error loading hero data:', error);
     return null;

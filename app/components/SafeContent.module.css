@@ -1,6 +1,6 @@
 /* WYSIWYG content for light background */
 .wysiwyg {
-  color: #4a3a32;
+  color: #ffecc6;
 }
 
 .wysiwyg h1,
@@ -10,7 +10,7 @@
   margin-top: 2rem;
   margin-bottom: 1rem;
   line-height: 1.5;
-  color: #2f241e;
+  color: #c1dedc;
   word-wrap: break-word;
   overflow-wrap: break-word;
 }
@@ -41,7 +41,7 @@
   margin-top: 1.5rem;
   margin-bottom: 0.875rem;
   line-height: 1.5;
-  color: #2f241e;
+  color: #c1dedc;
   word-wrap: break-word;
   overflow-wrap: break-word;
 }
@@ -68,7 +68,7 @@
 .wysiwyg h5,
 .wysiwyg h6 {
   font-size: 1rem;
-  color: #2f241e;
+  color: #c1dedc;
   font-weight: 600;
   margin-top: 1.5rem;
   margin-bottom: 0.75rem;
@@ -89,7 +89,7 @@
   margin-bottom: 1rem;
   line-height: 1.6;
   font-size: 0.9375rem;
-  color: #4a3a32;
+  color: #ffecc6;
 }
 
 @media (min-width: 640px) {
@@ -113,26 +113,26 @@
   padding-left: 1.5rem;
   margin: 1.5rem 0;
   font-style: italic;
-  color: #4a3a32;
+  color: #ffecc6;
 }
 
 .wysiwyg strong,
 .wysiwyg b {
   font-weight: 700;
-  color: #2f241e;
+  color: #c1dedc;
 }
 
 .wysiwyg em,
 .wysiwyg i {
   font-style: italic;
-  color: #4a3a32;
+  color: #ffecc6;
 }
 
 .wysiwyg ul,
 .wysiwyg ol {
   margin: 1rem 0;
   padding-left: 1.5rem;
-  color: #4a3a32;
+  color: #ffecc6;
 }
 
 @media (min-width: 1024px) {
@@ -146,7 +146,7 @@
 .wysiwyg li {
   margin-bottom: 0.5rem;
   line-height: 1.6;
-  color: #4a3a32;
+  color: #ffecc6;
   font-size: 0.9375rem;
 }
 

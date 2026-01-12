@@ -46,9 +46,13 @@ export const getCollectionFromDirectus = cache(async (collection: string) => {
         }
       : undefined;
     
+    const fields = collection === 'header'
+      ? ['*', 'menu.menu_items_id.*']
+      : ['*.*'];
+
     const response = await directusClient.request(
       readItems(collection as any, {
-        fields: ['*.*'] as any,
+        fields: fields as any,
         ...(filter ? { filter } : {})
       })
     );

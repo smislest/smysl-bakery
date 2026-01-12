@@ -14,12 +14,10 @@ export default function Header() {
   const pathname = usePathname();
 
   const defaultMenu: HeaderData['menu'] = [
-    { label: 'Продукты', href: '/#products' },
-    { label: 'О нас', href: '/about' },
-    { label: 'Новости', href: '/news' },
-    { label: 'Блог', href: '/blog' },
-    { label: 'FAQ', href: '/faq' },
-    { label: 'Контакты', href: '/contacts' },
+    { label: 'Наша выпечка', href: '/#products' },
+    { label: 'О нас', href: '/#about' },
+    { label: 'Новости', href: '/#news' },
+    { label: 'Контакты', href: '/#contacts' },
   ];
 
   useEffect(() => {
@@ -104,6 +102,7 @@ export default function Header() {
               <Image src={logoSrc} alt="СМЫСЛ есть" width={120} height={60} priority />
             </div>
           </Link>
+
         </div>
       </div>
 
@@ -134,6 +133,7 @@ export default function Header() {
               <Image src={logoSrc} alt="СМЫСЛ есть" width={120} height={60} priority />
             </div>
           </Link>
+
         </div>
       </div>
 
@@ -216,14 +216,7 @@ export default function Header() {
                   <a href={`mailto:${header?.email || ''}`} className={styles.phone}>{header?.email || 'info@smysl-est.ru'}</a>
                 </div>
 
-                <div className={styles.contactLine}>
-                  <span className={styles.contactIcon} aria-hidden="true">
-                    <svg viewBox="0 0 24 24" width={18} height={18} fill="currentColor">
-                      <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
-                    </svg>
-                  </span>
-                  <div className={styles.addressText}>{address}</div>
-                </div>
+                {/* Адрес убран из мобильного меню по запросу */}
               </div>
             </div>
           </div>

@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "cross-env NODE_TLS_REJECT_UNAUTHORIZED=0 next dev",
+    "dev": "cross-env NODE_TLS_REJECT_UNAUTHORIZED=0 next dev --webpack -p 3000",
     "dev:webpack": "next dev",
     "build": "cross-env NEXT_PUBLIC_DIRECTUS_URL=https://admin.smislest.ru DIRECTUS_URL=https://admin.smislest.ru next build",
     "start": "next start",

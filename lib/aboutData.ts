@@ -1,8 +1,8 @@
 
 
-import { getCollectionFromDirectus } from './directus';
 import { typograph } from './typograph';
 import { cache } from 'react';
+import { getBaseUrl } from './baseUrl';
 
 export interface AboutData {
   id: string;
@@ -64,15 +64,13 @@ function normalizeImages(raw: AboutData | Record<string, unknown>): AboutData {
 
 export const getAboutData = cache(async (): Promise<AboutData | null> => {
   try {
-    const data = await getCollectionFromDirectus('about');
-    let item: AboutData | null = null;
-    
-    if (Array.isArray(data) && data.length > 0) {
-      item = data[0] as AboutData;
-    } else if (data) {
-      item = data as unknown as AboutData;
+    const apiUrl = `${getBaseUrl()}/api/about`;
+    const res = await fetch(apiUrl, { next: { revalidate: 3600 } });
+    if (!res.ok) {
+      console.warn('⚠️ getAboutData: API returned', res.status);
+      return null;
     }
-    
+    const item = await res.json() as AboutData | null;
     if (!item) {
       return null;
     }

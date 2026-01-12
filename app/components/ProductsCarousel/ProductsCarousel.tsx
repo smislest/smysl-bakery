@@ -5,7 +5,6 @@ import { useState, useRef, useCallback, useEffect } from "react";
 import Image from "next/image";
 import { useSpring, animated } from '@react-spring/web';
 import { useDrag } from '@use-gesture/react';
-import { createDirectus, rest, readItems } from '@directus/sdk';
 import styles from './ProductsCarousel.module.css';
 
 interface Product {
@@ -36,24 +35,10 @@ export default function ProductsCarousel({ initialProducts = [] }: ProductsCarou
         setLoading(true);
       }
       try {
-        const directus = createDirectus(DIRECTUS_URL).with(rest());
-        
-        const data = await directus.request(
-          readItems('products' as any, {
-            fields: [
-              'id',
-              'title',
-              'subtitle',
-              'description',
-              'ingredients',
-              'weight',
-              { product_photo: ['id', 'filename_disk'] }
-            ] as any,
-          })
-        ) as Product[];
-        
-        if (data && data.length > 0) {
-          setProducts(data);
+        const res = await fetch('/api/products', { cache: 'no-store' });
+        const data = await res.json();
+        if (Array.isArray(data) && data.length > 0) {
+          setProducts(data as Product[]);
         }
       } catch (e) {
         // Error handled silently
@@ -66,7 +51,10 @@ export default function ProductsCarousel({ initialProducts = [] }: ProductsCarou
     fetchProducts();
   }, [initialProducts, DIRECTUS_URL]);
 
-  const getImageUrl = (photo: Product['product_photo']) => {
+  const getImageUrl = (product: Product) => {
+    // API возвращает поле 'image', но старые данные могут иметь 'product_photo'
+    if (!product) return "/img/placeholder.jpg";
+    const photo = (product as any).image || product.product_photo;
     if (!photo) return "/img/placeholder.jpg";
     if (typeof photo === 'object') {
       if ('url' in photo && photo.url) return photo.url;
@@ -84,13 +72,14 @@ export default function ProductsCarousel({ initialProducts = [] }: ProductsCarou
   const [isAnimating, setIsAnimating] = useState(false);
   const [mobileActiveIndex, setMobileActiveIndex] = useState(0);
   const [isMobileView, setIsMobileView] = useState(false);
+  const [isHoveringCard, setIsHoveringCard] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const animationRef = useRef<number | null>(null);
   const dragContainerRef = useRef<HTMLDivElement>(null);
   
   // Spring для центральной карточки
   const [centerSpring, centerApi] = useSpring(() => ({ 
-    scale: 1,
+    scale: isHoveringCard ? 1.02 : 1,
     opacity: 1,
     config: { tension: 300, friction: 30 }
   }));
@@ -239,6 +228,15 @@ export default function ProductsCarousel({ initialProducts = [] }: ProductsCarou
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [prevProduct, nextProduct]);
 
+  // Обновляем анимацию при изменении состояния hover
+  useEffect(() => {
+    if (isHoveringCard) {
+      centerApi.start({ scale: 1.02, config: { tension: 300, friction: 30 } });
+    } else {
+      centerApi.start({ scale: 1, config: { tension: 300, friction: 30 } });
+    }
+  }, [isHoveringCard, centerApi]);
+
   if (loading) {
     return <div className="w-full py-12 text-center text-xl text-white">Загрузка продуктов...</div>;
   }
@@ -347,7 +345,7 @@ export default function ProductsCarousel({ initialProducts = [] }: ProductsCarou
                   return (
                     <animated.div
                       key={uniqueKey}
-                      className={`${styles.activeCard} ${styles.centeredCard}`}
+                      className={`${styles.activeCard} ${styles.centeredCard} hover:shadow-2xl transition-all`}
                       style={{
                         ...centerSpring,
                         position: 'absolute',
@@ -356,11 +354,19 @@ export default function ProductsCarousel({ initialProducts = [] }: ProductsCarou
                         transform: 'translate(-50%, -50%)',
                         zIndex: 50,
                       }}
+                      onMouseEnter={() => {
+                        setIsHoveringCard(true);
+                        centerApi.start({ scale: 1.02, config: { tension: 300, friction: 30 } });
+                      }}
+                      onMouseLeave={() => {
+                        setIsHoveringCard(false);
+                        centerApi.start({ scale: 1, config: { tension: 300, friction: 30 } });
+                      }}
                     >
                       <div className={styles.activeCardInner}>
                         <div className={styles.activeImageContainer}>
                           <Image
-                            src={getImageUrl(product.product_photo)}
+                            src={getImageUrl(product)}
                             alt={product.title}
                             fill
                             className={styles.activeImage}
@@ -428,7 +434,7 @@ export default function ProductsCarousel({ initialProducts = [] }: ProductsCarou
                         }}
                       >
                         <Image
-                          src={getImageUrl(product.product_photo)}
+                          src={getImageUrl(product)}
                           alt={product.title}
                           fill
                           className="object-contain drop-shadow-xl"
@@ -449,11 +455,11 @@ export default function ProductsCarousel({ initialProducts = [] }: ProductsCarou
             className={`${styles.scrollSnapContainer} md:hidden`}
           >
             {products.map((product, index) => (
-              <div key={product.id || product.title} className={styles.scrollSnapCard}>
-                <div className={styles.mobileCard}>
+              <div key={product.id || product.title} className={`${styles.scrollSnapCard}`}>
+                <div className={`${styles.mobileCard} hover:shadow-2xl transition-all`}>
                   <div className={styles.mobileImageWrapper}>
                     <Image
-                      src={getImageUrl(product.product_photo)}
+                      src={getImageUrl(product)}
                       alt={product.title}
                       width={308}
                       height={220}

@@ -3,6 +3,7 @@
 import { getCollectionFromDirectus } from './directus';
 import { typograph } from './typograph';
 import { cache } from 'react';
+import { getBaseUrl } from './baseUrl';
 
 export interface Product {
   id: string;
@@ -41,13 +42,27 @@ const normalizeProducts = (items: Array<RawProduct | Product>): Product[] => {
 
 export const getProductsData = cache(async (): Promise<Product[]> => {
   try {
-    const data = await getCollectionFromDirectus('products');
+    // Получаем данные через безопасный API route
+    const apiUrl = `${getBaseUrl()}/api/products`;
+    
+    const response = await fetch(apiUrl, {
+      next: { revalidate: 3600 }, // ISR: кэшировать на 1 час
+    });
+
+    if (!response.ok) {
+      console.log('⚠️ getProductsData: API вернул', response.status);
+      return [];
+    }
+
+    const data = await response.json();
 
     if (Array.isArray(data) && data.length > 0) {
       const normalized = normalizeProducts(data);
+      console.log('✅ getProductsData: загружено', normalized.length, 'продуктов из API');
       return normalized;
     }
 
+    console.log('⚠️ getProductsData: API вернул пустой массив');
     return [];
   } catch (error) {
     console.error('❌ Error in getProductsData:', error instanceof Error ? error.message : error);

@@ -1,4 +1,5 @@
 import { getCollectionFromDirectus, DIRECTUS_URL } from "./directus";
+import { getBaseUrl } from './baseUrl';
 import { cache } from "react";
 
 export interface SiteSettings {
@@ -47,33 +48,23 @@ export interface SiteSettings {
 // Кэшируем результат с помощью React cache для дедупликации запросов в рамках одного рендера
 export const getSiteSettings = cache(async (): Promise<SiteSettings | null> => {
   try {
-    const data = await getCollectionFromDirectus('site_settings');
-    
-    let settings: any = null;
-    
-    // Обработка: если это массив (коллекция с несколькими записями)
-    if (Array.isArray(data) && data.length > 0) {
-      settings = data[0];
+    // Получаем данные через безопасный API route
+    const response = await fetch(`${getBaseUrl()}/api/site-settings`, {
+      next: { revalidate: 3600 }, // ISR: кэшировать на 1 час
+    });
+
+    if (!response.ok) {
+      console.log('⚠️ getSiteSettings: API вернул', response.status);
+      return null;
     }
-    // Обработка: если это объект (singleton collection - одна запись)
-    else if (data && typeof data === 'object' && !Array.isArray(data)) {
-      settings = data;
-    }
+
+    const settings = await response.json();
     
-    if (settings) {
-      // Преобразуем og_image в полный URL если есть
-      if (settings.og_image) {
-        settings.og_image_url = `${DIRECTUS_URL}/assets/${
-          typeof settings.og_image === 'string' 
-            ? settings.og_image 
-            : settings.og_image.id
-        }`;
-      }
-      
+    if (settings && !settings.error) {
       return settings;
     }
     
-    console.warn('⚠️ Site settings not found in Directus');
+    console.warn('⚠️ Site settings not found in API');
     return null;
   } catch (error) {
     console.error('❌ Error loading site settings:', error instanceof Error ? error.message : error);
