@@ -181,6 +181,7 @@ export default async function NewsPage({ params }: PageProps) {
         <SafeContent
           content={news.content || ''}
           className="max-w-4xl"
+          variant="light"
         />
 
         {/* Разделитель */}

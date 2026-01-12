@@ -7,9 +7,10 @@ interface SafeContentProps {
   content: string;
   className?: string;
   style?: React.CSSProperties;
+  variant?: 'dark' | 'light';
 }
 
-export default function SafeContent({ content, className, style }: SafeContentProps) {
+export default function SafeContent({ content, className, style, variant = 'dark' }: SafeContentProps) {
   const cleanContent = DOMPurify.sanitize(content, {
     ALLOWED_TAGS: [
       'p', 'br', 'strong', 'b', 'em', 'i', 'u', 'a',
@@ -30,10 +31,12 @@ export default function SafeContent({ content, className, style }: SafeContentPr
       'frameborder', 'allow', 'allowfullscreen'
     ],
   });
+
+  const wysiwygClass = variant === 'light' ? styles.wysiwygLight : styles.wysiwyg;
   
   return (
     <div
-      className={`${styles.wysiwyg} ${className || ''}`}
+      className={`${wysiwygClass} ${className || ''}`}
       style={style}
       dangerouslySetInnerHTML={{ __html: cleanContent }}
     />

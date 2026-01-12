@@ -247,3 +247,47 @@
   min-height: 400px;
   aspect-ratio: 16 / 9;
 }
+
+/* Light variant for news pages with white background */
+.wysiwygLight {
+  color: #2f241e;
+}
+
+.wysiwygLight h1,
+.wysiwygLight h2 {
+  color: #675b53;
+}
+
+.wysiwygLight h3,
+.wysiwygLight h4,
+.wysiwygLight h5,
+.wysiwygLight h6 {
+  color: #675b53;
+}
+
+.wysiwygLight p {
+  color: #2f241e;
+}
+
+.wysiwygLight strong,
+.wysiwygLight b {
+  color: #2f241e;
+}
+
+.wysiwygLight em,
+.wysiwygLight i {
+  color: #2f241e;
+}
+
+.wysiwygLight ul,
+.wysiwygLight ol {
+  color: #2f241e;
+}
+
+.wysiwygLight li {
+  color: #2f241e;
+}
+
+.wysiwygLight blockquote {
+  color: #2f241e;
+}

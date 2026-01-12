@@ -75,6 +75,13 @@
   display: block;
 }
 
+/* Только для планшетов поднимаем муку */
+@media (min-width: 500px) and (max-width: 767px) {
+  .waveBgMobile {
+    top: -15%;
+  }
+}
+
 @media (min-width: 768px) {
   .waveBgMobile {
     display: none;
