@@ -21,7 +21,7 @@ export const metadata: Metadata = {
 
 export default function PresentationPage() {
   return (
-    <div className="min-h-screen relative" style={{ backgroundColor: '#544a44' }}>
+    <div className="min-h-screen w-full bg-[#544a44]" style={{ backgroundColor: '#544a44' }}>
       {/* Декор: радиальный градиент и колосья */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden" aria-hidden="true">
         <div
