@@ -1,6 +1,6 @@
 import { DIRECTUS_URL, DIRECTUS_TOKEN } from '@/lib/directus';
 
-export const revalidate = 3600; // ISR: кэшировать на 1 час
+export const revalidate = 60; // ISR: обновлять каждую минуту
 
 export async function GET() {
 	try {
@@ -17,7 +17,7 @@ export async function GET() {
 
 		const res = await fetch(url, {
 			headers,
-			cache: 'no-store',
+			next: { revalidate: 60 }, // Обновлять каждую минуту
 		});
 
 		if (!res.ok) {
@@ -42,7 +42,8 @@ export async function GET() {
 			// Переименовываем product_photo в image для совместимости с фронтендом
 			image: item.product_photo
 				? {
-						...item.product_photo,
+						id: item.product_photo.id,
+						filename_disk: item.product_photo.filename_disk,
 						url: `${directusUrl}/assets/${item.product_photo.id}`,
 					}
 				: null,

@@ -27,29 +27,12 @@ export default function ProductsCarousel({ initialProducts = [] }: ProductsCarou
   const [loading, setLoading] = useState(false);
   const DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'https://admin.smislest.ru';
 
-  // Клиентская загрузка для подстраховки (если серверная не сработала)
+  // Обновляем products только если пришли новые initialProducts
   useEffect(() => {
-    async function fetchProducts() {
-      const shouldShowLoader = !(initialProducts && initialProducts.length > 0);
-      if (shouldShowLoader) {
-        setLoading(true);
-      }
-      try {
-        const res = await fetch('/api/products', { cache: 'no-store' });
-        const data = await res.json();
-        if (Array.isArray(data) && data.length > 0) {
-          setProducts(data as Product[]);
-        }
-      } catch (e) {
-        // Error handled silently
-      } finally {
-        if (shouldShowLoader) {
-          setLoading(false);
-        }
-      }
+    if (initialProducts && initialProducts.length > 0) {
+      setProducts(initialProducts);
     }
-    fetchProducts();
-  }, [initialProducts, DIRECTUS_URL]);
+  }, [initialProducts]);
 
   const getImageUrl = (product: Product) => {
     // API возвращает поле 'image', но старые данные могут иметь 'product_photo'
@@ -57,9 +40,15 @@ export default function ProductsCarousel({ initialProducts = [] }: ProductsCarou
     const photo = (product as any).image || product.product_photo;
     if (!photo) return "/img/placeholder.jpg";
     if (typeof photo === 'object') {
+      // Сначала проверяем готовый URL
       if ('url' in photo && photo.url) return photo.url;
+      // Затем проверяем filename_disk
       if ('filename_disk' in photo && photo.filename_disk) {
         return `${DIRECTUS_URL}/assets/${photo.filename_disk}`;
+      }
+      // Проверяем id файла
+      if ('id' in photo && photo.id) {
+        return `${DIRECTUS_URL}/assets/${photo.id}`;
       }
     }
     if (typeof photo === 'string') {

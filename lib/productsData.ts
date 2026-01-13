@@ -46,7 +46,7 @@ export const getProductsData = cache(async (): Promise<Product[]> => {
     const apiUrl = `${getBaseUrl()}/api/products`;
     
     const response = await fetch(apiUrl, {
-      next: { revalidate: 3600 }, // ISR: кэшировать на 1 час
+      next: { revalidate: 60 }, // ISR: обновлять каждую минуту
     });
 
     if (!response.ok) {
