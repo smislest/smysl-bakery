@@ -32,7 +32,7 @@ export const noindex = process.env.NEXT_PUBLIC_NOINDEX === '1';
 export const defaultTitle = DEFAULT_TITLE;
 export const defaultDescription = DEFAULT_DESCRIPTION;
 export const siteName = SITE_NAME;
-export const defaultOgImage = `${siteUrl}/img/logo.png`;
+export const defaultOgImage = `${siteUrl}/img/OG_img_opt.jpg`;
 
 export function canonical(path: string): string {
   if (!path) return '/';
