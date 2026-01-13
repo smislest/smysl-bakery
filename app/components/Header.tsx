@@ -6,6 +6,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import styles from "./Header.module.css";
 import { getHeaderData, type HeaderData } from "../../lib/headerData";
+import DownloadPdfButton from "./DownloadPdfButton";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -133,6 +134,10 @@ export default function Header() {
               <Image src={logoSrc} alt="СМЫСЛ есть" width={120} height={60} priority />
             </div>
           </Link>
+
+          <div className={styles.desktopActions}>
+            <DownloadPdfButton />
+          </div>
 
         </div>
       </div>

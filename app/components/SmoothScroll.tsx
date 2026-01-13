@@ -4,6 +4,13 @@ import { useEffect } from 'react';
 
 export default function SmoothScroll() {
   useEffect(() => {
+    // Проверяем ширину экрана - работаем только на десктопах (>= 1024px)
+    const isDesktop = () => window.innerWidth >= 1024;
+    
+    if (!isDesktop()) {
+      return; // На мобильных и планшетах не активируем
+    }
+
     let currentScrollY = window.scrollY;
     let targetScrollY = window.scrollY;
     let isScrolling = false;
@@ -27,8 +34,22 @@ export default function SmoothScroll() {
     };
 
     const handleWheel = (e: WheelEvent) => {
+      // Не перехватываем события внутри элементов с анимациями
+      const target = e.target as HTMLElement;
+      
+      // Исключаем Hero секцию целиком, карусели и другие анимированные элементы
+      if (target.closest('#hero') || 
+          target.closest('.scrollSnapContainer') || 
+          target.closest('[data-no-smooth-scroll]') ||
+          target.closest('.activeCard') ||
+          target.closest('.mobileCard') ||
+          target.closest('[class*="spring"]') ||
+          target.closest('[class*="animated"]')) {
+        return; // Пропускаем - используем нативный скролл
+      }
+
       e.preventDefault();
-      targetScrollY += e.deltaY * 0.8;
+      targetScrollY += e.deltaY * 0.9;
       targetScrollY = Math.max(0, Math.min(targetScrollY, document.body.scrollHeight - window.innerHeight));
       
       if (!isScrolling) {
@@ -37,34 +58,19 @@ export default function SmoothScroll() {
       }
     };
 
-    const handleTouchStart = (e: TouchEvent) => {
-      const touch = e.touches[0];
-      const startY = touch.clientY;
-      
-      const handleTouchMove = (e: TouchEvent) => {
-        const touch = e.touches[0];
-        const deltaY = startY - touch.clientY;
-        targetScrollY += deltaY * 0.5;
-        targetScrollY = Math.max(0, Math.min(targetScrollY, document.body.scrollHeight - window.innerHeight));
-        
-        if (!isScrolling) {
-          isScrolling = true;
-          animationFrameId = requestAnimationFrame(updateScroll);
-        }
-      };
-
-      document.addEventListener('touchmove', handleTouchMove, { passive: false });
-      document.addEventListener('touchend', () => {
-        document.removeEventListener('touchmove', handleTouchMove);
-      }, { once: true });
+    // Обработка ресайза - отключаем на маленьких экранах
+    const handleResize = () => {
+      if (!isDesktop()) {
+        window.removeEventListener('wheel', handleWheel);
+      }
     };
 
     window.addEventListener('wheel', handleWheel, { passive: false });
-    window.addEventListener('touchstart', handleTouchStart, { passive: false });
+    window.addEventListener('resize', handleResize);
 
     return () => {
       window.removeEventListener('wheel', handleWheel);
-      window.removeEventListener('touchstart', handleTouchStart);
+      window.removeEventListener('resize', handleResize);
       if (animationFrameId) {
         cancelAnimationFrame(animationFrameId);
       }
