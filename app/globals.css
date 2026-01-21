@@ -1,3 +1,19 @@
+/* Стили для баннера "Открытие весной 2026 года" */
+.open2026-banner {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 260px;
+  height: auto;
+  z-index: 99999;
+  pointer-events: none;
+}
+@media (max-width: 768px) {
+  .open2026-banner {
+    width: 130px;
+  }
+}
+
 @import "tailwindcss";
 
 /* ТОЛЬКО базовые сбросы, никаких фиксов */

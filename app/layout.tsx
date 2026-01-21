@@ -67,9 +67,14 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <StructuredData seo={seo} />
       </head>
       <body className="antialiased overflow-x-hidden font-montserrat">
-        <LayoutContainer>
-          {children}
-        </LayoutContainer>
+        <div style={{position: 'relative', width: '100%'}}>
+          <div style={{display: 'flex', justifyContent: 'flex-end', width: '100%'}}>
+            <img src="/img/open2026.png" alt="Открытие весной 2026 года" className="open2026-banner" />
+          </div>
+          <LayoutContainer>
+            {children}
+          </LayoutContainer>
+        </div>
       </body>
     </html>
   );
